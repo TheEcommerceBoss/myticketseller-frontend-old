@@ -8,6 +8,7 @@ import { Ticket } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";  // Adjust path as necessary
 import WhyUs from "../../components/(others)/WhyUs";
 import EventCalendar from "../../components/(others)/HowItWorks";
+import Footer from "../../components/(footers)/Footer";
 
 function LandingPage() {
     const { theme } = useTheme();
@@ -80,6 +81,7 @@ function LandingPage() {
             <FeaturedEvents />
             <WhyUs />
             <EventCalendar />
+            <Footer />
         </>
     );
 }
