@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from "../../context/ThemeContext";  // Adjust path as necessary
 import { Sun, Moon, Search, X, Menu } from "lucide-react";
 import logo from '../../assets/(site_assets)/logo.png';  // Adjust path as necessary
+import logoDark from '../../assets/(site_assets)/logo-dark.png';  // Adjust path as necessary
 import { Link } from "react-router-dom";
 const HeaderMain = ({ variation }) => {
     const { theme, toggleTheme } = useTheme();
@@ -21,19 +22,20 @@ const HeaderMain = ({ variation }) => {
 
     return (
         <header className={` flex items-center justify-center ${variation === 1 ? 'absolute w-full' : ''}`}>
-            <nav className="flex items-center lg:mt-[2rem] w-full lg:w-[80%] z-50 justify-between lg:rounded-full p-3 bg-white shadow-lg">
+            <nav className={`flex items-center lg:mt-[2rem] w-full lg:w-[80%] z-50 justify-between lg:rounded-full p-3  ${theme === "light" ? "bg-white" : "bg-[#121212]"} shadow-lg`}>
                 <div className="flex items-center">
-                    <img src={logo} className="px-5 py-2 w-[6.5rem]" alt="" />
+                    <img src={theme === "light" ? logo : logoDark} className="px-5 py-2 w-[6.5rem]" alt="" />
 
                 </div>
                 <div className="hidden lg:flex space-x-6">
                     <a href="#" className="text-orange-500 text-lg font-medium">Home</a>
-                    <a href="#" className="text-gray-700 hover:text-orange-500 text-lg">About Us</a>
-                    <a href="#" className="text-gray-700 hover:text-orange-500 text-lg">Services</a>
-                    <a href="#" className="text-gray-700 hover:text-orange-500 text-lg">Pricing</a>
-                    <a href="#" className="text-gray-700 hover:text-orange-500 text-lg">Blog</a>
-                    <a href="#" className="text-gray-700 hover:text-orange-500 text-lg">Contact</a>
+                    <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>About Us</a>
+                    <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Services</a>
+                    <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Pricing</a>
+                    <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Blog</a>
+                    <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Contact</a>
                 </div>
+
                 <div className="flex items-center space-x-4 px-3">
                     <button
                         onClick={toggleTheme}
@@ -79,11 +81,14 @@ const HeaderMain = ({ variation }) => {
             >
                 {isMenuOpen && (
                     <nav className="text-white text-2xl space-y-4">
-                        <a href="#banner" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Home</a>
-                        <a href="#about" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">About</a>
-                        <a href="#works" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">My Works</a>
-                        <a href="#contact" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Contact</a>
-                    </nav>
+                        <a href="#"  onClick={toggleMenu}  className="block hover:text-orange-300 font-gluten transition-colors">Home</a>
+                        <a href="#"  onClick={toggleMenu}  className="block hover:text-orange-300 font-gluten transition-colors">About Us</a>
+                        <a href="#"  onClick={toggleMenu}  className="block hover:text-orange-300 font-gluten transition-colors">Services</a>
+                        <a href="#"  onClick={toggleMenu}  className="block hover:text-orange-300 font-gluten transition-colors">Pricing</a>
+                        <a href="#"  onClick={toggleMenu}  className="block hover:text-orange-300 font-gluten transition-colors">Blog</a>
+                        <a href="#"  onClick={toggleMenu}  className="block hover:text-orange-300 font-gluten transition-colors">Contact</a>
+
+                               </nav>
                 )}
             </div>
         </header>
