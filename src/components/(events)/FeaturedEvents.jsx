@@ -246,7 +246,7 @@ function FeaturedEvents() {
                     {cards.map((card, index) => (
                         <div
                             key={index}
-                            className={`bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}
+                            className={`bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}
                         >
                             <img
                                 src={card.image}
