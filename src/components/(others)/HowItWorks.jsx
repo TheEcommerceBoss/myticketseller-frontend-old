@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Calendar, Clock8, Search } from 'lucide-react';
 import SearchBox from '../../assets/(landing)/searchBox.png';
 import SearchBar from '../../assets/(landing)/searchBar.png';
+import Calendars from '../../assets/(landing)/calendar.png';
+
 const EventCalendar = () => {
     const [selectedDate, setSelectedDate] = useState(18);
 
@@ -24,9 +26,8 @@ const EventCalendar = () => {
     };
 
     return (
-        <div className="bg-white p-8 font-sans">
-
-            <div className="flex flex-col items-center md:flex-row md:space-x-8">
+        <div className="bg-white p-8 md:px-[10rem] flex flex-col items-center font-sans">
+            <div className="flex flex-col md:flex-row w-full justify-between items-center md:space-x-8 mt-[1rem] md:mt-[5rem]">
                 <div className="w-full md:w-1/2">
                     <div className="my-10 text-center md:text-start">
                         <h2 className="text-3xl font-bold text-[#1a237e] relative inline-block">
@@ -50,32 +51,32 @@ const EventCalendar = () => {
                         </li>
                     </ul>
                 </div>
-                <div className="w-full flex my-5 md:my-0 flex-col items-center md:w-1/2">
-                    <img src={SearchBar} className='w-[100%]' />
-                    <img src={SearchBox} className='w-[100%]' />
-
+                <div className="w-full md:w-1/3 flex flex-col items-center justify-center">
+                    <img src={SearchBar} className='w-full   mb-4' alt="Search Bar" />
+                    <img src={SearchBox} className='w-full ' alt="Search Box" />
                 </div>
             </div>
-            <div className="flex flex-col md:flex-row ">
 
-
-                <div className="flex flex-col items-center w-full md:w-1/2">
+            <div className="flex flex-col md:flex-row w-full justify-between items-center md:space-x-8 mt-[5rem]">
+                <div className="w-full md:w-1/2 order-2 md:order-1">
                     <div className="my-10 text-center md:text-start">
-                        <h2 className="text-2xl font-bold px-5 text-[#1a237e] relative inline-block">
+                        <h2 className="text-2xl font-bold text-[#1a237e] relative inline-block">
                             FOLLOW UP WITH OUR SPECIAL TICKETSELLER CALENDAR
                         </h2>
                     </div>
                     <div className="space-y-4">
-                        <div className="flex shadow-xl  p-5 rounded-2xl items-center">
-                            <Calendar className="mr-5 text-[#040171] w-[5rem]" />
+                        <div className="flex shadow-lg p-5 rounded-2xl items-center">
+                            <Calendar className="mr-5 text-[#040171] w-[3rem]" />
                             <p className='text-black'>Follow the event by selecting the appropriate date using the calendar feature.</p>
                         </div>
-                        <div className="flex shadow-xl p-5 rounded-2xl items-center">
-                            <Clock8 className="mr-5 text-[#040171] w-[5rem]" />
-
+                        <div className="flex shadow-lg p-5 rounded-2xl items-center">
+                            <Clock8 className="mr-5 text-[#040171] w-[3rem]" />
                             <p className='text-black'>We will remind you when the event will be held 7 days before the day.</p>
                         </div>
                     </div>
+                </div>
+                <div className="w-full md:w-1/3 flex justify-center items-center order-1 md:order-2 mb-8 md:mb-0">
+                    <img src={Calendars} className='w-full ' alt="Calendar" />
                 </div>
             </div>
         </div>
