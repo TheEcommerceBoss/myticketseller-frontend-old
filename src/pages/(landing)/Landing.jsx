@@ -6,6 +6,8 @@ import Banner2 from '../../assets/(landing)/banner2.png';
 import FeaturedEvents from "../../components/(events)/FeaturedEvents";
 import { Ticket } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";  // Adjust path as necessary
+import WhyUs from "../../components/(others)/WhyUs";
+import EventCalendar from "../../components/(others)/HowItWorks";
 
 function LandingPage() {
     const { theme } = useTheme();
@@ -14,7 +16,7 @@ function LandingPage() {
         <>
 
             <div
-                className="relative w-full h-[calc(90vh)] md:h-[calc(100vh - 10rem)] bg-cover bg-center"
+                className="relative w-full h-[calc(90vh)] lg:h-[calc(100vh - 10rem)] bg-cover bg-center"
                 style={{
                     backgroundImage: 'url("' + Banner + '")',
                     backgroundSize: 'cover',
@@ -24,10 +26,10 @@ function LandingPage() {
             >
                 <HeaderMain variation={1} />
 
-                <div className={`absolute inset-0 bg-[#040171B0] opacity-${theme == 'light' ? 90 : 50 } `}></div>
+                <div className={`absolute inset-0 bg-[#040171B0] opacity-${theme == 'light' ? 90 : 50} `}></div>
                 <div className="absolute inset-0 flex lg:items-center  justify-center">
-                    <div className="text-center max-w-5xl mx-auto mt-[55%]  lg:mt-0 px-6 mb-12 z-10">
-                        <h1 className="text-4xl lg:text-7xl flex items-center text-white  font-gochi lg:mb-6">
+                    <div className="text-center max-w-5xl mx-auto mt-[12rem] md:mt-[20rem]  lg:mt-0 px-6 mb-12 z-10">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl flex items-center text-white  font-gochi lg:mb-6">
                             <div className="hidden lg:flex items-center justify-center gap-1 flex-wrap my-2">
                                 <span className="hidden lg:flex text-white mx-[.5rem]">YOUR</span>
                                 <div className=" mt-1">
@@ -76,6 +78,8 @@ function LandingPage() {
                 </div>
             </div>
             <FeaturedEvents />
+            <WhyUs />
+            <EventCalendar />
         </>
     );
 }
