@@ -22,3 +22,9 @@ body {
 .font-gochi {
   font-family: "Gochi Hand" !important;
 }
+
+.custom-datepicker::placeholder {
+  color: #777; 
+  opacity: 1;  /* Ensure opacity is set to 1 for better visibility */
+}
+
