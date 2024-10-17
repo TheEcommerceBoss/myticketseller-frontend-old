@@ -5,6 +5,8 @@
 :root {
   --background-color: #ffffff;
   --text-color: #000000;
+  font-family: "Gabarito Variable";
+
 }
 
 [data-theme="dark"] {
