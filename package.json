@@ -12,6 +12,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@fontsource-variable/gabarito": "^5.1.0",
     "@fontsource/gochi-hand": "^5.1.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.453.0",
