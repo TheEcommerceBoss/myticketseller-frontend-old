@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
-import { ChevronDown, Search, Calendar, MapPin } from "lucide-react";
+import { ChevronDown, Search, Calendar, MapPin, Clock } from "lucide-react";
 import Select from "react-select";
 import DatePicker from "react-datepicker"; // Import the date picker
 import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
@@ -27,7 +27,7 @@ const eventTypeOptions = [
 ];
 
 
-function FeaturedEvents() {
+function FeaturedEvents({ variation }) {
     const { theme } = useTheme();
     const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
 
@@ -158,7 +158,7 @@ function FeaturedEvents() {
 
     return (
         <section className={`py-16 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-gray-100'}`}>
-            <div className="relative z-10 flex flex-col -mt-[6.5rem] items-center justify-center h-full text-white px-4">
+            <div className={`${variation == 2 ? 'hidden' : 'flex'} relative z-10  flex-col -mt-[6.5rem] items-center justify-center h-full text-white px-4`}>
                 <div className={`${theme === 'dark' ? 'bg-gray-100' : 'bg-white'} rounded-[2rem] p-2 w-full max-w-6xl flex flex-col md:flex-row items-center shadow-lg`}>
                     <p className="flex-grow px-6 py-3 rounded-[2rem] focus:outline-none text-gray-500 placeholder-gray-400">
                         Search by name or type
@@ -205,11 +205,11 @@ function FeaturedEvents() {
                     </div>
                 </div>
             </div>
-            <div className="container mx-auto px-4 mt-[6rem]">
+            <div className={`${variation == 2 ? '' : 'mt-[6rem]'} container mx-auto px-4 `}>
                 <div className="text-center mb-8">
-                 
+
                     <h2 className={`text-xl md:text-3xl  font-bold pb-1 mb-3 relative inline-block font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                        Featured Events Around You
+                        {variation == 2 ? 'Browse Events' : 'Featured Events Around You'}
 
                         <span className="absolute bottom-0 right-0 w-[5rem] h-[.1rem] bg-orange-500 "></span>
                         <span className="absolute bottom-1 right-0 w-[5rem] h-[.1rem] bg-orange-500 "></span>
@@ -242,32 +242,93 @@ function FeaturedEvents() {
                     </div>
 
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-2">
+                <div className={`${variation == 2 ? '' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} grid  gap-8 px-2 `}>
                     {cards.map((card, index) => (
-                        <div
-                            key={index}
-                            className={`bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}
-                        >
-                            <img
-                                src={card.image}
-                                alt={card.title}
-                                className="w-full h-[8rem] md:h-[10rem] object-cover"
-                            />
-                            <div className={`flex flex-col justify-between p-6 py-4 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
-                                <div className="flex  items-center">
-                                    <span className="text-gray-500 flex w-2/5 items-center gap-1 text-xs"><Calendar size={16} /> <span>{card.date}</span></span>
-                                    <span className="text-orange-500 text-center w-1/5">|</span>
-                                    <span className="text-gray-500 flex w-2/5  items-center justify-end  gap-1 text-xs"><MapPin size={16} /> <span>{card.location}</span></span>
+                        <>
+                            {
+                                variation != 2 ? (
+                                    <>
 
-                                </div>
-                                <Link to={'/event/view/' + card.id} className="text-xl my-2 text-black font-semibold ">
-                                    {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
-                                </Link>
+                                        <div
+                                            key={index}
+                                            className={`bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}
+                                        >
+                                            <img
+                                                src={card.image}
+                                                alt={card.title}
+                                                className="w-full h-[8rem] md:h-[10rem] object-cover"
+                                            />
+                                            <div className={`flex flex-col justify-between p-6 py-4 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
+                                                <div className="flex  items-center">
+                                                    <span className="text-gray-500 flex w-2/5 items-center gap-1 text-xs"><Calendar size={16} /> <span>{card.date}</span></span>
+                                                    <span className="text-orange-500 text-center w-1/5">|</span>
+                                                    <span className="text-gray-500 flex w-2/5  items-center justify-end  gap-1 text-xs"><MapPin size={16} /> <span>{card.location}</span></span>
 
-                                <span className="text-gray-500 text-sm">{card.description.length > 100 ? `${card.description.substring(0, 100)}...` : card.description}</span>
+                                                </div>
+                                                <Link to={'/event/view/' + card.id} className="text-xl my-2 text-black font-semibold ">
+                                                    {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
+                                                </Link>
 
-                            </div>
-                        </div>
+                                                <span className="text-gray-500 text-sm">{card.description.length > 100 ? `${card.description.substring(0, 100)}...` : card.description}</span>
+
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md   lg:rounded-none lg:shadow-none   flex flex-col lg:flex-row  lg:gap-5 mb-4">
+                                        <img
+                                            src={card.image}
+                                            alt={card.title}
+                                            className=" w-full h-[10rem] lg:w-1/4 rounded-xl object-cover"
+                                        />
+                                        <div className="rounded-xl lg:shadow-md  bg-white p-4 flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
+                                            <div className="flex justify-between items-start">
+                                                <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
+                                                    <div className="">
+                                                        <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
+                                                            <div className="flex font-semibold items-center gap-1">
+                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                <span>{card.date}</span>
+                                                            </div>
+                                                            <div className="flex font-bold items-center gap-1">
+                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                <span>{card.date}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+                                                    <h3 className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                        {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
+                                                    </h3>
+
+                                                    <div className="flex items-center font-semibold text-xs text-gray-400 mt-1 gap-1">
+                                                        <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                        <span>{card.location}</span>
+                                                    </div>
+                                                    <div className="h-full  md:hidden mt-4 flex ">
+
+                                                        <button className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                            Buy Tickets
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="h-full hidden md:flex md:border-l pl-3 items-center">
+
+                                                    <button className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                        Buy Tickets
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </>
                     ))}
                 </div>
                 <div className="flex items-center flex-col my-[3rem]">
