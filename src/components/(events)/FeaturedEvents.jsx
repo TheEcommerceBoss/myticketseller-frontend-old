@@ -248,27 +248,52 @@ function FeaturedEvents({ variation }) {
                 </div>
             </div>
             <div className={`${variation == 2 ? '' : 'mt-[6rem]'} container mx-auto px-4 `}>
-                <div className="text-center mb-8">
+                <div className={`${variation == 2 ? 'text-start' : 'text-center '} mb-8`}>
 
-                    <h2 className={`text-xl md:text-3xl  font-bold pb-1 mb-3 relative inline-block font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                        {variation == 2 ? 'Browse Events' : 'Featured Events Around You'}
+                    <div className={`${variation == 2 ? 'flex flex-col md:flex-row justify-between' : ''} `}>
+                        <h2 className={`${variation == 2 ? ' text-lg  md:text-2xl  ' : ' text-xl  md:text-3xl  '}font-bold pb-1 mb-3 relative inline-block font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                            {variation == 2 ? 'Browse Events' : 'Featured Events Around You'}
 
-                        <span className="absolute bottom-0 right-0 w-[5rem] h-[.1rem] bg-orange-500 "></span>
-                        <span className="absolute bottom-1 right-0 w-[5rem] h-[.1rem] bg-orange-500 "></span>
-                    </h2>
+                            <span className={` absolute bottom-0 ${variation == 2 ? ' left-0 ' : ' right-0 '} w-[5rem] h-[.1rem] bg-orange-500 `}></span>
+                            <span className={` absolute bottom-1 ${variation == 2 ? ' left-0 ' : ' right-0 '} w-[5rem] h-[.1rem] bg-orange-500 `}></span>
+                        </h2>
+
+                        <div className={`${variation == 2 ? 'relative max-w-[200px] md:max-w-auto mx-auto  hidden lg:flex items-center' : 'hidden'} `}>
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
+                            />
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <Search size={20} className="text-gray-400" />
+                            </div>
+                        </div>
+                    </div>
 
 
-                    <p className={`text-sm px-5  ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+
+                    <p className={`${variation == 2 ? 'hidden' : ''} text-sm px-5  ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         Check out what’s trending now and grab your tickets before they sell out!
                     </p>
-                    <div className="flex lg:hidden flex-col items-center mt-5">
-                        <Select
+                    <div className="flex  lg:hidden flex-row justify-around items-center gap-2 mt-5">
+                        <div className={`${variation == 2 ? 'relative w-1/2 mx-auto  flex items-center' : 'hidden'} `}>
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
+                            />
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                <Search size={20} className="text-gray-400" />
+                            </div>
+                        </div>
+                         <Select
                             options={eventTypeOptions}
                             styles={customSearchStyles}
                             components={{ DropdownIndicator }}
                             placeholder="All"
                             isSearchable={false}
                         />
+
                     </div>
                     <div className="hidden lg:flex justify-center space-x-10 items-center my-8">
                         <a href="javascript:void(0)" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
