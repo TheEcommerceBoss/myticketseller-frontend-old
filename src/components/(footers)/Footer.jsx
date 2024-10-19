@@ -15,7 +15,7 @@ const Footer = () => {
         <footer className="font-sans relative mt-[10rem]">
             <div className="absolute px-3 mx-auto max-w-5xl  left-0 right-0 -top-[6rem] md:-top-24">
                 <div className="bg-white rounded-2xl shadow-xl p-6 ">
-                    <h2 className="text-2xl font-bold mb-2">JOIN MY TICKETSELLER PARTY COMMUNITY</h2>
+                    <h2 className="text-2xl font-semibold text-center mb-2">JOIN MY TICKETSELLER PARTY COMMUNITY</h2>
                     <p className="text-gray-600 mb-4">Sign up for our newsletter to get exclusive event access, discounts and updates.</p>
                     <form onSubmit={handleSubmit} className="flex flex-wrap">
                         <div className="flex-grow flex items-center border border-gray-300 rounded-l-lg bg-white">

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
-import { ChevronDown, Search, Calendar, MapPin, Clock } from "lucide-react";
+import { ChevronDown, Search, Calendar, MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import Select from "react-select";
 import DatePicker from "react-datepicker"; // Import the date picker
 import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
@@ -26,11 +26,53 @@ const eventTypeOptions = [
     { id: 8, value: "concert", label: "Concert", slug: "concert", image: "path/to/concert-image.jpg" },
 ];
 
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
+
+    return (
+        <div className="flex items-center justify-center space-x-2">
+            <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 disabled:opacity-50"
+            >
+                <ChevronLeft size={20} />
+            </button>
+
+            {pageNumbers.map((number) => (
+                <button
+                    key={number}
+                    onClick={() => onPageChange(number)}
+                    className={`w-10 h-10 flex items-center justify-center rounded-full 
+              ${currentPage === number
+                            ? 'bg-blue-900 text-white'
+                            : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                        }`}
+                >
+                    {number}
+                </button>
+            ))}
+
+            <button
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 disabled:opacity-50"
+            >
+                <ChevronRight size={20} />
+            </button>
+        </div>
+    );
+};
+
 
 function FeaturedEvents({ variation }) {
     const { theme } = useTheme();
     const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
-
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const totalPages = 3;
     const customSearchStyles = {
         control: (provided) => ({
             ...provided,
@@ -331,10 +373,12 @@ function FeaturedEvents({ variation }) {
                         </>
                     ))}
                 </div>
-                <div className="flex items-center flex-col my-[3rem]">
-                    <Link to={'/event/find'} className="flex align-center items-center gap-2 bg-orange-500 text-white px-5 py-3 rounded-full hover:bg-orange-600 transition duration-300">
-                        <Search size={18} />  <span className=''>Find More Events</span>
-                    </Link>
+                <div className="p-4">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
                 </div>
             </div>
         </section>
