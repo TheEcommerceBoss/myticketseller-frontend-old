@@ -141,7 +141,7 @@ const FAQ = ({ theme }) => {
                 Frequently Asked Questions
             </h2>
             {questions.map((q, index) => (
-                <div key={q.id} className="border-b border-gray-200">
+                <div key={q.id} className={`border-b ${theme === 'dark' ? ' border-gray-700' : ' border-gray-200'}`}>
                     <button
                         className="w-full py-4 text-left flex justify-between items-center"
                         onClick={() => setOpenIndex(openIndex === index ? null : index)}
@@ -196,8 +196,63 @@ function ViewEventComponent({ variation }) {
     const { theme } = useTheme();
 
 
+
+    const cards = [
+        {
+            id: 1,
+            title: "Nicki Minaj Live at Los Angeles",
+            date: "24 Jan 2024",
+            location: "Lagos, Nigeria",
+            description: "This is a description for event 1, It will show some info about this event.",
+            image: eventImage,
+        },
+        {
+            id: 2,
+            title: "        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorum pariatur repellat quaerat eius, ratione accusamus at officia voluptatibus, numquam error eligendi est iusto ab, saepe dignissimos quam dolore. Voluptas amet corporis, ut rem suscipit cumque dolore commodi nemo nesciunt adipisci architecto aliquid maiores, quam non optio, fuga consequatur quo laboriosam?",
+            date: "24 Jan 2024",
+            location: "Texas, USA",
+            description: "This is a description for event 2, It will show some info about this event.",
+            image: event2Image,
+        },
+
+        {
+            id: 3,
+            title: "Nicki Minaj Live at Los Angeles",
+            date: "24 Jan 2024",
+            location: "Virtual",
+            description: "This is a description for event 3, It will show some info about this event.",
+            image: event3Image,
+        },
+        {
+            id: 4,
+            title: "Nicki Minaj Live at Los Angeles",
+            date: "24 Jan 2024",
+            location: "Lagos, Nigeria",
+            description: "This is a description for event 1, It will show some info about this event.",
+            image: event4Image,
+        },
+        {
+            id: 5,
+            title: "        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorum pariatur repellat quaerat eius, ratione accusamus at officia voluptatibus, numquam error eligendi est iusto ab, saepe dignissimos quam dolore. Voluptas amet corporis, ut rem suscipit cumque dolore commodi nemo nesciunt adipisci architecto aliquid maiores, quam non optio, fuga consequatur quo laboriosam?",
+            date: "24 Jan 2024",
+            location: "Texas, USA",
+            description: "This is a description for event 2, It will show some info about this event.",
+            image: eventImage,
+        },
+
+        {
+            id: 6,
+            title: "Nicki Minaj Live at Los Angeles",
+            date: "24 Jan 2024",
+            location: "Virtual",
+            description: "This is a description for event 3, It will show some info about this event.",
+            image: event3Image,
+        },
+    ];
+
+
     return (
-        <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-white'}`}>
+        <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-gray-100'}`}>
 
             <div className="flex flex-col  items-center p-5">
                 <img src={event2Image} className="w-full  lg:w-4/5 mb-5 rounded-[2rem]" alt="" />
@@ -226,7 +281,74 @@ function ViewEventComponent({ variation }) {
                 <FAQ theme={theme} />
 
                 <div>
-                    <Tags />
+                    <Tags theme={theme} />
+                </div>
+                <div className={`flex flex-col items-center my-[3rem]`}>
+                    <div className="flex flex-col w-full px-2 my-5 items-start text-start">
+                        <h2 className={`text-xl font-bold text-start  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>More Events From this Organizer</h2>
+
+                    </div>
+                    <div className={`flex flex-col gap-8 px-2 `}>
+                        {cards.map((card, index) => (
+                            <>
+                                {
+
+                                    <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md   lg:rounded-none lg:shadow-none   flex flex-col lg:flex-row  lg:gap-5 mb-4">
+                                        <img
+                                            src={card.image}
+                                            alt={card.title}
+                                            className=" w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
+                                        />
+                                        <div className="rounded-xl lg:shadow-md  bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
+                                            <div className="flex justify-between items-start">
+                                                <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
+                                                    <div className="">
+                                                        <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
+                                                            <div className="flex font-semibold items-center gap-1">
+                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                <span>{card.date}</span>
+                                                            </div>
+                                                            <div className="flex font-bold items-center gap-1">
+                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                <span>{card.date}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+                                                    <Link to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                        {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
+                                                    </Link>
+
+                                                    <div className="flex items-center font-semibold text-xs text-gray-400 mt-1 gap-1">
+                                                        <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                        <span>{card.location}</span>
+                                                    </div>
+                                                    <div className="h-full  md:hidden mt-4 flex ">
+
+                                                        <button className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                            Buy Tickets
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="h-full hidden md:flex md:border-l pl-3 items-center">
+
+                                                    <button className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                        Buy Tickets
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+                            </>
+                        ))}
+                    </div>
                 </div>
             </div>
 
