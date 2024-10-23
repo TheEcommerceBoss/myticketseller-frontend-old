@@ -45,7 +45,7 @@ const Header = ({ theme }) => (
 
 // Host Info Component
 const HostInfo = ({ theme }) => (
-    <div className="bg-gray-100 lg:w-1/2 rounded-lg p-6 shadow-sm mb-8">
+    <div className={`lg:w-1/2 rounded-lg p-6 shadow-sm mb-8 ${theme === 'dark' ? 'bg-gray-500' : 'bg-white '}`}>
         <div className="flex items-center gap-4">
             <img
                 src={user}
@@ -53,7 +53,7 @@ const HostInfo = ({ theme }) => (
                 className="w-12 h-12 object-cover object-center rounded-full"
             />
             <div className="flex-grow">
-                <div className="text-[#040171] font-medium">Hosted by: Jane Doe</div>
+                <div className={`text-xl font-medium  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}  >Hosted by: Jane Doe</div>
                 <div className="bg-orange-500 text-white text-sm px-3 py-1 rounded-full inline-block mt-1">
                     3,000 Events Hosted
                 </div>
@@ -83,7 +83,7 @@ const HostInfo = ({ theme }) => (
 const DateTime = ({ theme }) => (
     <div className="mb-8">
         <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Date and Time</h2>
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-400' : 'text-[#040171]'}`}>
             <Calendar className="w-5 h-5" />
             <span>October 4 · 10pm - October 5 · 4am EDT</span>
         </div>
@@ -97,7 +97,7 @@ const Location = ({ theme }) => {
     return (
         <div className="mb-8">
             <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Location</h2>
-            <div className="flex items-start gap-2 text-gray-600">
+            <div className={`flex items-start gap-2 ${theme === 'dark' ? 'text-gray-400' : 'text-[#040171]'}`}>
                 <MapPin className="w-5 h-5 mt-1" />
                 <div>
                     <div className="font-medium">POLYGON BROOKLYN</div>
@@ -214,40 +214,6 @@ function ViewEventComponent({ variation }) {
             description: "This is a description for event 2, It will show some info about this event.",
             image: event2Image,
         },
-
-        {
-            id: 3,
-            title: "Nicki Minaj Live at Los Angeles",
-            date: "24 Jan 2024",
-            location: "Virtual",
-            description: "This is a description for event 3, It will show some info about this event.",
-            image: event3Image,
-        },
-        {
-            id: 4,
-            title: "Nicki Minaj Live at Los Angeles",
-            date: "24 Jan 2024",
-            location: "Lagos, Nigeria",
-            description: "This is a description for event 1, It will show some info about this event.",
-            image: event4Image,
-        },
-        {
-            id: 5,
-            title: "        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorum pariatur repellat quaerat eius, ratione accusamus at officia voluptatibus, numquam error eligendi est iusto ab, saepe dignissimos quam dolore. Voluptas amet corporis, ut rem suscipit cumque dolore commodi nemo nesciunt adipisci architecto aliquid maiores, quam non optio, fuga consequatur quo laboriosam?",
-            date: "24 Jan 2024",
-            location: "Texas, USA",
-            description: "This is a description for event 2, It will show some info about this event.",
-            image: eventImage,
-        },
-
-        {
-            id: 6,
-            title: "Nicki Minaj Live at Los Angeles",
-            date: "24 Jan 2024",
-            location: "Virtual",
-            description: "This is a description for event 3, It will show some info about this event.",
-            image: event3Image,
-        },
     ];
 
 
@@ -265,12 +231,12 @@ function ViewEventComponent({ variation }) {
 
                 <div className="mb-8">
                     <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
-                    <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-600'}`}>No Refund</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>No Refund</p>
                 </div>
 
                 <div className="mb-8">
                     <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
-                    <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-600'}`}>
+                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
                         aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
