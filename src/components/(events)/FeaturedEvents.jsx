@@ -309,7 +309,8 @@ function FeaturedEvents({ variation }) {
                     </div>
 
                 </div>
-                <div className={`${variation == 2 ? '' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} grid  gap-8 px-2 `}>
+                <div className={`${variation == 2 ? '' : 'flex flex-col items-center'}`}>
+               <div className={`${variation == 2 ? 'lg:px-[5rem]' : 'max-w-7xl  grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} grid  gap-8 px-2 `}>
                     {cards.map((card, index) => (
                         <>
                             {
@@ -346,9 +347,9 @@ function FeaturedEvents({ variation }) {
                                         <img
                                             src={card.image}
                                             alt={card.title}
-                                            className=" w-full h-[10rem] lg:w-1/4 rounded-xl object-cover"
+                                            className=" w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
                                         />
-                                        <div className="rounded-xl lg:shadow-md  bg-white p-4 flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
+                                        <div className="rounded-xl lg:shadow-md  bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
                                             <div className="flex justify-between items-start">
                                                 <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
                                                     <div className="">
@@ -367,9 +368,9 @@ function FeaturedEvents({ variation }) {
 
 
 
-                                                    <h3 className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                    <Link to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
                                                         {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
-                                                    </h3>
+                                                    </Link>
 
                                                     <div className="flex items-center font-semibold text-xs text-gray-400 mt-1 gap-1">
                                                         <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
@@ -398,6 +399,7 @@ function FeaturedEvents({ variation }) {
                         </>
                     ))}
                 </div>
+               </div>
                 <div className="p-4">
                     <Pagination
                         currentPage={currentPage}
