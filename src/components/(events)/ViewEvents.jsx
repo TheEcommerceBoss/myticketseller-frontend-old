@@ -12,40 +12,53 @@ import event4Image from "../../assets/(landing)/event4.png"
 import user from "../../assets/(user)/user.png"
 import map from "../../assets/(utils)/map.png"
 import { Share2 } from 'lucide-react';
-
+import TicketModal from "./TicketModal";
+import { useParams } from "react-router-dom";
 // Header Component
-const Header = ({ theme }) => (
 
-    <div className="mb-8">
-        <div className="flex justify-between items-center">
-            <div className="text-gray-600 flex flex-col items-center">
-                <p>Friday, September 28</p>
-            </div>
-            <div className="">
-                <button className="p-2 hover:bg-gray-100 rounded-full">
-                    <Heart className="w-4 h-4" />
-                </button>
-                <button className="p-2 hover:bg-gray-100 rounded-full">
-                    <Share2 className="w-4 h-4" />
-                </button> </div>
-        </div>
-        <div className="flex flex-col md:flex-row mt-4 justify-between items-start">
-            <h1 className={`text-2xl md:text-3xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                Nicki Minaj Concert Live at<br />Los Angeles
-            </h1>
-            <div className="flex gap-2">
-                <button className="bg-orange-500 text-white px-4 py-2 mt-2 md:mt-0 rounded-md">
-                    Buy Tickets
-                </button>
+const Header = ({ theme, id }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    return (
+
+        <div className="mb-8">
+            <div className="flex justify-between items-center">
+                <div className="text-gray-600 flex flex-col items-center">
+                    <p>Friday, September 28</p>
+                </div>
+                <div className="">
+                    <button className="p-2 hover:bg-gray-100 rounded-full">
+                        <Heart className="w-4 h-4" />
+                    </button>
+                    <button className="p-2 hover:bg-gray-100 rounded-full">
+                        <Share2 className="w-4 h-4" />
+                    </button> </div>
             </div>
+            <div className="flex flex-col md:flex-row mt-4 justify-between items-start">
+                <h1 className={`text-2xl md:text-3xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                    Nicki Minaj Concert Live at<br />Los Angeles
+                </h1>
+                <div className="flex gap-2">
+                    <button onClick={() => setIsModalOpen(true)} className="bg-orange-500 text-white px-4 py-2 mt-2 md:mt-0 rounded-md">
+                        Buy Tickets
+                    </button>
+
+                </div>
+            </div>
+            {isModalOpen && (
+                <TicketModal
+                    eventId={12}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            )}
         </div>
-    </div>
-);
+    );
+}
 
 // Host Info Component
 const HostInfo = ({ theme }) => (
-    <div className={`lg:w-1/2 rounded-lg p-6 shadow-sm mb-8 ${theme === 'dark' ? 'bg-gray-500' : 'bg-white '}`}>
+    <div className={`lg:w-1/2 rounded-lg p-6 shadow-sm mb-8 ${theme === 'dark' ? 'bg-[#000]' : 'bg-white '}`}>
         <div className="flex items-center gap-4">
             <img
                 src={user}
@@ -194,7 +207,10 @@ const Tags = ({ theme }) => {
 
 function ViewEventComponent({ variation }) {
     const { theme } = useTheme();
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const {id} = useParams();
+    console.log(id);
+  
 
 
     const cards = [
@@ -218,13 +234,13 @@ function ViewEventComponent({ variation }) {
 
 
     return (
-        <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-gray-100'}`}>
+        <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#111]' : 'bg-gray-100'}`}>
 
             <div className="flex flex-col  items-center p-5">
                 <img src={event2Image} className="w-full  lg:w-4/5 mb-5 rounded-[2rem]" alt="" />
             </div>
             <div className="max-w-7xl mx-auto p-6">
-                <Header theme={theme} />
+                <Header theme={theme} id={1} />
                 <HostInfo theme={theme} />
                 <DateTime theme={theme} />
                 <Location theme={theme} />
@@ -294,7 +310,7 @@ function ViewEventComponent({ variation }) {
                                                     </div>
                                                     <div className="h-full  md:hidden mt-4 flex ">
 
-                                                        <button className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                        <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
                                                             Buy Tickets
                                                         </button>
                                                     </div>
@@ -303,7 +319,7 @@ function ViewEventComponent({ variation }) {
 
                                                 <div className="h-full hidden md:flex md:border-l pl-3 items-center">
 
-                                                    <button className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                    <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
                                                         Buy Tickets
                                                     </button>
                                                 </div>
@@ -316,8 +332,8 @@ function ViewEventComponent({ variation }) {
                         ))}
                     </div>
                 </div>
+                    <TicketModal  isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventTitle="Nicki Minaj Live at Los Angeles" eventDateTime="October 4 · 10pm - October 5 · 4am EDT" />
             </div>
-
         </section>
     );
 }

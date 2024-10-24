@@ -12,10 +12,10 @@ function ViewEvent() {
 
     return (
         <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-            <HeaderMain variation={2} />
+            <HeaderMain variation={2} showsearch={true} />
             
             <main>
-                 <ViewEventComponent  variation={1} />
+                 <ViewEventComponent  variation={1}  />
              </main>
 
             <Footer />
