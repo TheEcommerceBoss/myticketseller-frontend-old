@@ -40,7 +40,8 @@ function WhyUs() {
                     ))}
                 </div>
                 <div className="flex items-center flex-col py-[3rem] pb-[4rem] ">
-                    <Link to={'/services'} className="flex align-center items-center gap-2 bg-orange-500 text-white px-5 py-3 rounded-full hover:bg-orange-600 transition duration-300">
+                    <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+ to={'/services'} className="flex align-center items-center gap-2 bg-orange-500 text-white px-5 py-3 rounded-full hover:bg-orange-600 transition duration-300">
                         View our Services
                     </Link>
                 </div>
