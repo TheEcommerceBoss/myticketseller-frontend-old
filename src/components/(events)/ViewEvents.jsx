@@ -300,7 +300,8 @@ function ViewEventComponent({ variation }) {
 
 
 
-                                                    <Link to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                    <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+ to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
                                                         {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                     </Link>
 

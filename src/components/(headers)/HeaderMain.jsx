@@ -32,7 +32,8 @@ const HeaderMain = ({ variation, showsearch }) => {
         <header className={` flex items-center justify-center ${variation === 1 ? 'absolute w-full' : ''}`}>
             <nav className={`flex items-center  ${variation === 1 ? 'lg:mt-[2rem] lg:w-[80%] lg:rounded-full ' : ''}  w-full  z-50 justify-between  p-3  ${theme === "light" ? "bg-white" : "bg-[#121212]"} shadow-lg`}>
                 <div className="flex items-center">
-                    <Link to={'/'} >
+                    <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+ to={'/'} >
                         <img src={theme === "light" ? logo : logoDark} className="px-5 py-2 w-[6.5rem]" alt="" />
                     </Link>
                 </div>
@@ -99,7 +100,8 @@ const HeaderMain = ({ variation, showsearch }) => {
                 <div className="flex items-center space-x-4 px-3">
                     {variation === 2 ?
                         (
-                            <Link to={'/'} className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Home</Link>
+                            <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+ to={'/'} className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Home</Link>
                         ) : ''
                     }
                     <button
@@ -126,7 +128,8 @@ const HeaderMain = ({ variation, showsearch }) => {
                             className="bg-orange-500 text-black pl-2 py-2 h-[3rem] lg:h-[4rem] pr-[2.5rem] lg:pr-[3.5rem] rounded-full relative flex items-center z-10"
                         >
                             <span className="mx-4 text-white text-sm lg:text-lg font-sora">
-                                <Link to={'/event/find'} className="">
+                                <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+ to={'/event/find'} className="">
                                     <Search size={18} />
                                 </Link>
                             </span>

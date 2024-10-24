@@ -335,7 +335,8 @@ function FeaturedEvents({ variation }) {
                                                         <span className="text-gray-500 flex w-2/5  items-center justify-end  gap-1 text-xs"><MapPin size={16} /> <span>{card.location}</span></span>
 
                                                     </div>
-                                                    <Link to={'/event/view/' + card.id} className="text-xl my-2 text-black font-semibold ">
+                                                    <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+ to={'/event/view/' + card.id} className="text-xl my-2 text-black font-semibold ">
                                                         {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                     </Link>
 
@@ -370,7 +371,8 @@ function FeaturedEvents({ variation }) {
 
 
 
-                                                        <Link to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                        <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+ to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
                                                             {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                         </Link>
 
