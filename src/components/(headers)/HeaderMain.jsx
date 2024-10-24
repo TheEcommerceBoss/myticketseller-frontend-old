@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useTheme } from "../../context/ThemeContext";  // Adjust path as necessary
+import { useTheme } from "../../context/ThemeContext";
 import { Sun, Moon, Search, X, Menu } from "lucide-react";
-import logo from '../../assets/(site_assets)/logo.png';  // Adjust path as necessary
-import logoDark from '../../assets/(site_assets)/logo-dark.png';  // Adjust path as necessary
+import logo from '../../assets/(site_assets)/logo.png';
+import logoDark from '../../assets/(site_assets)/logo-dark.png';
 import { Link } from "react-router-dom";
-const HeaderMain = ({ variation }) => {
+import {  MapPin } from 'lucide-react';
+const HeaderMain = ({ variation, showsearch }) => {
     const { theme, toggleTheme } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
-
+    const [searchQuery, setSearchQuery] = useState('');
+    const [location, setLocation] = useState('New York');
+  
+    const handleSearch = (e) => {
+      e.preventDefault();
+      // Handle search logic here
+      console.log('Searching:', searchQuery, 'in', location);
+    };
+  
     useEffect(() => {
         if (isMenuOpen) {
             document.body.classList.add('overflow-hidden');
@@ -37,8 +45,55 @@ const HeaderMain = ({ variation }) => {
                             <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Pricing</a>
                             <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Blog</a>
                             <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Contact</a>
+                            <a href="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Login</a>
                         </>
-                        : ""}
+                        :
+                        showsearch ?
+                            <>
+                                <div className="hidden lg:flex max-w-4xl mx-auto px-4">
+                                    <form
+                                        onSubmit={handleSearch}
+                                        className="flex items-center bg-white rounded-full shadow-lg border border-gray-200 overflow-hidden"
+                                    >
+                                        <div className="flex items-center flex-1 divide-x divide-gray-200">
+                                            {/* Search Input */}
+                                            <div className="flex items-center flex-1 px-4 py-1">
+                                                <Search className="w-5 h-5 text-gray-400 mr-3" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search events"
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    className="w-full outline-none text-gray-700 placeholder-gray-500 text-lg"
+                                                />
+                                            </div>
+
+                                            {/* Location Input */}
+                                            <div className="flex items-center px-4 py-1">
+                                                <MapPin className="w-5 h-5 text-gray-400 mr-3" />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Location"
+                                                    value={location}
+                                                    onChange={(e) => setLocation(e.target.value)}
+                                                    className="w-40 outline-none text-gray-700 placeholder-gray-500 text-lg"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Search Button */}
+                                        <button
+                                            type="submit"
+                                            className="p-4 bg-orange-500 hover:bg-orange-600 transition-colors"
+                                        >
+                                            <Search className="w-6 h-6 text-white" />
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                            </> : ""
+
+                    }
                 </div>
 
                 <div className="flex items-center space-x-4 px-3">
@@ -54,7 +109,7 @@ const HeaderMain = ({ variation }) => {
                     >
                         {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
                     </button>
-                    <Link to={'/event/find'} className="hidden lg:flex align-center items-center gap-2 bg-orange-500 text-white px-5 py-3 rounded-full hover:bg-orange-600 transition duration-300">
+                    <Link to={variation == 1 ? '/event/find' : '/login'} className="hidden lg:flex align-center items-center gap-2 bg-orange-500 text-white px-5 py-3 rounded-full hover:bg-orange-600 transition duration-300">
 
                         {variation === 2 ?
                             (<>
