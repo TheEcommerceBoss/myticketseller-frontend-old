@@ -15,6 +15,7 @@
     "@fontsource-variable/gabarito": "^5.1.0",
     "@fontsource/gochi-hand": "^5.1.0",
     "@react-google-maps/api": "^2.20.3",
+    "axios": "^1.7.7",
     "date-fns": "^4.1.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.453.0",
@@ -23,6 +24,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",
     "react-select": "^5.8.1",
+    "recharts": "^2.13.0",
     "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
