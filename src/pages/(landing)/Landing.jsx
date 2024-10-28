@@ -27,7 +27,7 @@ function LandingPage() {
             >
                 <HeaderMain variation={1} />
 
-                <div className={`absolute inset-0 bg-[#040171B0] opacity-${theme == 'light' ? 90 : 50} `}></div>
+                <div className={`absolute inset-0 bg-[#040171B0] opacity-${theme == 'light' ? 60 : 40} `}></div>
                 <div className="absolute inset-0 flex lg:items-center  justify-center">
                     <div className="text-center max-w-5xl mx-auto mt-[12rem] md:mt-[20rem]  lg:mt-0 px-6 mb-12 z-10">
                         <h1 className="text-4xl md:text-6xl lg:text-7xl flex items-center text-white  font-gochi lg:mb-6">
