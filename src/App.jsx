@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import ViewEvent from './pages/(events)/ViewEvent';
 import NotFound from './pages/others/NotFound';
 import Dashboard from './pages/(dashboard)/dashboard';
+import LoginPage from './pages/(login)/login';
 
 function App() {
   return (
@@ -16,7 +17,9 @@ function App() {
           <Route path="/event/find" element={<FindEvent />} />
           <Route path="/event/view/:id" element={<ViewEvent />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<NotFound />} />
+
         </Routes>
       </Router>
     </ThemeProvider>
