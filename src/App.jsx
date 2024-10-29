@@ -6,7 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import ViewEvent from './pages/(events)/ViewEvent';
 import NotFound from './pages/others/NotFound';
 import Dashboard from './pages/(dashboard)/dashboard';
-import LoginPage from './pages/(auth)/login';
+import LoginPage from './pages/(auth)/Login';
 import SignupPage from './pages/(auth)/register';
 import CreateEvent from './pages/(dashboard)/createEvent';
 

@@ -147,7 +147,7 @@ const CreateEvent = () => {
         <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
           {/* Category Selection */}
           <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-sm border  mr-2`}>
                 1
               </div>
@@ -164,7 +164,7 @@ const CreateEvent = () => {
           </div>
 
           <div className="mb-8 mt-[2.5rem]  flex items-center flex-col justify-center text-center items-center ">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-sm border  mr-2`}>
                 2
               </div>
@@ -184,7 +184,7 @@ const CreateEvent = () => {
         <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
 
           <div className="mb-8 flex items-center flex-col justify-center text-center items-center ">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-sm border  mr-2`}>
                 3
               </div>
@@ -214,7 +214,7 @@ const CreateEvent = () => {
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 md:px-[3rem] my-6 shadow-sm`}>
           {/* Month Selection */}
           <div className="mb-8 flex items-center flex-col justify-center text-center">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-sm border mr-2`}>
                 4
               </div>
@@ -257,7 +257,7 @@ const CreateEvent = () => {
           </div>
 
           {/* Time Selection */}
-          <div className="flex items-center mb-4">
+          <div className="flex items-center mb-[2rem] mt-2">
             <label className={`text-sm font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
               Time
             </label>
