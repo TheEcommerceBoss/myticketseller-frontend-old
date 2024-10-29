@@ -66,6 +66,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
               alt="Logo"
             />
           </Link>
+          {isOpen && (
           <button
             onClick={toggleSidebar}
             className={`hidden lg:flex rounded-lg outline-none p-2 transition-colors ${theme === "light"
@@ -75,6 +76,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
           >
             {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
           </button>
+          )}
         </div>
 
         <nav className="mt-5">

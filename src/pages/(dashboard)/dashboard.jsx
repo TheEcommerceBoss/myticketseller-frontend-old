@@ -100,14 +100,14 @@ const Dashboard = () => {
               />
             </div>
             <button
-              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-orange-400 bg-orange-500"}`}
+              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
               aria-label="Toggle theme"
             >
               <Bell fill={theme === "light" ? "#040171" : "white"} size={20} />
             </button>
             <button
               onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-orange-400 bg-orange-500"}`}
+              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
@@ -147,7 +147,7 @@ const Dashboard = () => {
 
           <div className="flex items-center space-x-8 mb-4">
             <div className="flex items-center">
-              <div className="w-4 h-0.5 bg-orange-500 mr-2" />
+              <div className="w-4 h-0.5 bg-[#121212] mr-2" />
               <span className="text-sm text-gray-600">Sold Tickets</span>
             </div>
             <div className="flex items-center">
