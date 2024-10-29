@@ -6,7 +6,9 @@ import { ThemeProvider } from './context/ThemeContext';
 import ViewEvent from './pages/(events)/ViewEvent';
 import NotFound from './pages/others/NotFound';
 import Dashboard from './pages/(dashboard)/dashboard';
-import LoginPage from './pages/(login)/login';
+import LoginPage from './pages/(auth)/login';
+import SignupPage from './pages/(auth)/register';
+import CreateEvent from './pages/(dashboard)/createEvent';
 
 function App() {
   return (
@@ -17,7 +19,9 @@ function App() {
           <Route path="/event/find" element={<FindEvent />} />
           <Route path="/event/view/:id" element={<ViewEvent />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/event/create" element={<CreateEvent />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<SignupPage />} />
           <Route path="*" element={<NotFound />} />
 
         </Routes>

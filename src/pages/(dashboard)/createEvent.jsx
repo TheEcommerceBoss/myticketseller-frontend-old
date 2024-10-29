@@ -38,7 +38,7 @@ const chartData = [
   { time: '8am', sold: 0.55, remaining: 0.05 },
 ];
 
-const Dashboard = () => {
+const CreateEvent = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
 
@@ -211,7 +211,7 @@ const Dashboard = () => {
         </div>
         <div className={`mt-5 flex-1 py-5 px-3 rounded-xl ${theme === 'dark' ? 'bg-[#121212] ' : 'bg-white'}`}>
             <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">Upcoming Events</h2>
-            <div className="grid md:grid-cols-3  lg:grid-cols-4  md:flex-row gap-3 ">
+            <div className="grid md:grid-cols-2 md:flex-row gap-3 ">
               {[1, 2,3,4,5].map((i) => (
               <div key={i} className={` p-4 rounded-xl ${theme === 'dark' ? 'bg-[#121212] shadow-[0_0px_4px_rgba(255,255,255,0.2)]' : 'bg-gray-100  '}`} >
                   <img src={eventImage} alt="Event" className="w-full h-48 object-cover rounded-xl mb-4" />
@@ -274,4 +274,4 @@ const Calendar = ({ theme }) => {
   );
 };
 
-export default Dashboard;
+export default CreateEvent;
