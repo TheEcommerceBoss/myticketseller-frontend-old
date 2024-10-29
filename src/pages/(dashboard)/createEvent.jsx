@@ -76,7 +76,7 @@ const CreateEvent = () => {
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
 
-      <div className="flex-1 py-8 px-4">
+      <div className="flex-1 py-8 px-5 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center  space-x-4">
             <button
@@ -117,17 +117,17 @@ const CreateEvent = () => {
         </div>
 
         {/* Progress Steps */}
-        <div className="flex pt-3 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
+        <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
           {steps.map((s, index) => (
             <>
 
               {index !== 0 && (
 
                 <div
-                  className={`h-[.8rem] md:h-1 w-[.2rem] md:w-[2rem] ${step >= s.number ? 'bg-blue-900' : 'bg-gray-300'}`}
+                  className={`h-[.8rem] md:h-1 w-[.15rem] md:w-[2rem] ${step >= s.number ? 'bg-blue-900' : 'bg-gray-300'}`}
                 />
               )}
-              <div key={s.number} className="flex w-full px-[3rem] md:px-0 items-center">
+              <div key={s.number} className="flex w-full px-[4rem] md:px-0 items-center">
 
 
                 <div
@@ -144,8 +144,7 @@ const CreateEvent = () => {
         </div>
 
 
-        {/* Form Content */}
-        <div className=" rounded-lg p-6 my-6 shadow-sm border border-[#040171]">
+        <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
           {/* Category Selection */}
           <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
             <div className="flex items-center mb-4">
@@ -164,7 +163,7 @@ const CreateEvent = () => {
             </select>
           </div>
 
-          <div className="mb-8 mt-[2.5rem] flex items-center flex-col justify-center text-center items-center ">
+          <div className="mb-8 mt-[2.5rem]  flex items-center flex-col justify-center text-center items-center ">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-sm border  mr-2`}>
                 2
@@ -182,7 +181,7 @@ const CreateEvent = () => {
           </div>
 
         </div>
-        <div className=" rounded-lg p-6 my-6 shadow-sm border border-[#040171]">
+        <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
 
           <div className="mb-8 flex items-center flex-col justify-center text-center items-center ">
             <div className="flex items-center mb-4">
@@ -193,28 +192,102 @@ const CreateEvent = () => {
                 Is this a Private or Public Event?
               </label>
             </div>
-            <div className="flex bg-white rounded-[5rem] p-1">
+            <div className={`flex ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
               <button
                 onClick={() => setIsPublic(false)}
-                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-l-[5rem] ${!isPublic
-                  ? 'bg-[#040171] text-white'
-                  : 'bg-white text-[#040171]'
+                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-l-[5rem] ${!isPublic ? 'bg-[#040171] text-white' : theme === "dark" ? "bg-[#222]" : ""
                   }`}
               >
                 Private
               </button>
               <button
                 onClick={() => setIsPublic(true)}
-                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-r-[5rem] ${isPublic
-                  ? 'bg-[#040171] text-white'
-                  : 'bg-white text-[#040171]'
+                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-r-[5rem] ${isPublic ? 'bg-[#040171] text-white' : theme === "dark" ? "bg-[#222]" : ""
                   }`}
               >
                 Public
               </button>
             </div>
+
           </div>
         </div>
+        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 md:px-[3rem] my-6 shadow-sm`}>
+          {/* Month Selection */}
+          <div className="mb-8 flex items-center flex-col justify-center text-center">
+            <div className="flex items-center mb-4">
+              <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-sm border mr-2`}>
+                4
+              </div>
+              <label className={`text-sm font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+                When will this Event be?
+              </label>
+            </div>
+            <select className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="">Month</option>
+              {/* Add options as needed */}
+            </select>
+          </div>
+
+          {/* Start Date Selection */}
+          <div className="mb-8 flex items-start flex-col justify-center text-center">
+            <div className="flex flex-col items-start mb-4">
+              <label className={`text-sm font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+                Starts
+              </label>
+            </div>
+            <input
+              type="text"
+              placeholder="Thu, Mar 22, 2024"
+              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* End Date Selection */}
+          <div className="mb-8 flex items-start flex-col justify-center text-center">
+            <div className="flex flex-col items-start mb-4">
+              <label className={`text-sm font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+                End By
+              </label>
+            </div>
+            <input
+              type="text"
+              placeholder="Thu, Mar 22, 2024"
+              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Time Selection */}
+          <div className="flex items-center mb-4">
+            <label className={`text-sm font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+              Time
+            </label>
+          </div>
+        <div className="flex items-center justify-between mb-4">
+
+            <div className="flex flex-col items-center w-1/2 pr-2">
+
+              <input
+                type="text"
+                placeholder="11:00AM"
+                className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <span className="px-2">—</span>
+            <div className="flex flex-col items-center w-1/2 pl-2">
+              <input
+                type="text"
+                placeholder="11:00AM"
+                className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+          <div className="text-right">
+            <a href="#" className="text-blue-600 font-semibold">
+              Customize
+            </a>
+          </div>
+        </div>
+
       </div>
 
     </div>
