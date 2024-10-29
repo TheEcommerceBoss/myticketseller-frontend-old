@@ -5,7 +5,7 @@ import logo from '../../assets/(site_assets)/logo.png';
 import logoDark from '../../assets/(site_assets)/logo-dark.png';
 import { Link } from "react-router-dom";
 import { MapPin } from 'lucide-react';
-const HeaderMain = ({ variation, showsearch, hidemenu }) => {
+const HeaderMain = ({ variation, showsearch, hidemenu ,nobg}) => {
     const { theme, toggleTheme } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleMenu = () => {
@@ -30,7 +30,7 @@ const HeaderMain = ({ variation, showsearch, hidemenu }) => {
 
     return (
         <header className={` flex items-center justify-center ${variation === 1 ? 'absolute w-full' : ''}`}>
-            <nav className={`flex items-center  ${variation === 1 ? 'lg:mt-[2rem] lg:w-[80%] lg:rounded-full ' : ''}  w-full  z-50 justify-between  p-3  ${theme === "light" ? "bg-white" : "bg-[#121212]"}  ${!hidemenu && 'shadow-lg'}`}>
+            <nav className={`flex items-center  ${variation === 1 ? 'lg:mt-[2rem] lg:w-[80%] lg:rounded-full ' : ''}  w-full  z-50 justify-between  p-3  ${nobg ? "bg-transparent" : theme === "light" ? "bg-white" : "bg-[#121212]"}  ${!hidemenu && 'shadow-lg'}`}>
                 <div className="flex items-center">
                     <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         to={'/'} >

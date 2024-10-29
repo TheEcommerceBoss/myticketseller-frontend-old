@@ -1,13 +1,13 @@
 import React from 'react';
+import { useLocation, Link } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import logo from '../../assets/(site_assets)/logo.png';
 import logoDark from '../../assets/(site_assets)/logo-dark.png';
-import { Link } from "react-router-dom";
 import {
   Home,
-  PlusCircle,
-  ListChecks,
-  Ticket,
+  SquarePen,
+  TextSearch,
+  TicketCheck,
   Megaphone,
   Settings,
   HelpCircle,
@@ -15,68 +15,111 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-const SideBar = ({ isOpen, toggleSidebar }) => {  // 'toggleSidebar' will be passed by the parent
+const SideBar = ({ isOpen, toggleSidebar }) => {
   const { theme } = useTheme();
+  const location = useLocation();
 
   const NavItem = ({ icon, text, link, active }) => (
     <Link to={link}>
       <div
-        className={`flex items-center space-x-3 px-4 py-3 cursor-pointer transition-colors duration-200
+        className={`flex items-center space-x-3 pl-[.2rem] pr-4 py-1 cursor-pointer transition-colors duration-200
           ${active
             ? theme === 'dark'
               ? 'bg-[#222]'
-              : 'bg-[#040171] bg-opacity-10 text-[#040171] font-semibold'
+              : 'bg-opacity-10 text-[#040171] font-semibold'
             : theme === 'dark'
               ? 'text-white hover:bg-[#222]'
               : 'text-gray-600 hover:bg-gray-100'
           }
           ${!isOpen ? 'justify-center' : ''}`}
       >
+        <div
+          className={`w-[.5rem] h-[2.8rem] mr-4 rounded-r-[5rem] ${active ? "bg-[#040171]" : "bg-transparent"
+            }`}
+        ></div>
         <div className={`${!isOpen ? 'w-8 h-8 flex items-center justify-center' : ''}`}>
           {icon}
         </div>
-        {isOpen && <span className="transition-opacity ">{text}</span>}
+        {isOpen && <span className="transition-opacity">{text}</span>}
       </div>
     </Link>
   );
 
   return (
     <>
-      {/* Mobile Menu Overlay */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden transition-opacity duration-200
           ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-        onClick={toggleSidebar}  // Use the toggle function passed as a prop
+        onClick={toggleSidebar}
       />
 
-      {/* Sidebar */}
       <div className={`fixed min-h-screen lg:sticky top-0 h-full z-30 transition-all duration-200
         ${theme === 'dark' ? 'bg-[#121212]' : 'bg-white'}
         ${isOpen ? 'w-64 translate-x-0' : 'w-20 -translate-x-full lg:translate-x-0'}
         shadow-lg`}
       >
-        {/* Logo Section */}
         <div className="p-4 flex items-center justify-between">
-          <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
- to={'/'}>
+          <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/'}>
             <img
               src={theme === "light" ? logo : logoDark}
               className={`transition-all duration-200 ${isOpen ? 'w-[5rem]' : 'w-[5rem]'}`}
               alt="Logo"
             />
           </Link>
- 
+          <button
+            onClick={toggleSidebar}
+            className={`hidden lg:flex rounded-lg outline-none p-2 transition-colors ${theme === "light"
+              ? "bg-gray-100"
+              : "bg-[#222]"
+              }`}
+          >
+            {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+          </button>
         </div>
 
-        {/* Navigation */}
         <nav className="mt-5">
-          <NavItem icon={<Home size={24} />} link="/dashboard" text="Dashboard" active />
-          <NavItem icon={<PlusCircle size={24} />} link="/dashboard/event/create" text="Create New Event" />
-          <NavItem icon={<ListChecks size={24} />} link="/dashboard/event/manage" text="Manage Events" />
-          <NavItem icon={<Ticket size={24} />} link="/dashboard/ticket/management" text="Ticket Management" />
-          <NavItem icon={<Megaphone size={24} />} link="/dashboard/event/promotion" text="Event Promotion Tools" />
-          <NavItem icon={<Settings size={24} />} link="/dashboard/settings" text="Settings" />
-          <NavItem icon={<HelpCircle size={24} />} link="/dashboard/support" text="Support" />
+          <NavItem
+            icon={<Home size={24} />}
+            link="/dashboard"
+            text="Dashboard"
+            active={location.pathname === '/dashboard'}
+          />
+          <NavItem
+            icon={<SquarePen size={24} />}
+            link="/dashboard/event/create"
+            text="Create New Event"
+            active={location.pathname === '/dashboard/event/create'}
+          />
+          <NavItem
+            icon={<TextSearch size={24} />}
+            link="/dashboard/event/manage"
+            text="Manage Events"
+            active={location.pathname === '/dashboard/event/manage'}
+          />
+          <NavItem
+            icon={<TicketCheck size={24} />}
+            link="/dashboard/ticket/management"
+            text="Ticket Management"
+            active={location.pathname === '/dashboard/ticket/management'}
+          />
+          <NavItem
+            icon={<Megaphone size={24} />}
+            link="/dashboard/event/promotion"
+            text="Event Promotion Tools"
+            active={location.pathname === '/dashboard/event/promotion'}
+          />
+          <NavItem
+            icon={<Settings size={24} />}
+            link="/dashboard/settings"
+            text="Settings"
+            active={location.pathname === '/dashboard/settings'}
+          />
+          <NavItem
+            icon={<HelpCircle size={24} />}
+            link="/dashboard/support"
+            text="Support"
+            active={location.pathname === '/dashboard/support'}
+          />
         </nav>
       </div>
     </>
