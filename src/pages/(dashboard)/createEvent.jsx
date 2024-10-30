@@ -70,7 +70,22 @@ const CreateEvent = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+  const [file, setFile] = useState(null);
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) setFile(droppedFile);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleFileInput = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) setFile(selectedFile);
+  };
   return (
     <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
@@ -262,7 +277,7 @@ const CreateEvent = () => {
               Time
             </label>
           </div>
-        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4">
 
             <div className="flex flex-col items-center w-1/2 pr-2">
 
@@ -287,7 +302,86 @@ const CreateEvent = () => {
             </a>
           </div>
         </div>
+        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
 
+          {/* Event Title */}
+          <div className="mb-8 flex items-center flex-col justify-center text-center">
+            <div className="flex items-center mb-4">
+              <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-sm border mr-2`}>
+                5
+              </div>
+              <label className={`text-sm font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+                Event Title
+              </label>
+            </div>
+            <input
+              type="text"
+              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Enter Event Title"
+            />
+          </div>
+
+          {/* Event Description */}
+          <div className="mb-8 flex items-center flex-col justify-center text-center">
+            <div className="flex items-center mb-4">
+              <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-sm border mr-2`}>
+                6
+              </div>
+              <label className={`text-sm font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+                What is this Event about?
+              </label>
+            </div>
+            <textarea
+              rows="4"
+              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Describe the Event"
+            />
+          </div>
+
+          <div className="p-6 border border-[#040171] flex flex-col items-center rounded-lg my-6 shadow-sm">
+            <div className="text-center mb-4">
+               <div className="flex items-center mb-4">
+                <div className={`w-5 h-5  rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-sm border mr-2`}>
+                  7
+                </div>
+                <label className={`text-sm font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+                  Event Picture
+                </label>
+              </div>
+              <p className={`text-sm font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>Upload main image</p>
+            </div>
+
+            <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              className={`${theme === "dark" ? "bg-[#222]" : "bg-[#04017117]"} md:w-[50%] flex flex-col items-center justify-center border-2 border-dashed border-[#040171] rounded-lg p-6 py-[5rem] mt-3 mb-[2rem] cursor-pointer`}
+            >
+              <p className={`text-sm font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'} mb-2`}>Drag & Drop</p>
+              <label className={` text-white bg-[#040171] px-4 py-2 rounded-md cursor-pointer`}>
+                Select File
+                <input
+                  type="file"
+                  onChange={handleFileInput}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            {file && (
+              <div className="mt-4 text-center">
+                <p className="text-sm text-gray-700">Selected file: {file.name}</p>
+              </div>
+            )}
+          </div>
+
+
+
+
+
+
+
+
+        </div>
       </div>
 
     </div>
