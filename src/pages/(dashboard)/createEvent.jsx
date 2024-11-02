@@ -338,42 +338,6 @@ const CreateEvent = () => {
             />
           </div>
 
-          <div className="p-6 border border-[#040171] flex flex-col items-center rounded-lg my-6 shadow-sm">
-            <div className="text-center mb-4">
-               <div className="flex items-center mb-4">
-                <div className={`w-5 h-5  rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-sm border mr-2`}>
-                  7
-                </div>
-                <label className={`text-sm font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
-                  Event Picture
-                </label>
-              </div>
-              <p className={`text-sm font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>Upload main image</p>
-            </div>
-
-            <div
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              className={`${theme === "dark" ? "bg-[#222]" : "bg-[#04017117]"} md:w-[50%] flex flex-col items-center justify-center border-2 border-dashed border-[#040171] rounded-lg p-6 py-[5rem] mt-3 mb-[2rem] cursor-pointer`}
-            >
-              <p className={`text-sm font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'} mb-2`}>Drag & Drop</p>
-              <label className={` text-white bg-[#040171] px-4 py-2 rounded-md cursor-pointer`}>
-                Select File
-                <input
-                  type="file"
-                  onChange={handleFileInput}
-                  className="hidden"
-                />
-              </label>
-            </div>
-
-            {file && (
-              <div className="mt-4 text-center">
-                <p className="text-sm text-gray-700">Selected file: {file.name}</p>
-              </div>
-            )}
-          </div>
-
 
 
 
@@ -382,6 +346,47 @@ const CreateEvent = () => {
 
 
         </div>
+
+        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"}  flex flex-col items-center  rounded-lg p-6 my-6 shadow-sm`}>
+          <div className="text-center mb-4">
+            <div className="flex items-center mb-4">
+              <div className={`w-5 h-5  rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-sm border mr-2`}>
+                7
+              </div>
+              <label className={`text-sm font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
+                Event Picture
+              </label>
+            </div>
+            <p className={`text-sm font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>Upload main image</p>
+          </div>
+
+          <div
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className={`${theme === "dark" ? "bg-[#222]" : "bg-[#04017117]"} md:w-[50%] flex flex-col items-center justify-center border-2 border-dashed border-[#040171] rounded-lg p-6 py-[5rem] mt-3 mb-[2rem] cursor-pointer`}
+          >
+            <p className={`text-sm font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'} mb-2`}>Drag & Drop</p>
+            <label className={` text-white bg-[#040171] px-4 py-2 rounded-md cursor-pointer`}>
+              Select File
+              <input
+                type="file"
+                onChange={handleFileInput}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {file && (
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-700">Selected file: {file.name}</p>
+            </div>
+          )}
+        </div>
+
+       <div className="flex flex-col items-end text-center">
+       <Link to={'/dashboard/event/create/1/payments/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
+
+       </div>
       </div>
 
     </div>
