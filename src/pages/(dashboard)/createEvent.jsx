@@ -139,7 +139,7 @@ const CreateEvent = () => {
               {index !== 0 && (
 
                 <div
-                  className={`h-[.8rem] md:h-1 w-[.15rem] md:w-[2rem] ${step >= s.number ? 'bg-blue-900' : 'bg-gray-300'}`}
+                  className={`h-[.8rem] md:h-1 w-[.15rem] md:w-[2rem] ${step >= s.number ? 'bg-[#040171]' : 'bg-gray-300'}`}
                 />
               )}
               <div key={s.number} className="flex w-full px-[4rem] md:px-0 items-center">
@@ -147,7 +147,7 @@ const CreateEvent = () => {
 
                 <div
                   className={`px-4  py-2 w-full rounded-full flex items-center justify-center text-sm ${step >= s.number
-                    ? 'bg-blue-900 text-white'
+                    ? 'bg-[#040171] text-white'
                     : 'bg-gray-300 text-gray-600'
                     }`}
                 >

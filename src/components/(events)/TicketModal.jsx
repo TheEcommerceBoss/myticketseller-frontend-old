@@ -273,7 +273,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                                     <span className="w-8 text-center">{ticketCounts.regular}</span>
                                                     <button
                                                         onClick={() => handleTicketChange('regular', 'add')}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-blue-900"
+                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
                                                     >
                                                         +
                                                     </button>
@@ -298,7 +298,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                                     <span className="w-8 text-center">{ticketCounts.vip}</span>
                                                     <button
                                                         onClick={() => handleTicketChange('vip', 'add')}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-blue-900"
+                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
                                                     >
                                                         +
                                                     </button>
