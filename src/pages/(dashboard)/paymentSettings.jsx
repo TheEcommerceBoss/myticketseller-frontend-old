@@ -174,7 +174,7 @@ const PaymentSettings = () => {
 
  
 
-        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
              <div className="flex items-center gap-2 mb-6">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-sm">
                 <span>8</span>
@@ -216,7 +216,7 @@ const PaymentSettings = () => {
        
         </div>
 
-        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
             <div className="flex items-center gap-2 mb-6">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-sm">
                 <span>9</span>
@@ -229,34 +229,33 @@ const PaymentSettings = () => {
               <div className="flex justify-center">
                 <div className={`flex ${theme === "dark" ? "bg-[#222] border border-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
                   <button
-                    className={`px-6 py-2 rounded-full text-sm ${!isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
+                    className={`px-[2.5rem] py-[.7rem] rounded-full text-sm ${!isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
                     onClick={() => setIsPaid(false)}
                   >
                     Free
                   </button>
                   <button
-                    className={`px-6 py-2 rounded-full text-sm ${isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"}`}
+                    className={`px-[2.5rem] py-[.7rem] rounded-full text-sm ${isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"}`}
                     onClick={() => setIsPaid(true)}
                   >
                     Paid
                   </button>
                 </div>
               </div>
-
-              {/* Pricing Counter */}
+ 
               <div className="space-y-2">
                 <p className="text-center text-sm">How many different pricing?</p>
                 <div className="flex justify-center items-center">
                   <button
                     onClick={() => handlePricingCountChange(-1)}
-                    className="w-12 h-12 bg-[#040171] text-white rounded-l-full flex items-center justify-center text-sm"
+                    className="w-[5rem] h-12 bg-[#040171] text-white rounded-l-full flex items-center justify-center text-sm"
                   >
                     -
                   </button>
-                  <span className={`w-12 h-12   text-center text-sm  flex items-center justify-center text-sm   ${theme === "dark" ? "bg-[#222]" : ""} `}>{pricingCount}</span>
+                  <span className={`w-[5rem] h-12   text-center text-sm  flex items-center justify-center text-sm   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{pricingCount}</span>
                   <button
                     onClick={() => handlePricingCountChange(1)}
-                    className="w-12 h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-sm"
+                    className="w-[5rem] h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-sm"
                   >
                     +
                   </button>
