@@ -10,6 +10,7 @@ import LoginPage from './pages/(auth)/Login';
 import SignupPage from './pages/(auth)/register';
 import CreateEvent from './pages/(dashboard)/createEvent';
 import PaymentSettings from './pages/(dashboard)/paymentSettings';
+import EventsInfo from './pages/(dashboard)/Info';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/event/create" element={<CreateEvent />} />
           <Route path="/dashboard/event/create/:id/payments" element={<PaymentSettings />} />
+          <Route path="/dashboard/event/create/:id/info" element={<EventsInfo />} />
 
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<SignupPage />} />
