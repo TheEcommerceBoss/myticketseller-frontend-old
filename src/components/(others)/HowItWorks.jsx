@@ -14,7 +14,7 @@ const EventCalendar = () => {
                 key={day}
                 className={`w-8 h-8 flex items-center justify-center rounded-full text-sm
           ${day === selectedDate ? 'bg-orange-500 text-white' : ''}
-          ${[4, 5, 22, 23, 24].includes(day) ? 'bg-blue-900 text-white' : ''}
+          ${[4, 5, 22, 23, 24].includes(day) ? 'bg-[#040171] text-white' : ''}
           ${[3, 8, 9, 10, 15, 16, 17].includes(day) ? 'bg-blue-600' : ''}
           ${![3, 4, 5, 8, 9, 10, 15, 16, 17, 18, 22, 23, 24].includes(day) ? 'text-gray-300' : ''}
         `}

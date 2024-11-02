@@ -172,7 +172,7 @@ const EventsInfo = () => {
               {index !== 0 && (
 
                 <div
-                  className={`h-[.8rem] md:h-1 w-[.15rem] md:w-[2rem] ${step >= s.number ? 'bg-blue-900' : 'bg-gray-300'}`}
+                  className={`h-[.8rem] md:h-1 w-[.15rem] md:w-[2rem] ${step >= s.number ? 'bg-[#040171]' : 'bg-gray-300'}`}
                 />
               )}
               <div key={s.number} className="flex w-full px-[4rem] md:px-0 items-center">
@@ -180,7 +180,7 @@ const EventsInfo = () => {
 
                 <div
                   className={`px-4  py-2 w-full rounded-full flex items-center justify-center text-sm ${step >= s.number
-                    ? 'bg-blue-900 text-white'
+                    ? 'bg-[#040171] text-white'
                     : 'bg-gray-300 text-gray-600'
                     }`}
                 >
@@ -269,9 +269,9 @@ const EventsInfo = () => {
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-sm">
-              <span>11</span>
+              <span>12</span>
             </div>
-            <h2 className="text-sm font-medium">How many users do you expect to see?</h2>
+            <h2 className="text-sm  font-medium">How many special guest will be there?</h2>
           </div>
 
           <div className="space-y-6">
