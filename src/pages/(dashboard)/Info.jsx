@@ -26,20 +26,20 @@ import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
 
 
-const PaymentSettings = () => {
+const EventsInfo = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
 
 
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(3);
   const [isPublic, setIsPublic] = useState(false);
 
   const steps = [
     { number: 1, title: 'General Information', active: false },
-    { number: 2, title: 'Payment and Location', active: true },
-    { number: 3, title: 'Additional Information', active: false },
+    { number: 2, title: 'Payment and Location', active: false },
+    { number: 3, title: 'Additional Information', active: true },
   ];
 
 
@@ -174,7 +174,7 @@ const PaymentSettings = () => {
 
  
 
-        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
              <div className="flex items-center gap-2 mb-6">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-sm">
                 <span>8</span>
@@ -216,7 +216,7 @@ const PaymentSettings = () => {
        
         </div>
 
-        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
             <div className="flex items-center gap-2 mb-6">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-sm">
                 <span>9</span>
@@ -301,4 +301,4 @@ const PaymentSettings = () => {
   );
 };
 
-export default PaymentSettings;
+export default EventsInfo;
