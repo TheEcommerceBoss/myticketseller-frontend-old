@@ -1,103 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import {
-  Home,
-  PlusCircle,
-  ListChecks,
-  Ticket,
-  Megaphone,
-  Settings,
-  HelpCircle,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Moon,
-  Sun,
-  CalendarCogIcon,
-  BellDot,
-  Bell,
-  X,
-} from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Home, PlusCircle, ListChecks, Ticket, Megaphone, Settings, HelpCircle, Menu, ChevronLeft, ChevronRight, Search, Moon, Sun, CalendarCogIcon, BellDot, Bell, X } from 'lucide-react';
+import { Pencil, Trash2, Share2 } from 'lucide-react';
+
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
-import user from "../../assets/(user)/user.png"
-import eventImage from "../../assets/(landing)/event.png"
+import user from "../../assets/(user)/user.png";
+import eventImage from "../../assets/(landing)/event.png";
 import { Link } from 'react-router-dom';
-
 
 const ManageEvent = () => {
   useEffect(() => {
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
   }, []);
-  const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
+  
   const { theme, toggleTheme } = useTheme();
-
   const [isOpen, setIsOpen] = useState(false);
 
-
-  const [step, setStep] = useState(1);
-  const [isPublic, setIsPublic] = useState(false);
-
-  
   useEffect(() => {
-    // Function to determine if screen is large or small
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        // True for large screens (lg breakpoint at 1024px and above)
-        setIsOpen(true);
-      } else {
-        // False for smaller screens
-        setIsOpen(false);
-      }
+      setIsOpen(window.innerWidth >= 1024);
     };
-
-    // Call once when the component mounts
     handleResize();
-
-    // Add event listener to handle window resizing
     window.addEventListener('resize', handleResize);
-
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []); // Empty dependency array ensures this runs only on mount and unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-  const [file, setFile] = useState(null);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) setFile(droppedFile);
-  };
+  const [selectedTab, setSelectedTab] = useState('All');
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const events = [
+    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active", published: true },
+    { id: 2, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status", published: true },
+  ];
 
-  const handleFileInput = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) setFile(selectedFile);
-  };
   return (
-    <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
-
       <div className="flex-1 py-8 px-5 lg:px-8">
+        {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center  space-x-4">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "bg-[#121212]"}`}
-            >
+          <div className="flex items-center space-x-4">
+            <button onClick={() => setIsOpen(!isOpen)} className={`rounded-lg p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-
             <h1 className="hidden lg:flex text-2xl font-bold">Add New Event</h1>
           </div>
 
@@ -107,39 +57,78 @@ const ManageEvent = () => {
               <input
                 type="text"
                 placeholder="Search"
-                className={`pl-10 pr-4 py-2 rounded-[4rem] border ${theme === 'dark' ? 'bg-[#222]  border-[#444]' : 'bg-transparent  border-gray-400'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`pl-10 pr-4 py-2 rounded-full border ${theme === 'dark' ? 'bg-[#222] border-[#444]' : 'bg-transparent border-gray-400'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
             </div>
-            <button
-              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
-              aria-label="Toggle theme"
-            >
+            <button className={`rounded-full p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
               <Bell fill={theme === "light" ? "#040171" : "white"} size={20} />
             </button>
-            <button
-              onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
-              aria-label="Toggle theme"
-            >
+            <button onClick={toggleTheme} className={`rounded-full p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
-
             <img src={user} alt="Profile" className="w-10 h-10 rounded-full" />
           </div>
         </div>
 
-      
-
-        <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
-        
-        </div>
-    
-        <div className="flex flex-col items-end text-center">
-          <Link to={'/dashboard/event/create/1/payments/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
-
+        {/* Table */}
+        <div className="border rounded-lg overflow-x-auto">
+          <table className="w-full min-w-[600px] table-fixed lg:table-auto">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="w-4 p-4">
+                  <input type="checkbox" className="rounded" />
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Event Title</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Category</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Date</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Location</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {events.map((event, index) => (
+                <tr key={index} className="bg-white">
+                  <td className="w-4 p-4">
+                    <input type="checkbox" className="rounded" />
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-[#040171]">{event.title}</td>
+                  <td className="px-4 py-3 text-sm text-[#040171]">{event.category}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <div className="flex flex-col">
+                      <span className="font-medium">Published</span>
+                      <span className="text-gray-500">{event.date}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="px-3 py-1 bg-orange-500 text-white rounded-full text-sm">
+                      {event.location}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                      {event.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      <button className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+                        <Pencil size={16} />
+                      </button>
+                      <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
+                        <Trash2 size={16} />
+                      </button>
+                      <button className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900">
+                        <Share2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-
     </div>
   );
 };
