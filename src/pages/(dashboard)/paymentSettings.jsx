@@ -27,6 +27,9 @@ import { Link } from 'react-router-dom';
 
 
 const PaymentSettings = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0); 
+  }, []);
   const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
 
@@ -89,7 +92,7 @@ const PaymentSettings = () => {
 
   const [isPaid, setIsPaid] = useState(false);
   const [pricingCount, setPricingCount] = useState(3);
-  
+
   const handlePricingCountChange = (increment) => {
     const newCount = pricingCount + increment;
     if (newCount >= 1 && newCount <= 10) {
@@ -158,7 +161,7 @@ const PaymentSettings = () => {
 
 
                 <div
-                  className={`px-4  py-2 w-full rounded-full flex items-center justify-center text-sm ${step >= s.number
+                  className={`px-4  py-2 w-full rounded-full flex items-center justify-center text-l ${step >= s.number
                     ? 'bg-[#040171] text-white'
                     : 'bg-gray-300 text-gray-600'
                     }`}
@@ -172,127 +175,132 @@ const PaymentSettings = () => {
 
 
 
- 
+
 
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-             <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-sm">
-                <span>8</span>
-              </div>
-              <h2 className="text-sm font-medium">Choose Location</h2>
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
+              <span>8</span>
             </div>
+            <h2 className="text-l font-medium">Choose Location</h2>
+          </div>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block mb-2 text-sm">Select City</label>
-                  <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-sm`}>
-                    <option>Select a city...</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm">Select City</label>
-                  <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-sm`}>
-                    <option>Select a city...</option>
-                  </select>
-                </div>
-              </div>
-
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block mb-2 text-sm">Or type an address if you can't find above</label>
-                <input
-                  type="text"
-                  className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-sm`}
-                />
+                <label className="block mb-2 text-l">Select City</label>
+                <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}>
+                  <option>Select a city...</option>
+                </select>
               </div>
-
-              <p className="text-sm text-gray-600">
-                If you are a venue manager you can {' '}
-                <a href="#" className="text-blue-600">create</a>
-                {' '} your venue. After approval you will find your locations here in Menu {'>'} Venue
-              </p>
+              <div>
+                <label className="block mb-2 text-l">Select City</label>
+                <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}>
+                  <option>Select a city...</option>
+                </select>
+              </div>
             </div>
- 
-       
+
+            <div>
+              <label className="block mb-2 text-l">Or type an address if you can't find above</label>
+              <input
+                type="text"
+                className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+              />
+            </div>
+
+            <p className="text-l text-gray-600">
+              If you are a venue manager you can {' '}
+              <a href="#" className="text-blue-600">create</a>
+              {' '} your venue. After approval you will find your locations here in Menu {'>'} Venue
+            </p>
+          </div>
+
+
         </div>
 
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-sm">
-                <span>9</span>
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
+              <span>9</span>
+            </div>
+            <h2 className="text-l font-medium">What is the price?</h2>
+          </div>
+
+          <div className="space-y-6">
+            {/* Free/Paid Toggle */}
+            <div className="flex justify-center">
+              <div className={`flex ${theme === "dark" ? "bg-[#222] border border-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
+                <button
+                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${!isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
+                  onClick={() => setIsPaid(false)}
+                >
+                  Free
+                </button>
+                <button
+                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"}`}
+                  onClick={() => setIsPaid(true)}
+                >
+                  Paid
+                </button>
               </div>
-              <h2 className="text-sm font-medium">What is the price?</h2>
             </div>
 
-            <div className="space-y-6">
-              {/* Free/Paid Toggle */}
-              <div className="flex justify-center">
-                <div className={`flex ${theme === "dark" ? "bg-[#222] border border-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
-                  <button
-                    className={`px-[2.5rem] py-[.7rem] rounded-full text-sm ${!isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
-                    onClick={() => setIsPaid(false)}
-                  >
-                    Free
-                  </button>
-                  <button
-                    className={`px-[2.5rem] py-[.7rem] rounded-full text-sm ${isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"}`}
-                    onClick={() => setIsPaid(true)}
-                  >
-                    Paid
-                  </button>
-                </div>
+            <div className="space-y-2">
+              <p className="text-center text-l">How many different pricing?</p>
+              <div className="flex justify-center items-center">
+                <button
+                  onClick={() => handlePricingCountChange(-1)}
+                  className="w-[5rem] h-12 bg-[#040171] text-white rounded-l-full flex items-center justify-center text-l"
+                >
+                  -
+                </button>
+                <span className={`w-[5rem] h-12   text-center text-l  flex items-center justify-center text-l   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{pricingCount}</span>
+                <button
+                  onClick={() => handlePricingCountChange(1)}
+                  className="w-[5rem] h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-l"
+                >
+                  +
+                </button>
               </div>
- 
-              <div className="space-y-2">
-                <p className="text-center text-sm">How many different pricing?</p>
-                <div className="flex justify-center items-center">
-                  <button
-                    onClick={() => handlePricingCountChange(-1)}
-                    className="w-[5rem] h-12 bg-[#040171] text-white rounded-l-full flex items-center justify-center text-sm"
-                  >
-                    -
-                  </button>
-                  <span className={`w-[5rem] h-12   text-center text-sm  flex items-center justify-center text-sm   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{pricingCount}</span>
-                  <button
-                    onClick={() => handlePricingCountChange(1)}
-                    className="w-[5rem] h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-sm"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
+            </div>
 
-              {/* Pricing Table */}
-              <div className="space-y-4">
-                {[
-                  { name: 'Standard', price: '20' },
-                  { name: 'Premium', price: '100' },
-                  { name: 'VIP', price: '1000' }
-                ].map((ticket, index) => (
-                  <div key={index} className="grid grid-cols-3 gap-4">
-                    <input
-                      type="text"
-                      defaultValue={ticket.name}
-                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-sm`}
-                      placeholder="Ticket Name"
-                    />
-                    <input
-                      type="number"
-                      defaultValue={ticket.price}
-                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-sm`}
-                      placeholder="Price"
-                    />
-                    <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-sm`}>
-                      <option>Naira</option>
-                    </select>
-                  </div>
-                ))}
-              </div>
+            {/* Pricing Table */}
+            <div className="space-y-4">
+              {[
+                { name: 'Standard', price: '20' },
+                { name: 'Premium', price: '100' },
+                { name: 'VIP', price: '1000' }
+              ].map((ticket, index) => (
+                <div key={index} className="grid grid-cols-3 gap-4">
+                  <input
+                    type="text"
+                    defaultValue={ticket.name}
+                    className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                    placeholder="Ticket Name"
+                  />
+                  <input
+                    type="number"
+                    defaultValue={ticket.price}
+                    className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                    placeholder="Price"
+                  />
+                  <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}>
+                    <option>Naira</option>
+                  </select>
+                </div>
+              ))}
             </div>
           </div>
-        <div className="flex flex-col items-end text-center">
-          <Link to={'/dashboard/event/create/1/info/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
+        </div>
+        <div className="flex flex-col lg:flex-row items-center justify-between text-center">
+          <Link to={'/dashboard/event/create/1'} className={`w-[12rem] bg-opacity-50 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Previous</Link>
 
+          <div className="flex items-center gap-3 mt-2 lg:mt-0">
+             <Link to={'/dashboard/event/create/1/info/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
+
+          </div>
+ 
         </div>
       </div>
 
