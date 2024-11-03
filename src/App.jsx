@@ -11,6 +11,7 @@ import SignupPage from './pages/(auth)/register';
 import CreateEvent from './pages/(dashboard)/createEvent';
 import PaymentSettings from './pages/(dashboard)/paymentSettings';
 import EventsInfo from './pages/(dashboard)/Info';
+import ManageEvent from './pages/(dashboard)/manageEvent';
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
           <Route path="/event/view/:id" element={<ViewEvent />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/event/create" element={<CreateEvent />} />
+          <Route path="/dashboard/event/manage" element={<ManageEvent />} />
+          <Route path="/dashboard/event/create/:id" element={<CreateEvent />} />
           <Route path="/dashboard/event/create/:id/payments" element={<PaymentSettings />} />
           <Route path="/dashboard/event/create/:id/info" element={<EventsInfo />} />
 
