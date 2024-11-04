@@ -8,6 +8,7 @@ import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png";
 import eventImage from "../../assets/(landing)/event.png";
 import { Link } from 'react-router-dom';
+import DashboardHeader from '../../components/(events)/DashboardHeader';
 
 const ManageEvent = () => {
   useEffect(() => {
@@ -66,7 +67,7 @@ const ManageEvent = () => {
             <button onClick={toggleTheme} className={`rounded-full p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
-            <img src={user} alt="Profile" className="w-10 h-10 rounded-full" />
+            <DashboardHeader />
           </div>
         </div>
 

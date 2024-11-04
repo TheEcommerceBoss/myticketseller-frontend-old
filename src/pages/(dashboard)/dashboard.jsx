@@ -24,6 +24,7 @@ import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
+import DashboardHeader from '../../components/(events)/DashboardHeader';
 
 // Sample data for the line chart
 const chartData = [
@@ -46,22 +47,22 @@ const Dashboard = () => {
   }, []);
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
-     const handleResize = () => {
+    const handleResize = () => {
       if (window.innerWidth >= 1024) {
-         setIsOpen(true);
+        setIsOpen(true);
       } else {
-         setIsOpen(false);
+        setIsOpen(false);
       }
     };
 
-     handleResize();
+    handleResize();
 
-     window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize);
 
-     return () => {
+    return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);  
+  }, []);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -109,7 +110,7 @@ const Dashboard = () => {
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
-            <img src={user} alt="Profile" className="w-10 h-10 rounded-full" />
+            <DashboardHeader />
           </div>
         </div>
 

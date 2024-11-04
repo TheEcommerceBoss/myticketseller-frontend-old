@@ -24,6 +24,7 @@ import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
+import DashboardHeader from '../../components/(events)/DashboardHeader';
 
 
 const CreateEvent = () => {
@@ -123,7 +124,7 @@ const CreateEvent = () => {
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
-            <img src={user} alt="Profile" className="w-10 h-10 rounded-full" />
+            <DashboardHeader />
           </div>
         </div>
 
