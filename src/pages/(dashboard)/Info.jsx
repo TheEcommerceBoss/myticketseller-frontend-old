@@ -44,7 +44,7 @@ const EventsInfo = () => {
 
   const steps = [
     { number: 1, title: 'General Information', active: false },
-    { number: 2, title: 'Payment and Location', active: false },
+    { number: 2, title: 'Tickets and Location', active: false },
     { number: 3, title: 'Additional Information', active: true },
   ];
 
@@ -322,7 +322,6 @@ const EventsInfo = () => {
             </div>
           </div>
 
-          {/* Authorities Section */}
           <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
@@ -331,7 +330,7 @@ const EventsInfo = () => {
               <h2 className="text-l font-medium">Any authorities needs to be notified?</h2>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-3">
               <div className={`flex ${theme === "dark" ? "bg-[#222] border border-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
                 <button
                   className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${!notifyAuthorities ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
@@ -350,7 +349,7 @@ const EventsInfo = () => {
 
 
             {notifyAuthorities && (
-              <div className="grid grid-cols-3 mt-[3rem] text-center">
+              <div className="flex flex-col items-start md:grid  md:grid-cols-3 mt-[3rem] text-center">
                 {['Police', 'Fire Department', 'Traffic Control'].map((authority, index) => (
                   <label key={index} className="flex items-center  justify-center text-center gap-2">
                     <input type="radio" name="authority" className="w-4 h-4" />
@@ -359,6 +358,73 @@ const EventsInfo = () => {
                 ))}
               </div>
             )}
+          </div>
+
+
+          <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
+                <span>14</span>
+              </div>
+              <h2 className="text-l font-medium">Is the Event Password Protected?</h2>
+            </div>
+
+            <div className="flex justify-center mt-3">
+              <div className={`flex ${theme === "dark" ? "bg-[#222] border border-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
+                <button
+                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${!notifyAuthorities ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
+                  onClick={() => setNotifyAuthorities(false)}
+                >
+                  No
+                </button>
+                <button
+                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${notifyAuthorities ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"}`}
+                  onClick={() => setNotifyAuthorities(true)}
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+
+
+            {notifyAuthorities && (
+              <div className="flex flex-col items-start md:grid  md:grid-cols-3 mt-[3rem] text-center">
+                <input
+                  type="text"
+                  className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter Event Password"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
+                <span>14</span>
+              </div>
+              <h2 className="text-l font-medium">Should be Event be Listed?</h2>
+            </div>
+
+            <div className="flex justify-center mt-3">
+              <div className={`flex ${theme === "dark" ? "bg-[#222] border border-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
+                <button
+                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${!notifyAuthorities ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
+                  onClick={() => setNotifyAuthorities(false)}
+                >
+                  No
+                </button>
+                <button
+                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${notifyAuthorities ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"}`}
+                  onClick={() => setNotifyAuthorities(true)}
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+
+
+           
           </div>
         </div>
         <div className="flex flex-col lg:flex-row items-center justify-between text-center">

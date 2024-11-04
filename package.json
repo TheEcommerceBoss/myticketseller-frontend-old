@@ -29,6 +29,8 @@
     "react-select": "^5.8.1",
     "react-table": "^7.8.0",
     "recharts": "^2.13.0",
+    "swal": "^0.1.0",
+    "sweetalert2": "^11.14.5",
     "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
