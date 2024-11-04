@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/(landing)/Landing';  
+import LandingPage from './pages/(landing)/Landing';
 import FindEvent from './pages/(events)/FindEvent';
 import { ThemeProvider } from './context/ThemeContext';
 import ViewEvent from './pages/(events)/ViewEvent';
@@ -12,27 +12,31 @@ import CreateEvent from './pages/(dashboard)/createEvent';
 import PaymentSettings from './pages/(dashboard)/paymentSettings';
 import EventsInfo from './pages/(dashboard)/Info';
 import ManageEvent from './pages/(dashboard)/manageEvent';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <ThemeProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/event/find" element={<FindEvent />} />
-          <Route path="/event/view/:id" element={<ViewEvent />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/event/create" element={<CreateEvent />} />
-          <Route path="/dashboard/event/manage" element={<ManageEvent />} />
-          <Route path="/dashboard/event/create/:id" element={<CreateEvent />} />
-          <Route path="/dashboard/event/create/:id/payments" element={<PaymentSettings />} />
-          <Route path="/dashboard/event/create/:id/info" element={<EventsInfo />} />
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/event/find" element={<FindEvent />} />
+            <Route path="/event/view/:id" element={<ViewEvent />} />
 
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<SignupPage />} />
-          <Route path="*" element={<NotFound />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/dashboard/event/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
+            <Route path="/dashboard/event/manage" element={<ProtectedRoute><ManageEvent /></ProtectedRoute>} />
+            <Route path="/dashboard/event/create/:id" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
+            <Route path="/dashboard/event/create/:id/payments" element={<ProtectedRoute><PaymentSettings /></ProtectedRoute>} />
+            <Route path="/dashboard/event/create/:id/info" element={<ProtectedRoute><EventsInfo /></ProtectedRoute>} />
 
-        </Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<SignupPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </Router>
     </ThemeProvider>
   );

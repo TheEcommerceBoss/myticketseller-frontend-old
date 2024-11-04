@@ -71,8 +71,8 @@ const ManageEvent = () => {
         </div>
 
         {/* Table */}
-        <div className="border rounded-lg overflow-x-auto">
-          <table className="w-full min-w-[600px] table-fixed lg:table-auto">
+        <div className="border rounded-lg">
+          <table className=" table-auto lg:table-auto">
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="w-4 p-4">
