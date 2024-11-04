@@ -1,50 +1,45 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Make sure you have react-router-dom installed
+import { Link } from "react-router-dom";
 import HeaderMain from "../../components/(headers)/HeaderMain";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 
 function LoginPage() {
   const { theme } = useTheme();
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);  
 
-  // Handle input changes
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
       [id]: value
     }));
-    setError(""); // Clear error when user types
+    setError("");
   };
 
-  // Demo credentials
-  const demoCredentials = {
-    email: "demo@example.com",
-    password: "demo123"
-  };
-
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Basic validation
     if (!formData.email || !formData.password) {
       setError("Please fill in all fields");
       return;
     }
 
-    // Demo authentication
-    if (formData.email === demoCredentials.email && formData.password === demoCredentials.password) {
-      // You might want to set some authentication state here
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/dashboard");
-    } else {
-      setError("Invalid credentials. Use demo@example.com / demo123");
+    setLoading(true);
+    try {
+      await login({
+        email: formData.email,
+        password: formData.password
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,8 +49,8 @@ function LoginPage() {
 
       <main className="flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-4xl lg:mt-10">
-          <div className={`${theme === "light" ? "bg-white" : "bg-[#222]"}  p-8 rounded-lg l:shadow-lg`}>
-            <h1 className={`text-3xl mt-5 mb-[3rem] text-center  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+          <div className={`${theme === "light" ? "bg-white" : "bg-[#222]"} p-8 rounded-lg l:shadow-lg`}>
+            <h1 className={`text-3xl mt-5 mb-[3rem] text-center ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
               Welcome Back!
             </h1>
 
@@ -67,7 +62,7 @@ function LoginPage() {
 
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className={`block text-sm text-black mb-3 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                <label htmlFor="email" className={`block text-sm mb-3 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                   Email Address
                 </label>
                 <input
@@ -82,7 +77,7 @@ function LoginPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className={`block text-sm text-black mb-3 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                <label htmlFor="password" className={`block text-sm mb-3 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                   Password
                 </label>
                 <input
@@ -105,21 +100,13 @@ function LoginPage() {
               <div className="w-full flex flex-col items-center justify-center">
                 <button
                   type="submit"
+                  disabled={loading}
                   className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}
                 >
-                  Login
+                  {loading ? "Loading..." : "Login"}
                 </button>
               </div>
             </form>
-
-            <div className="mt-6 text-center">
-              <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Demo Credentials:
-              </p>
-              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Email: demo@example.com / Password: demo123
-              </p>
-            </div>
 
             <div className="mt-6 text-center text-sm text-gray-600">
               Don't have an account?{' '}
