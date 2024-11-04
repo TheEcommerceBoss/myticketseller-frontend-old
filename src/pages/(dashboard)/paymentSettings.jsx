@@ -18,17 +18,20 @@ import {
   BellDot,
   Bell,
   X,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 
 const PaymentSettings = () => {
   useEffect(() => {
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
   }, []);
   const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
@@ -41,9 +44,10 @@ const PaymentSettings = () => {
 
   const steps = [
     { number: 1, title: 'General Information', active: false },
-    { number: 2, title: 'Payment and Location', active: true },
+    { number: 2, title: 'Tickets and Location', active: true },
     { number: 3, title: 'Additional Information', active: false },
   ];
+  const [tickets, setTickets] = useState([]);
 
 
   useEffect(() => {
@@ -92,11 +96,71 @@ const PaymentSettings = () => {
 
   const [isPaid, setIsPaid] = useState(false);
   const [pricingCount, setPricingCount] = useState(3);
+  const [dayCount, setdayCount] = useState(1);
 
   const handlePricingCountChange = (increment) => {
     const newCount = pricingCount + increment;
     if (newCount >= 1 && newCount <= 10) {
       setPricingCount(newCount);
+    }
+  };
+
+  const addTicket = (type) => {
+    if (type === 'Guest List' && tickets.some(ticket => ticket.type === 'Guest List')) {
+      Swal.fire('Error', 'You can only create one Guest List ticket!', 'error');
+      return;
+    }
+
+    const newTicket = {
+      id: tickets.length + 1,
+      type,
+      name: "",
+      quantity: "",
+      price: "",
+      fetched: 0,
+      inputtype: type === 'Free Ticket' ? "text" : "number",
+      fee: type === 'Free Ticket' ? "Free" : "",
+      timeSlots: [],
+      isFeeDisabled: type === 'Free Ticket',
+    };
+
+    setTickets([...tickets, newTicket]);
+  };
+
+
+  const updateTicket = (id, key, value) => {
+    const updatedTickets = tickets.map(ticket =>
+      ticket.id === id ? { ...ticket, [key]: value } : ticket
+    );
+    setTickets(updatedTickets);
+  };
+
+
+  const removeTicket = (id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTickets(tickets.filter(ticket => ticket.id !== id));
+        Swal.fire(
+          'Deleted!',
+          'Your ticket has been deleted.',
+          'success'
+        )
+      }
+    })
+  };
+
+  const handledayCountChange = (increment) => {
+    const newCount = dayCount + increment;
+    if (newCount >= 1 && newCount <= 10) {
+      setdayCount(newCount);
     }
   };
 
@@ -177,87 +241,121 @@ const PaymentSettings = () => {
 
 
 
+
+
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
               <span>8</span>
             </div>
-            <h2 className="text-l font-medium">Choose Location</h2>
+            <h2 className="text-l font-medium">Create your Tickets</h2>
           </div>
 
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block mb-2 text-l">Select City</label>
-                <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}>
-                  <option>Select a city...</option>
-                </select>
-              </div>
-              <div>
-                <label className="block mb-2 text-l">Select City</label>
-                <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}>
-                  <option>Select a city...</option>
-                </select>
-              </div>
+            <div className="flex flex-wrap justify-between mb-6">
+              {['Paid Ticket', 'Free Ticket', 'Group Ticket', 'Request Ticket', 'Guest List', 'Bottle List', 'Donation'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => addTicket(type)}
+                  className="bg-gray-500 text-white py-1 px-4 w-[47%] lg:w-[10rem] mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center"
+                >
+                  <span className="mr-1">+</span> {type}
+                </button>
+              ))}
             </div>
+            {tickets.map((ticket, index) => {
+              console.log(ticket.fetched);
+              return (
+                <div key={ticket.id} className="mb-8 border border-gray-500 p-4 rounded">
+                  <h3 className='my-2'>{'Ticket ' + (index + 1) + '( ' + ticket.type + ')'} </h3>
 
-            <div>
-              <label className="block mb-2 text-l">Or type an address if you can't find above</label>
-              <input
-                type="text"
-                className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
-              />
-            </div>
+                  <div className="mb-4">
+                    <input
+                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      id={'ticket_name' + ticket.id}
+                      required="1"
+                      placeholder="Ticket Name"
+                      value={ticket.name}
+                      onChange={(e) => updateTicket(ticket.id, 'name', e.target.value)}
+                      type="text"
 
-            <p className="text-l text-gray-600">
-              If you are a venue manager you can {' '}
-              <a href="#" className="text-blue-600">create</a>
-              {' '} your venue. After approval you will find your locations here in Menu {'>'} Venue
-            </p>
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <input
+                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      id={"ticket_quantity" + ticket.id}
+
+                      required="1"
+                      placeholder="Quantity"
+                      value={ticket.quantity}
+                      onChange={(e) => updateTicket(ticket.id, 'quantity', e.target.value)}
+                      type="number"
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <input
+                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      id={"fee" + ticket.id}
+                      required="1"
+                      placeholder={"Fee (" + "$" + ") - Set as 0 for a free ticket"}
+                      value={ticket.fee}
+                      disabled={ticket.isFeeDisabled}
+                      onChange={(e) => updateTicket(ticket.id, 'fee', e.target.value)}
+                      type={ticket.inputtype}
+ 
+                    />
+                  </div>
+
+                  <div className="mb-4">
+
+                    <div className="flex gap-5">
+                      <button
+                        onClick={() => addTimeSlot(ticket.id)}
+                        className="bg-gray-500 hidden text-white py-1 px-4 mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center"
+                      >
+                        <Plus size={17} className={'mr-2'} /> Add Time Slot
+                      </button>
+                      <button
+                        onClick={() => removeTicket(ticket.id)}
+                        className={`bg-red-500 text-white py-1 px-4 mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center ${ticket.fetched == 1 ? 'hidden' : ''}`}
+                      >
+                        <Trash2 size={17} className={'mr-2'} /> Delete Ticket
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+
           </div>
-
-
         </div>
-
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
               <span>9</span>
             </div>
-            <h2 className="text-l font-medium">What is the price?</h2>
+            <h2 className="text-l font-medium">Setup your Event Locations</h2>
           </div>
 
           <div className="space-y-6">
-            {/* Free/Paid Toggle */}
-            <div className="flex justify-center">
-              <div className={`flex ${theme === "dark" ? "bg-[#222] border border-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
-                <button
-                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${!isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"} `}
-                  onClick={() => setIsPaid(false)}
-                >
-                  Free
-                </button>
-                <button
-                  className={`px-[2.5rem] py-[.7rem] rounded-full text-l ${isPaid ? 'bg-[#040171] text-[#fff]  shadow ' : theme === "dark" ? "text-[#fff]" : "text-[#040171]"}`}
-                  onClick={() => setIsPaid(true)}
-                >
-                  Paid
-                </button>
-              </div>
-            </div>
 
             <div className="space-y-2">
-              <p className="text-center text-l">How many different pricing?</p>
+              <p className="text-center text-l">How many days?</p>
               <div className="flex justify-center items-center">
                 <button
-                  onClick={() => handlePricingCountChange(-1)}
+                  onClick={() => handledayCountChange(-1)}
                   className="w-[5rem] h-12 bg-[#040171] text-white rounded-l-full flex items-center justify-center text-l"
                 >
                   -
                 </button>
-                <span className={`w-[5rem] h-12   text-center text-l  flex items-center justify-center text-l   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{pricingCount}</span>
+                <span className={`w-[5rem] h-12   text-center text-l  flex items-center justify-center text-l   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{dayCount}</span>
                 <button
-                  onClick={() => handlePricingCountChange(1)}
+                  onClick={() => handledayCountChange(1)}
                   className="w-[5rem] h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-l"
                 >
                   +
@@ -267,27 +365,40 @@ const PaymentSettings = () => {
 
             {/* Pricing Table */}
             <div className="space-y-4">
-              {[
-                { name: 'Standard', price: '20' },
-                { name: 'Premium', price: '100' },
-                { name: 'VIP', price: '1000' }
-              ].map((ticket, index) => (
-                <div key={index} className="grid grid-cols-3 gap-4">
-                  <input
-                    type="text"
-                    defaultValue={ticket.name}
-                    className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
-                    placeholder="Ticket Name"
-                  />
-                  <input
-                    type="number"
-                    defaultValue={ticket.price}
-                    className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
-                    placeholder="Price"
-                  />
-                  <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}>
-                    <option>Naira</option>
-                  </select>
+              {[...Array(dayCount)].map((_, index) => (
+
+                <div key={index} className={`${theme === "dark" ? "bg-[#121212] border border-[#ccc]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+
+
+                  <div className="space-y-6">
+                    <h4 className='font-bold'>Event {index + 1}</h4>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block mb-2 text-l">Select Event Type</label>
+                        <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}>
+                          <option>On Site</option>
+                          <option>Virtual</option>
+                        </select>
+                      </div>
+
+                    </div>
+
+                    <div>
+                      <label className="block mb-2 text-l">Enter the address of the event Here</label>
+                      <input
+                        type="text"
+                        className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      />
+                    </div>
+
+                    {/* <p className="text-l text-gray-400">
+                      If you are a venue manager you can {' '}
+                      <a href="#" className="text-blue-600">create</a>
+                      {' '} your venue. After approval you will find your locations here in Menu {'>'} Venue
+                    </p> */}
+                  </div>
+
+
                 </div>
               ))}
             </div>
@@ -297,10 +408,10 @@ const PaymentSettings = () => {
           <Link to={'/dashboard/event/create/1'} className={`w-[12rem] bg-opacity-50 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Previous</Link>
 
           <div className="flex items-center gap-3 mt-2 lg:mt-0">
-             <Link to={'/dashboard/event/create/1/info/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
+            <Link to={'/dashboard/event/create/1/info/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
 
           </div>
- 
+
         </div>
       </div>
 

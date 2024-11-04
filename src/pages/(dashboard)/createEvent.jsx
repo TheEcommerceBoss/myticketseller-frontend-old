@@ -41,35 +41,28 @@ const CreateEvent = () => {
 
   const steps = [
     { number: 1, title: 'General Information', active: true },
-    { number: 2, title: 'Payment and Location', active: false },
+    { number: 2, title: 'Tickets and Location', active: false },
     { number: 3, title: 'Additional Information', active: false },
   ];
 
 
   useEffect(() => {
-    // Function to determine if screen is large or small
-    const handleResize = () => {
+     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        // True for large screens (lg breakpoint at 1024px and above)
-        setIsOpen(true);
+         setIsOpen(true);
       } else {
-        // False for smaller screens
-        setIsOpen(false);
+         setIsOpen(false);
       }
     };
 
-    // Call once when the component mounts
-    handleResize();
+     handleResize();
 
-    // Add event listener to handle window resizing
-    window.addEventListener('resize', handleResize);
+     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
-    return () => {
+     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []); // Empty dependency array ensures this runs only on mount and unmount
-
+  }, []); 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -134,8 +127,7 @@ const CreateEvent = () => {
           </div>
         </div>
 
-        {/* Progress Steps */}
-        <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
+         <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
           {steps.map((s, index) => (
             <>
 
@@ -163,8 +155,7 @@ const CreateEvent = () => {
 
 
         <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
-          {/* Category Selection */}
-          <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
+           <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
             <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-l border  mr-2`}>
                 1
@@ -173,7 +164,7 @@ const CreateEvent = () => {
                 What is the Category of your Event?
               </label>
             </div>
-            <select className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select className="w-full p-3 border border-gray-300  text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <option value="">Select Event Category</option>
               <option value="conference">Conference</option>
               <option value="workshop">Workshop</option>
@@ -230,8 +221,7 @@ const CreateEvent = () => {
           </div>
         </div>
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 md:px-[3rem] my-6 shadow-sm`}>
-          {/* Month Selection */}
-          <div className="mb-8 flex items-center flex-col justify-center text-center">
+           <div className="mb-8 flex items-center flex-col justify-center text-center">
             <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
                 4
@@ -245,8 +235,7 @@ const CreateEvent = () => {
             </select>
           </div>
 
-          {/* Start Date Selection */}
-          <div className="mb-8 flex items-start flex-col justify-center text-center">
+           <div className="mb-8 flex items-start flex-col justify-center text-center">
             <div className="flex flex-col items-start mb-4">
               <label className={`text-l font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Starts
@@ -259,8 +248,7 @@ const CreateEvent = () => {
             />
           </div>
 
-          {/* End Date Selection */}
-          <div className="mb-8 flex items-start flex-col justify-center text-center">
+           <div className="mb-8 flex items-start flex-col justify-center text-center">
             <div className="flex flex-col items-start mb-4">
               <label className={`text-l font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 End By
@@ -273,8 +261,7 @@ const CreateEvent = () => {
             />
           </div>
 
-          {/* Time Selection */}
-          <div className="flex items-center mb-[2rem] mt-2">
+           <div className="flex items-center mb-[2rem] mt-2">
             <label className={`text-l font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
               Time
             </label>
@@ -323,8 +310,7 @@ const CreateEvent = () => {
             />
           </div>
 
-          {/* Event Description */}
-          <div className="mb-8 flex items-center flex-col justify-center text-center">
+           <div className="mb-8 flex items-center flex-col justify-center text-center">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
                 6
@@ -365,7 +351,7 @@ const CreateEvent = () => {
           <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}
-            className={`${theme === "dark" ? "bg-[#222]" : "bg-[#04017117]"} md:w-[50%] flex flex-col items-center justify-center border-2 border-dashed border-[#040171] rounded-lg p-6 py-[5rem] mt-3 mb-[2rem] cursor-pointer`}
+            className={`${theme === "dark" ? "bg-[#222]" : "bg-[#04017117]"} w-full lg:w-[50%] flex flex-col items-center justify-center border-2 border-dashed border-[#040171] rounded-lg p-6 py-[5rem] mt-3 mb-[2rem] cursor-pointer`}
           >
             <p className={`text-l font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'} mb-2`}>Drag & Drop</p>
             <label className={` text-white bg-[#040171] px-4 py-2 rounded-md cursor-pointer`}>
