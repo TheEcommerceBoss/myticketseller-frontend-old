@@ -2,14 +2,13 @@
 import Cookies from "js-cookie";
 
 const api = axios.create({
-  baseURL: "https://your-api-domain.com",  
+  baseURL: "https://ticket-system-backend-bfd3.onrender.com",  
   headers: {
     "Content-Type": "application/json"
   }
 });
 
-// Add token to request headers if available
-api.interceptors.request.use((config) => {
+ api.interceptors.request.use((config) => {
   const token = Cookies.get("auth_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

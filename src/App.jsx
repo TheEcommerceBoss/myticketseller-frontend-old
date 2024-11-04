@@ -14,6 +14,7 @@ import EventsInfo from './pages/(dashboard)/Info';
 import ManageEvent from './pages/(dashboard)/manageEvent';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import LogoutPage from './pages/(auth)/logout';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/dashboard/event/create/:id/info" element={<ProtectedRoute><EventsInfo /></ProtectedRoute>} />
 
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/logout" element={<LogoutPage />} />
             <Route path="/register" element={<SignupPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

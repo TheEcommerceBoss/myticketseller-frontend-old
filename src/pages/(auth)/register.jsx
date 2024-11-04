@@ -1,34 +1,36 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderMain from "../../components/(headers)/HeaderMain";
-import signup from "../../assets/(utils)/signup.png"
+import signup_image from "../../assets/(utils)/signup.png";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 
 function SignupPage() {
     const { theme } = useTheme();
+    const { signup } = useAuth();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
         password: "",
         confirmPassword: "",
-        acceptTerms: false
+        acceptTerms: false,
     });
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);  
 
     const handleChange = (e) => {
         const { id, value, type, checked } = e.target;
-        setFormData(prevState => ({
+        setFormData((prevState) => ({
             ...prevState,
-            [id]: type === 'checkbox' ? checked : value
+            [id]: type === "checkbox" ? checked : value,
         }));
         setError("");
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Basic validation
         if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
             setError("Please fill in all fields");
             return;
@@ -44,26 +46,30 @@ function SignupPage() {
             return;
         }
 
-        // Demo registration success
-        navigate("/dashboard");
+        setLoading(true); // Start loading
+        try {
+            await signup({
+                fullname: formData.fullName,
+                email: formData.email,
+                password: formData.password,
+                confirmpass: formData.confirmPassword,
+            });
+         } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false); // End loading
+        }
     };
 
     return (
         <div className={`min-h-screen ${theme === "light" ? "bg-white" : "bg-[#121212]"}`}>
-
-            <div className={`${theme === "light" ? "bg-white" : "bg-[#222]"} rounded-lg shadow-lg  min-h-screen flex`}>
-
+            <div className={`${theme === "light" ? "bg-white" : "bg-[#222]"} rounded-lg shadow-lg min-h-screen flex`}>
                 <div className="w-full lg:w-1/2 flex bg-blue-50 flex-col items-center justify-start lg:pl-8 p-6">
-
                     <div className="flex flex-col w-full items-start">
                         <HeaderMain variation={2} showsearch={true} nobg={true} hidemenu={true} />
                     </div>
                     <div className="hidden lg:w-full lg:flex items-center justify-center mt-[8rem] rounded-l-lg">
-                        <img
-                            src={signup}
-                            alt="Registration illustration"
-                            className="w-4/5"
-                        />
+                        <img src={signup_image} alt="Registration illustration" className="w-4/5" />
                     </div>
                 </div>
 
@@ -157,23 +163,20 @@ function SignupPage() {
                                 <a href="#" className="text-[#040171] hover:underline">Privacy Policy</a>
                             </label>
                         </div>
-
                         <div className="w-full flex flex-col items-center justify-center">
                             <button
                                 type="submit"
+                                disabled={loading}  
                                 className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}
                             >
-                                Register
+                                {loading ? "Loading..." : "Register"}  
                             </button>
                         </div>
                     </form>
 
                     <div className="mt-6 text-center text-sm text-gray-600">
-                        Already have an account?{' '}
-                        <a
-                            href="/login"
-                            className={`text-sm hover:underline ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}
-                        >
+                        Already have an account?{" "}
+                        <a href="/login" className={`text-sm hover:underline ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
                             Login Here
                         </a>
                     </div>

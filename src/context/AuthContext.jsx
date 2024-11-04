@@ -12,19 +12,34 @@ export const AuthProvider = ({ children }) => {
   const signup = async (userData) => {
     try {
       const response = await api.post("/signup", userData);
-      const { token } = response.data;
-
-      // Set cookie
+      const { token } = response.data.token;
+      
       Cookies.set("auth_token", token, { expires: 7 });
-
-       setIsAuthenticated(true);
-
+      setIsAuthenticated(true);
       navigate("/dashboard");
     } catch (error) {
       if (error.response && error.response.data) {
         throw new Error(error.response.data.message);
       }
       throw new Error("Failed to sign up");
+    }
+  };
+
+  const login = async (credentials) => {
+    try {
+      console.log('start')
+      const response = await api.post("/login", credentials);
+      const { token } = response.data.token;
+      // console.log(response)
+
+      Cookies.set("auth_token", token, { expires: 7 });
+      setIsAuthenticated(true);
+      navigate("/dashboard");
+    } catch (error) {
+      if (error.response && error.response.data) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error("Failed to log in");
     }
   };
 
@@ -35,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signup, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
