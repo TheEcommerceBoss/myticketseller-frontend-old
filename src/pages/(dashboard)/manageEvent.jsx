@@ -29,23 +29,20 @@ const ManageEvent = () => {
 
   const events = [
     { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
-    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
-    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
-    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
-    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
-    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+    { id: 2, title: "Summer Music Festival", category: "Musical Concert", date: "2024-06-20", location: "Los Angeles", status: "Active" },
+    { id: 3, title: "Tech Conference 2024", category: "Conference", date: "2024-08-15", location: "San Francisco", status: "Upcoming" },
+    { id: 4, title: "Art Exhibition", category: "Exhibition", date: "2024-09-10", location: "Chicago", status: "Inactive" },
+    { id: 5, title: "Food Festival", category: "Food", date: "2024-10-05", location: "Miami", status: "Upcoming" },
+   ];
 
-  ];
+  const eventsWithIndex = events.map((event, index) => ({
+    ...event,
+    index: index + 1, // Change to start index from 1
+  }));
 
   const columns = [
-    { field: 'id', headerName: '#', width: 50, sortable: false, hideSortIcons: true, renderCell: (params) => params.row.id },
-    { field: 'title', headerName: 'Event Title', width: 300 },
+    { field: 'index', headerName: '#', width: 50, sortable: false, hideSortIcons: true },
+    { field: 'title', headerName: 'Event Title', width: 250 },
     { field: 'category', headerName: 'Category', width: 150 },
     { field: 'date', headerName: 'Date', width: 120 },
     { field: 'location', headerName: 'Location', width: 150 },
@@ -56,7 +53,7 @@ const ManageEvent = () => {
       width: 150,
       renderCell: () => (
         <div className="flex gap-2 mt-2">
-          <button onClick={() => ModifyEvent()} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+          <button onClick={ModifyEvent} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
             <Pencil size={16} />
           </button>
           <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
@@ -79,7 +76,7 @@ const ManageEvent = () => {
             <button onClick={() => setIsOpen(!isOpen)} className={`rounded-lg p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <h1 className="hidden lg:flex text-2xl font-bold">Add New Event</h1>
+            <h1 className="hidden lg:flex text-2xl font-bold">Manage Events</h1>
           </div>
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex relative">
@@ -104,7 +101,7 @@ const ManageEvent = () => {
             <div className={`md:col-span-3 p-2 ${theme === "light" ? "bg-white" : "bg-[#121212] text-white"} shadow-lg rounded-lg`}>
               <div style={{ height: '100%', width: '100%' }}>
                 <DataGrid
-                  rows={events}
+                  rows={eventsWithIndex}
                   columns={columns}
                   pageSize={25}
                   rowsPerPageOptions={[5]}
