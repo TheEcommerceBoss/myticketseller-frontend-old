@@ -338,7 +338,7 @@ const CreateEvent = ({ manage }) => {
           <div className="mb-8 flex items-center flex-col justify-center text-center items-center ">
             <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-l border  mr-2`}>
-                3
+                2
               </div>
               <label className={`text-l font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Is this a Private or Public Event?
@@ -370,7 +370,7 @@ const CreateEvent = ({ manage }) => {
           <div className="mb-8 flex items-center flex-col justify-center text-center">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
-                4
+                3
               </div>
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Event Title
@@ -389,7 +389,7 @@ const CreateEvent = ({ manage }) => {
           <div className="mb-8 flex items-center flex-col justify-center text-center">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
-                5
+                4
               </div>
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 What is this Event about?
@@ -418,7 +418,7 @@ const CreateEvent = ({ manage }) => {
           <div className="text-center mb-4">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5  rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
-                6
+                5
               </div>
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Event Picture
