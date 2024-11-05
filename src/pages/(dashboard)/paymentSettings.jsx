@@ -246,7 +246,7 @@ const PaymentSettings = () => {
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
-              <span>8</span>
+              <span>6</span>
             </div>
             <h2 className="text-l font-medium">Create your Tickets</h2>
           </div>
@@ -337,7 +337,7 @@ const PaymentSettings = () => {
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
-              <span>9</span>
+              <span>7</span>
             </div>
             <h2 className="text-l font-medium">Setup your Event Locations</h2>
           </div>
@@ -384,7 +384,7 @@ const PaymentSettings = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <div>
                         <label className="block mb-2 text-l">Start Day</label>
                         <input
@@ -392,13 +392,7 @@ const PaymentSettings = () => {
                           className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
-                      <div>
-                        <label className="block mb-2 text-l">End Day</label>
-                        <input
-                          type="date"
-                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
-                        />
-                      </div>
+                     
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

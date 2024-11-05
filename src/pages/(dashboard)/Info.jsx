@@ -210,7 +210,7 @@ const EventsInfo = () => {
         <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
-              <span>10</span>
+              <span>8</span>
             </div>
             <h2 className="text-l font-medium">Any restrictions in regard of your audience?</h2>
           </div>
@@ -251,7 +251,7 @@ const EventsInfo = () => {
             <div className="mb-8 flex items-center flex-col justify-center text-center items-center ">
               <div className="flex items-center mb-[2rem] mt-2">
                 <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-l border  mr-2`}>
-                  11
+                  9
                 </div>
                 <label className={`text-l font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                   How many users do you expect to see?
@@ -283,7 +283,7 @@ const EventsInfo = () => {
           <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
-                <span>12</span>
+                <span>10</span>
               </div>
               <h2 className="text-l font-medium">How many special guest will be there?</h2>
             </div>
@@ -331,7 +331,7 @@ const EventsInfo = () => {
           <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
-                <span>13</span>
+                <span>11</span>
               </div>
               <h2 className="text-l font-medium">Any authorities needs to be notified?</h2>
             </div>
@@ -370,7 +370,7 @@ const EventsInfo = () => {
           <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
-                <span>14</span>
+                <span>12</span>
               </div>
               <h2 className="text-l font-medium">Is the Event Password Protected?</h2>
             </div>
@@ -407,7 +407,7 @@ const EventsInfo = () => {
           <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
-                <span>14</span>
+                <span>13</span>
               </div>
               <h2 className="text-l font-medium">Should be Event be Listed?</h2>
             </div>
