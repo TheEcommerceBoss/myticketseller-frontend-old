@@ -90,7 +90,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
             icon={<SquarePen size={24} />}
             link="/dashboard/event/create"
             text="Create New Event"
-            active={location.pathname === '/dashboard/event/create'}
+            active={location.pathname.startsWith('/dashboard/event/create') }
           />
           <NavItem
             icon={<TextSearch size={24} />}

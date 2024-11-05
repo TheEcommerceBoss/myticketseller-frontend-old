@@ -26,7 +26,8 @@ import { useTheme } from '../../context/ThemeContext';
 function DashboardHeader() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
-    const [isOpen, setIsOpen] = useState(false);
+      const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
     useEffect(() => {
       const handleResize = () => {
         if (window.innerWidth >= 1024) {

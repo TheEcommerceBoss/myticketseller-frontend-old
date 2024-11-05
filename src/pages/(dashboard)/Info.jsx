@@ -36,7 +36,8 @@ const EventsInfo = () => {
   }, []);
 
 
-  const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
 
   const [guestCount, setGuestCount] = useState(3);
 

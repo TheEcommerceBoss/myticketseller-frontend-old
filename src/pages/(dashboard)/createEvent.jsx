@@ -34,7 +34,8 @@ const CreateEvent = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
 
-  const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
 
 
   const [step, setStep] = useState(1);
