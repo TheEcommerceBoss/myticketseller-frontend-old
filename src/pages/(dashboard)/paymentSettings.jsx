@@ -25,14 +25,73 @@ import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import MapAutocomplete from '../../components/(maps)/Autocomplete';
 import axios from 'axios';
 
+import Cookies from 'js-cookie'; // Ensure you have this import to access cookies
+
 const PaymentSettings = () => {
   let { id } = useParams();
+  const navigate = useNavigate();
+
+
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = Cookies.get("auth_token");
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/get-event-details`,
+          { event_id: id },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+    
+        console.log(response.data);
+    
+        // Format event days with the specified structure
+        const formattedEventDays = response.data.event_days.map((day, index) => ({
+          index: index + 1,
+          eventType: day.event_type,
+          startDate: day.start_day,
+          startTime: day.open_door_time,
+          endTime: day.close_door_time,
+          location: day.event_type === "onsite" ? day.event_address : "",
+          virtualLink: day.event_type === "virtual" ? day.event_link : "",
+          password: day.event_type === "virtual" ? day.event_password : "",
+        }));
+    
+        setEventDays(formattedEventDays);
+        setDayCount(response.data.event_days.length);
+    
+        // Format tickets
+        const formattedTickets = response.data.tickets.map(ticket => ({
+          event_id: ticket.event_id,
+          name: ticket.ticket_name,
+          type: ticket.ticket_type,
+          fee: ticket.ticket_type === "Free Ticket" ? 0 : ticket.price,
+          currency: ticket.currency,
+          quantity: ticket.quantity,
+        }));
+    
+        setTickets(formattedTickets);
+      } catch (error) {
+        console.error("Failed to fetch event details:", error);
+      }
+    };
+    
+
+
+    // Call the function
+    fetchEvents();
+  }, [id]); // Add `id` as a dependency
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,8 +105,9 @@ const PaymentSettings = () => {
 
   const handleAddressSelect = (selectedAddress) => {
     setLocation(selectedAddress);
-    console.log(selectedAddress)
+    // console.log(selectedAddress)
   };
+  const [loading, setLoading] = useState(false);
 
   const [step, setStep] = useState(2);
   const [isPublic, setIsPublic] = useState(false);
@@ -61,7 +121,7 @@ const PaymentSettings = () => {
   const [tickets, setTickets] = useState([]);
   const [eventDays, setEventDays] = useState([]);
   console.log(eventDays)
-  console.log(tickets)
+  // console.log(tickets)
 
   useEffect(() => {
     const handleResize = () => {
@@ -115,17 +175,17 @@ const PaymentSettings = () => {
     }
   };
 
-  const submitPayment = () => {
+  const submitPayment = async () => {
     if (tickets.length < 1) {
       Swal.fire('Error', 'Please add at least one ticket before submitting.', 'error');
       return;
     }
-  
+
     if (eventDays.length < 1) {
       Swal.fire('Error', 'Please add at least one event day before submitting.', 'error');
       return;
     }
-  
+
     // Check each ticket for completeness
     for (const ticket of tickets) {
       if (!ticket.name) {
@@ -136,9 +196,8 @@ const PaymentSettings = () => {
         Swal.fire('Error', `Please complete the quantity for ticket ${ticket.id}.`, 'error');
         return;
       }
-      // The fee is already managed in the jsonBody creation below, so no need to check here
     }
-  
+
     for (const day of eventDays) {
       if (!day.startDate) {
         Swal.fire('Error', 'Please complete the start date for the event day ' + (day.index) + '.', 'error');
@@ -152,7 +211,7 @@ const PaymentSettings = () => {
         Swal.fire('Error', 'Please complete the end time for the event day ' + (day.index) + '.', 'error');
         return;
       }
-  
+
       // Check if the date is in the past
       const currentDate = new Date();
       const selectedDate = new Date(day.startDate);
@@ -160,7 +219,7 @@ const PaymentSettings = () => {
         Swal.fire('Error', 'The start date cannot be in the past for the event day ' + (day.index) + '.', 'error');
         return;
       }
-  
+
       // Check if start time is before end time
       const [startHours, startMinutes] = day.startTime.split(':').map(Number);
       const [endHours, endMinutes] = day.endTime.split(':').map(Number);
@@ -168,30 +227,13 @@ const PaymentSettings = () => {
       const endTime = new Date(selectedDate);
       startTime.setHours(startHours, startMinutes);
       endTime.setHours(endHours, endMinutes);
-  
+
       if (startTime >= endTime) {
         Swal.fire('Error', 'The start time must be before the end time for the event day ' + (day.index) + '.', 'error');
         return;
       }
-  
-      // Check location or virtual link and password based on event type
-      if (eventType === 'onsite') {
-        if (!day.location) {
-          Swal.fire('Error', 'Please complete the location for the event day ' + (day.index + 1) + '.', 'error');
-          return;
-        }
-      } else {
-        if (!day.virtualLink) {
-          Swal.fire('Error', 'Please provide a virtual link for the event day ' + (day.index + 1) + '.', 'error');
-          return;
-        }
-        if (!day.password) {
-          Swal.fire('Error', 'Please provide a password for the virtual event.', 'error');
-          return;
-        }
-      }
     }
-  
+
     // Construct the JSON body
     const jsonBody = {
       event_id: id,
@@ -199,33 +241,50 @@ const PaymentSettings = () => {
         event_id: id,
         name: ticket.name,
         type: ticket.type,
-        price: ticket.type === "Free Ticket" ? 0 : ticket.fee, // Set fee to 0 for Free Ticket
-        currency: "NGN",  // Assuming currency is always NGN
+        price: ticket.type === "Free Ticket" ? 0 : ticket.fee,
+        currency: "NGN",
         quantity: ticket.quantity
       })),
       event_days: eventDays.map(day => ({
         event_id: id,
         event_type: day.eventType,
         number_of_days: eventDays.length,
-        event_day: day.startDate, // Assuming you want the startDate for event_day
-        open_door: day.startTime,  // Assuming open_door is startTime
-        close_door: day.endTime,    // Assuming close_door is endTime
+        event_day: day.startDate,
+        open_door: day.startTime,
+        close_door: day.endTime,
         ...(day.eventType === 'virtual' ? {
           event_link: day.virtualLink,
           event_password: day.password
         } : {
           event_address: day.location
         })
-      })) 
+      }))
     };
-  
-    // Log the JSON body to the console
-    console.log(JSON.stringify(jsonBody, null, 2));
-  
-    // Optionally, show a success message
-    Swal.fire('Success', 'Payment submitted successfully!', 'success');
+
+    // console.log(jsonBody)
+    // console.log(`${import.meta.env.VITE_API_URL}/ticket_event_details`)
+    setLoading(true);
+
+    try {
+      const token = Cookies.get("auth_token"); // Ensure the token is fetched from cookies
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/ticket_event_details`, jsonBody, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      console.log(response.data);
+      Swal.fire('Success', 'Location details submitted successfully!', 'success');
+      navigate('/dashboard/event/create/' + id + '/info')
+    } catch (error) {
+      console.error("Failed to submit details:", error);
+      Swal.fire('Error', 'Failed to submit details. Please try again later.', 'error');
+    } finally {
+      setLoading(false);  // Set loading to false once request is completed
+    }
   };
-  
+
 
   const addTicket = (type) => {
     if (type === 'Guest List' && tickets.some(ticket => ticket.type === 'Guest List')) {
@@ -276,21 +335,34 @@ const PaymentSettings = () => {
       }
     })
   };
-
   const handleDayCountChange = (increment) => {
     const newCount = dayCount + increment;
+
     if (newCount >= 1 && newCount <= 10) {
       setDayCount(newCount);
-      setEventDays(Array.from({ length: newCount }, (_, index) => ({
-        index: index + 1,
-        eventType: "onsite",
-        startDate: "",
-        startTime: "",
-        endTime: "",
-        location: "",
-        virtualLink: "",
-        password: "",
-      })));
+
+      if (increment > 0) {
+        // Create new event days when adding
+        const newEventDays = Array.from({ length: increment }, (_, index) => ({
+          index: dayCount + index + 1,
+          eventType: "onsite",
+          startDate: "",
+          startTime: "",
+          endTime: "",
+          location: "",
+          virtualLink: "",
+          password: "",
+        }));
+
+        setEventDays(prevEventDays => [...prevEventDays, ...newEventDays]);
+      } else if (increment < 0) {
+        // Remove the last event day when decrementing
+        setEventDays(prevEventDays => {
+          const updatedEventDays = [...prevEventDays];
+          updatedEventDays.pop(); // Remove the last entry
+          return updatedEventDays;
+        });
+      }
     }
   };
 
@@ -392,7 +464,7 @@ const PaymentSettings = () => {
               ))}
             </div>
             {tickets.map((ticket, index) => {
-              console.log(ticket.fetched);
+              // console.log(ticZket.fetched);
               return (
                 <div key={ticket.id} className="mb-8 border border-gray-500 p-4 rounded">
                   <h3 className='my-2'>{'Ticket ' + (index + 1) + '( ' + ticket.type + ')'} </h3>
@@ -613,8 +685,13 @@ const PaymentSettings = () => {
           <Link to={'/dashboard/event/create/' + id} className={`w-[12rem] bg-opacity-50 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Previous</Link>
 
           <div className="flex items-center gap-3 mt-2 lg:mt-0">
-            <button onClick={() => submitPayment()} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</button>
-
+            <button
+              onClick={() => submitPayment()}
+              disabled={loading}
+              className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-800'}`}
+            >
+              {loading ? 'Loading...' : 'Next'}
+            </button>
           </div>
 
         </div>      </div>
