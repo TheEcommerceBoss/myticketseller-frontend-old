@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Pencil, Trash2, Share2 } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
+import Cookies from "js-cookie";
+import api from "../../api";
 
 const ManageEvent = () => {
   useEffect(() => {
@@ -15,8 +17,30 @@ const ManageEvent = () => {
     alert(1);
   };
 
+
   const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = React.useState(window.innerWidth >= 1024);
+  const [events, setEvents] = useState('')
+
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = Cookies.get("auth_token");
+        const response = await api.get("/get_user_events", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setEvents(response.data.events);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  console.log(events)
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,43 +51,59 @@ const ManageEvent = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const events = [
-    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: "Summer Music Festival", category: "Musical Concert", date: "2024-06-20", location: "Los Angeles", status: "Active" },
-    { id: 3, title: "Tech Conference 2024", category: "Conference", date: "2024-08-15", location: "San Francisco", status: "Upcoming" },
-    { id: 4, title: "Art Exhibition", category: "Exhibition", date: "2024-09-10", location: "Chicago", status: "Inactive" },
-    { id: 5, title: "Food Festival", category: "Food", date: "2024-10-05", location: "Miami", status: "Upcoming" },
-   ];
 
-  const eventsWithIndex = events.map((event, index) => ({
+
+  const eventsWithIndex = events && events.map((event, index) => ({
     ...event,
-    index: index + 1, // Change to start index from 1
+    id: index + 1, // Change to start index from 1
   }));
 
   const columns = [
-    { field: 'index', headerName: '#', width: 50, sortable: false, hideSortIcons: true },
-    { field: 'title', headerName: 'Event Title', width: 250 },
-    { field: 'category', headerName: 'Category', width: 150 },
-    { field: 'date', headerName: 'Date', width: 120 },
-    { field: 'location', headerName: 'Location', width: 150 },
-    { field: 'status', headerName: 'Status', width: 120 },
+    { field: 'id', headerName: '#', width: 50, sortable: false, hideSortIcons: true },
+    { field: 'event_title', headerName: 'Event Title', width: 250 },
+    { field: 'event_category', headerName: 'Category', width: 150 },
+    { field: 'event_description', headerName: 'Description', width: 300 },
     {
-      field: 'actions',
-      headerName: 'Actions',
+      field: 'event_specific_type',
+      headerName: 'Visibility',
       width: 150,
-      renderCell: () => (
-        <div className="flex gap-2 mt-2">
-          <button onClick={ModifyEvent} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
-            <Pencil size={16} />
-          </button>
-          <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
-            <Trash2 size={16} />
-          </button>
-          <button className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900">
-            <Share2 size={16} />
-          </button>
+      renderCell: (params) => (
+        <div>
+          {params.value === 0 ? 'Private' : 'Public'}
         </div>
       ),
+    },
+    {
+      field: 'status', headerName: 'Status', width: 120, renderCell: (params) => (
+        <div>
+          {params.value === 0 ? 'Draft' : 'Live'}
+        </div>
+      ),
+    },
+    {
+      field: 'event_id',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params) => {
+        const eventId = params.value;  
+        const eventLink = `/modify-event/${eventId}`; 
+
+        return (
+          <div className="flex gap-2 mt-2">
+            <Link to={eventLink}>
+              <button className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+                <Pencil size={16} />
+              </button>
+            </Link>
+            <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
+              <Trash2 size={16} />
+            </button>
+            <button className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900">
+              <Share2 size={16} />
+            </button>
+          </div>
+        );
+      },
     },
   ];
 
