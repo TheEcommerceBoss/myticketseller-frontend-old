@@ -31,6 +31,7 @@ function App() {
             <Route path="/dashboard/event/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
             <Route path="/dashboard/event/manage" element={<ProtectedRoute><ManageEvent /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
+            <Route path="/dashboard/event/manage/:id" element={<ProtectedRoute><CreateEvent manage={true} /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/payments" element={<ProtectedRoute><PaymentSettings /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/info" element={<ProtectedRoute><EventsInfo /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/completed" element={<ProtectedRoute><CompletedCreation /></ProtectedRoute>} />

@@ -7,6 +7,7 @@ import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Cookies from "js-cookie";
 import api from "../../api";
+import { Link } from 'react-router-dom';
 
 const ManageEvent = () => {
   useEffect(() => {
@@ -86,15 +87,13 @@ const ManageEvent = () => {
       width: 150,
       renderCell: (params) => {
         const eventId = params.value;  
-        const eventLink = `/modify-event/${eventId}`; 
+        const eventLink = `/dashboard/event/manage/${eventId}`; 
 
         return (
           <div className="flex gap-2 mt-2">
-            <Link to={eventLink}>
-              <button className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+            <Link to={eventLink}  className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
                 <Pencil size={16} />
-              </button>
-            </Link>
+             </Link>
             <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
               <Trash2 size={16} />
             </button>
