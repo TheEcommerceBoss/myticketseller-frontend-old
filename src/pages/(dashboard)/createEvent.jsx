@@ -222,84 +222,14 @@ const CreateEvent = () => {
 
           </div>
         </div>
-        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 md:px-[3rem] my-6 shadow-sm`}>
-           <div className="mb-8 flex items-center flex-col justify-center text-center">
-            <div className="flex items-center mb-[2rem] mt-2">
-              <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
-                4
-              </div>
-              <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
-                When will this Event be?
-              </label>
-            </div>
-            <select className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="">Month</option>
-            </select>
-          </div>
-
-           <div className="mb-8 flex items-start flex-col justify-center text-center">
-            <div className="flex flex-col items-start mb-4">
-              <label className={`text-l font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
-                Starts
-              </label>
-            </div>
-            <input
-              type="text"
-              placeholder="Thu, Mar 22, 2024"
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-           <div className="mb-8 flex items-start flex-col justify-center text-center">
-            <div className="flex flex-col items-start mb-4">
-              <label className={`text-l font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
-                End By
-              </label>
-            </div>
-            <input
-              type="text"
-              placeholder="Thu, Mar 22, 2024"
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-           <div className="flex items-center mb-[2rem] mt-2">
-            <label className={`text-l font-normal ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
-              Time
-            </label>
-          </div>
-          <div className="flex items-center justify-between mb-4">
-
-            <div className="flex flex-col items-center w-1/2 pr-2">
-
-              <input
-                type="text"
-                placeholder="11:00AM"
-                className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <span className="px-2">—</span>
-            <div className="flex flex-col items-center w-1/2 pl-2">
-              <input
-                type="text"
-                placeholder="11:00AM"
-                className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-          <div className="text-right">
-            <a href="#" className="text-blue-600 font-semibold">
-              Customize
-            </a>
-          </div>
-        </div>
+     
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
 
           {/* Event Title */}
           <div className="mb-8 flex items-center flex-col justify-center text-center">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
-                5
+                4
               </div>
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Event Title
@@ -315,7 +245,7 @@ const CreateEvent = () => {
            <div className="mb-8 flex items-center flex-col justify-center text-center">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
-                6
+                5
               </div>
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 What is this Event about?
@@ -341,7 +271,7 @@ const CreateEvent = () => {
           <div className="text-center mb-4">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5  rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
-                7
+                6
               </div>
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Event Picture
