@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import {
   Home,
   PlusCircle,
@@ -23,25 +22,17 @@ import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Cookies from "js-cookie";
-
 import Swal from "sweetalert2";
 import api from "../../api";
+import axios from 'axios';
 
-const CreateEvent = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+const CreateEvent = ({ manage }) => {
+  let { id } = useParams();
+  const [eventData, setEventData] = useState(null);
   const { theme, toggleTheme } = useTheme();
-   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
-   const navigate = useNavigate();
- 
-  const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
-  const [categories, setCategories] = useState([]);
-  const [error, setError] = useState("");
-
   const [formData, setFormData] = useState({
     category: "",
     specific_type: true,
@@ -49,6 +40,54 @@ const CreateEvent = () => {
     event_description: "",
     event_image: "",
   });
+
+  console.log(formData)
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = Cookies.get("auth_token");
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/event_details`, {
+          "event_id": id
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        console.log(response.data);
+
+        // Update the formData state with the fetched event details
+        if (response.data) {
+          const { event_category, event_specific_type, event_title, event_description, event_image } = response.data.event_details;
+          setFormData({
+            category: event_category || "",
+            specific_type: event_specific_type || true,
+            event_title: event_title || "",
+            event_description: event_description || "",
+            event_image: event_image || "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch event details:", error);
+      }
+    };
+
+    if (manage) {
+      fetchEvents();
+    }
+
+  }, [manage, id]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+  const navigate = useNavigate();
+
+  const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
+  const [categories, setCategories] = useState([]);
+  const [error, setError] = useState("");
+
 
   const handleTypeChange = (type) => {
     setFormData((prevState) => ({
@@ -83,24 +122,24 @@ const CreateEvent = () => {
       const token = Cookies.get("auth_token"); // Retrieve the token first
       const response = await api.post("/create-event", formData, {
         headers: {
-          Authorization: `Bearer ${token}`,  
+          Authorization: `Bearer ${token}`,
         },
       });
-    
+
       Swal.fire({
         icon: 'success',
         title: 'Event Created',
         text: 'Your event has been created successfully.',
       });
-      
+
       navigate('/dashboard/event/create/' + response.data.event_id + '/payments/ ');
-     
+
 
     } catch (error) {
       console.log(error)
-      if(error.response){
+      if (error.response) {
         console.log(error.response.data.message)
-        if(error.response.data.message == 'Event already exists'){
+        if (error.response.data.message == 'Event already exists') {
           navigate('/dashboard/event/create/' + error.response.data.event_id + '/payments/ ');
 
           console.log(error.response.data.event_id)
@@ -211,7 +250,7 @@ const CreateEvent = () => {
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            <h1 className="hidden lg:flex text-2xl font-bold">Add New Event</h1>
+            <h1 className="hidden lg:flex text-2xl font-bold">{manage ? 'Manage Event' : 'Add New Event'}</h1>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -307,14 +346,14 @@ const CreateEvent = () => {
             <div className={`flex ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
               <button
                 onClick={() => handleTypeChange(false)}
-                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-l-[5rem] ${formData.specific_type === false ? "bg-[#040171] text-white" : theme === "dark" ? "bg-[#222]" : ""
+                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-l-[5rem] ${formData.specific_type == false ? "bg-[#040171] text-white" : theme == "dark" ? "bg-[#222]" : ""
                   }`}
               >
                 Private
               </button>
               <button
                 onClick={() => handleTypeChange(true)}
-                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-r-[5rem] ${formData.specific_type === true ? "bg-[#040171] text-white" : theme === "dark" ? "bg-[#222]" : ""
+                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-r-[5rem] ${formData.specific_type == true ? "bg-[#040171] text-white" : theme == "dark" ? "bg-[#222]" : ""
                   }`}
               >
                 Public
@@ -405,11 +444,21 @@ const CreateEvent = () => {
             </label>
 
           </div>
-          {file && (
+          {file ? (
             <div className="my-4 text-center">
               {preview && (
                 <img
                   src={preview}
+                  alt="Preview"
+                  className="mt-2  w-full h-[10rem] object-contain rounded-lg "
+                />
+              )}
+            </div>
+          ) : formData && (
+            <div className="my-4 text-center">
+              {formData.event_image && (
+                <img
+                  src={formData.event_image}
                   alt="Preview"
                   className="mt-2  w-full h-[10rem] object-contain rounded-lg "
                 />

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
       const fetchUser = async () => {
         try {
           const token = Cookies.get("auth_token");
-          const response = await api.get("/user", {
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
             headers: {
               Authorization: `Bearer ${token}`,  
             },
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (userData) => {
     try {
-      const response = await api.post("/signup", userData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/signup`, userData);
       const { token } = response.data;
       Cookies.set("auth_token", token, { expires: 7 });
       setIsAuthenticated(true);
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await api.post("/login", credentials);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, credentials);
       const { token } = response.data;
       Cookies.set("auth_token", token, { expires: 7 });
       setIsAuthenticated(true);
