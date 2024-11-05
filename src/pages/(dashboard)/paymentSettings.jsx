@@ -28,6 +28,7 @@ import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
+import MapAutocomplete from '../../components/(maps)/Autocomplete';
 
 
 const PaymentSettings = () => {
@@ -39,7 +40,12 @@ const PaymentSettings = () => {
 
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
+  const [location, setLocation] = useState('');
 
+  const handleAddressSelect = (selectedAddress) => {
+      setLocation(selectedAddress);
+      console.log(selectedAddress)
+  };
 
   const [step, setStep] = useState(2);
   const [isPublic, setIsPublic] = useState(false);
@@ -392,7 +398,7 @@ const PaymentSettings = () => {
                           className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
-                     
+
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -415,10 +421,7 @@ const PaymentSettings = () => {
                     {eventType === "onsite" ? (
                       <div>
                         <label className="block mb-2 text-l">Enter the address of the event here</label>
-                        <input
-                          type="text"
-                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
-                        />
+                        <MapAutocomplete onAddressSelect={handleAddressSelect} />
                       </div>
                     ) : (
                       <>
