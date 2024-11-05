@@ -11,6 +11,10 @@ const ManageEvent = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const ModifyEvent = () => {
+    alert(1);
+  };
+
   const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = React.useState(window.innerWidth >= 1024);
 
@@ -25,22 +29,34 @@ const ManageEvent = () => {
 
   const events = [
     { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
-    { id: 2, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
+    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
+    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
+    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
+    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
+    { id: 2, title: " Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+
   ];
 
   const columns = [
-    { field: 'title', headerName: 'Event Title', flex: 1 },
-    { field: 'category', headerName: 'Category', flex: 1 },
-    { field: 'date', headerName: 'Date', flex: 1 },
-    { field: 'location', headerName: 'Location', flex: 1 },
-    { field: 'status', headerName: 'Status', flex: 1 },
+    { field: 'id', headerName: '#', width: 50, sortable: false, hideSortIcons: true, renderCell: (params) => params.row.id },
+    { field: 'title', headerName: 'Event Title', width: 300 },
+    { field: 'category', headerName: 'Category', width: 150 },
+    { field: 'date', headerName: 'Date', width: 120 },
+    { field: 'location', headerName: 'Location', width: 150 },
+    { field: 'status', headerName: 'Status', width: 120 },
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 1,
+      width: 150,
       renderCell: () => (
-        <div className="flex gap-2">
-          <button className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+        <div className="flex gap-2 mt-2">
+          <button onClick={() => ModifyEvent()} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
             <Pencil size={16} />
           </button>
           <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
@@ -83,20 +99,32 @@ const ManageEvent = () => {
             <DashboardHeader />
           </div>
         </div>
-        <div className="h-[400px] w-full border rounded-lg">
-          <DataGrid
-            rows={events}
-            columns={columns}
-            pageSize={5}
-            checkboxSelection
-            disableSelectionOnClick
-            sx={{
-              '& .MuiDataGrid-cell': {
-                color: theme === 'dark' ? 'white' : '#040171',
-              },
-              backgroundColor: theme === 'dark' ? '#222' : 'white',
-            }}
-          />
+        <div className="container mx-auto lg:px-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+            <div className={`md:col-span-3 p-2 ${theme === "light" ? "bg-white" : "bg-[#121212] text-white"} shadow-lg rounded-lg`}>
+              <div style={{ height: '100%', width: '100%' }}>
+                <DataGrid
+                  rows={events}
+                  columns={columns}
+                  pageSize={25}
+                  rowsPerPageOptions={[5]}
+                  checkboxSelection={false}
+                  disableSelectionOnClick
+                  sx={{
+                    '& .MuiDataGrid-columnHeaders': {
+                      backgroundColor: theme === 'dark' ? 'black' : '#f5f5f5',
+                    },
+                    '& .MuiDataGrid-cell': {
+                      color: theme === 'dark' ? 'white' : 'black',
+                    },
+                    '& .MuiDataGrid-footerContainer': {
+                      backgroundColor: 'white',
+                    },
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
