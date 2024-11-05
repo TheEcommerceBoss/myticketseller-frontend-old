@@ -25,17 +25,38 @@ import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
+import api from "../../api";
 
 
 const CreateEvent = () => {
   useEffect(() => {
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0);
   }, []);
   const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
+  const [categories, SetCategories] = useState([]);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
-    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
+
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/get_categories", {
+          headers: {
+
+          },
+        });
+        SetCategories(response.data.categories);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+
+    fetchCategories();
+
+  }, []);
 
 
   const [step, setStep] = useState(1);
@@ -49,22 +70,22 @@ const CreateEvent = () => {
 
 
   useEffect(() => {
-     const handleResize = () => {
+    const handleResize = () => {
       if (window.innerWidth >= 1024) {
-         setIsOpen(true);
+        setIsOpen(true);
       } else {
-         setIsOpen(false);
+        setIsOpen(false);
       }
     };
 
-     handleResize();
+    handleResize();
 
-     window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize);
 
-     return () => {
+    return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []); 
+  }, []);
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -129,7 +150,7 @@ const CreateEvent = () => {
           </div>
         </div>
 
-         <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
+        <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
           {steps.map((s, index) => (
             <>
 
@@ -157,7 +178,7 @@ const CreateEvent = () => {
 
 
         <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
-           <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
+          <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
             <div className="flex items-center mb-[2rem] mt-2">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-l border  mr-2`}>
                 1
@@ -167,29 +188,13 @@ const CreateEvent = () => {
               </label>
             </div>
             <select className="w-full p-3 border border-gray-300  text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="">Select Event Category</option>
-              <option value="conference">Conference</option>
-              <option value="workshop">Workshop</option>
-              <option value="seminar">Seminar</option>
+              <option value="" disabled>Select Event Category</option>
+              {categories.map((category, index) => (
+                <option key={index} value={category.id}>{category.category}</option>
+              ))}
             </select>
           </div>
 
-          <div className="mb-8 mt-[2.5rem]  flex items-center flex-col justify-center text-center items-center ">
-            <div className="flex items-center mb-[2rem] mt-2">
-              <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200  " : "border-[#040171]"} flex items-center justify-center text-l border  mr-2`}>
-                2
-              </div>
-              <label className={`text-l font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
-                Select Subcategory
-              </label>
-            </div>
-            <select className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              <option value="">Select Subcategory</option>
-              <option value="technology">Technology</option>
-              <option value="business">Business</option>
-              <option value="design">Design</option>
-            </select>
-          </div>
 
         </div>
         <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
@@ -222,7 +227,7 @@ const CreateEvent = () => {
 
           </div>
         </div>
-     
+
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
 
           {/* Event Title */}
@@ -242,7 +247,7 @@ const CreateEvent = () => {
             />
           </div>
 
-           <div className="mb-8 flex items-center flex-col justify-center text-center">
+          <div className="mb-8 flex items-center flex-col justify-center text-center">
             <div className="flex items-center mb-4">
               <div className={`w-5 h-5 rounded-full bg-transparent ${theme === "dark" ? "border-gray-200" : "border-[#040171]"} flex items-center justify-center text-l border mr-2`}>
                 5

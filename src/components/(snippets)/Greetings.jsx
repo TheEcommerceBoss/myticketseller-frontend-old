@@ -1,25 +1,23 @@
 import { useState } from "react";
 
 function Greetings() {
-    var today = new Date()
-    var curHr = today.getHours()
+    const today = new Date();
+    const curHr = today.getHours();
+    let greeting;
 
-    switch (curHr) {
-        case (curHr < 12):
-            var greeting = ('Good Morning')
-            break;
-        case (curHr < 18):
-            var greeting = ('Good Afternoon')
-            break;
-        default:
-            var greeting = ('Good Evening')
-            break;
+    if (curHr < 12) {
+        greeting = 'Good Morning';
+    } else if (curHr < 18) {
+        greeting = 'Good Afternoon';
+    } else {
+        greeting = 'Good Evening';
     }
+
     return (
         <>
             <h3>{greeting}</h3>
         </>
-    )
+    );
 }
 
-export default Greetings
+export default Greetings;

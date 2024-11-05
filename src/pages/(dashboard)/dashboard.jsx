@@ -26,6 +26,7 @@ import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Greetings from '../../components/(snippets)/Greetings';
+import { useAuth } from '../../context/AuthContext';
 
 // Sample data for the line chart
 const chartData = [
@@ -70,6 +71,10 @@ const Dashboard = () => {
     setIsOpen(!isOpen);
   };
 
+  const { userData } = useAuth();
+  
+  // console.log(userData.user.fullname)
+
   return (
     <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
@@ -87,7 +92,7 @@ const Dashboard = () => {
 
             <div className="">
               <h1 className="hidden lg:flex text-2xl font-bold">Dashboard</h1>
-              <span className={`hidden lg:flex ${theme != 'dark' ? 'text-[#040171]' : 'text-white'} `}><Greetings /></span>
+              <span className={`hidden lg:flex ${theme != 'dark' ? 'text-[#040171]' : 'text-white'} `}><Greetings />, {userData && userData.user.fullname}</span>
               
             </div>
           </div>
