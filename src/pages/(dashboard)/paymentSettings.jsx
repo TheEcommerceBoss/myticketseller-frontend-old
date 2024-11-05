@@ -53,14 +53,11 @@ const PaymentSettings = () => {
 
 
   useEffect(() => {
-    // Function to determine if screen is large or small
-    const handleResize = () => {
+     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        // True for large screens (lg breakpoint at 1024px and above)
-        setIsOpen(true);
+         setIsOpen(true);
       } else {
-        // False for smaller screens
-        setIsOpen(false);
+         setIsOpen(false);
       }
     };
 

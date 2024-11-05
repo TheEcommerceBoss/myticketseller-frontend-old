@@ -15,6 +15,7 @@ import ManageEvent from './pages/(dashboard)/manageEvent';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LogoutPage from './pages/(auth)/logout';
+import CompletedCreation from './pages/(dashboard)/CompletedCreation';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/dashboard/event/create/:id" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/payments" element={<ProtectedRoute><PaymentSettings /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/info" element={<ProtectedRoute><EventsInfo /></ProtectedRoute>} />
+            <Route path="/dashboard/event/create/:id/completed" element={<ProtectedRoute><CompletedCreation /></ProtectedRoute>} />
 
             <Route path="/login" element={<LoginPage />} />
             <Route path="/logout" element={<LogoutPage />} />
