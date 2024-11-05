@@ -1,5 +1,501 @@
-% todo
-    /dashboard/event/create/1/payments/ 
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import {
+  Home,
+  PlusCircle,
+  ListChecks,
+  Ticket,
+  Megaphone,
+  Settings,
+  HelpCircle,
+  Menu,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Moon,
+  Sun,
+  CalendarCogIcon,
+  BellDot,
+  Bell,
+  X,
+  Plus,
+  Trash2,
+} from 'lucide-react';
+import { useTheme } from "../../context/ThemeContext";
+import SideBar from '../../components/(headers)/DashboardSidebar';
+import user from "../../assets/(user)/user.png"
+import eventImage from "../../assets/(landing)/event.png"
+import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import DashboardHeader from '../../components/(events)/DashboardHeader';
+import MapAutocomplete from '../../components/(maps)/Autocomplete';
+
+const PaymentSettings = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
+  const { theme, toggleTheme } = useTheme();
+
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
+  const [location, setLocation] = useState('');
+
+  const handleAddressSelect = (selectedAddress) => {
+      setLocation(selectedAddress);
+      console.log(selectedAddress)
+  };
+
+  const [step, setStep] = useState(2);
+  const [isPublic, setIsPublic] = useState(false);
+  const [eventType, setEventType] = useState("onsite");
+
+  const steps = [
+    { number: 1, title: 'General Information', active: false },
+    { number: 2, title: 'Tickets and Location', active: true },
+    { number: 3, title: 'Additional Information', active: false },
+  ];
+  const [tickets, setTickets] = useState([]);
+  const [eventDays, setEventDays] = useState([]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    };
+
+    // Call once when the component mounts
+    handleResize();
+
+    // Add event listener to handle window resizing
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Empty dependency array ensures this runs only on mount and unmount
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+  const [file, setFile] = useState(null);
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) setFile(droppedFile);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleFileInput = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) setFile(selectedFile);
+  };
+
+  const [isPaid, setIsPaid] = useState(false);
+  const [pricingCount, setPricingCount] = useState(3);
+  const [dayCount, setDayCount] = useState(1);
+
+  const handlePricingCountChange = (increment) => {
+    const newCount = pricingCount + increment;
+    if (newCount >= 1 && newCount <= 10) {
+      setPricingCount(newCount);
+    }
+  };
+
+  const addTicket = (type) => {
+    if (type === 'Guest List' && tickets.some(ticket => ticket.type === 'Guest List')) {
+      Swal.fire('Error', 'You can only create one Guest List ticket!', 'error');
+      return;
+    }
+
+    const newTicket = {
+      id: tickets.length + 1,
+      type,
+      name: "",
+      quantity: "",
+      price: "",
+      fetched: 0,
+      inputtype: type === 'Free Ticket' ? "text" : "number",
+      fee: type === 'Free Ticket' ? "Free" : "",
+      timeSlots: [],
+      isFeeDisabled: type === 'Free Ticket',
+    };
+
+    setTickets([...tickets, newTicket]);
+  };
+
+  const updateTicket = (id, key, value) => {
+    const updatedTickets = tickets.map(ticket =>
+      ticket.id === id ? { ...ticket, [key]: value } : ticket
+    );
+    setTickets(updatedTickets);
+  };
+
+  const removeTicket = (id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setTickets(tickets.filter(ticket => ticket.id !== id));
+        Swal.fire(
+          'Deleted!',
+          'Your ticket has been deleted.',
+          'success'
+        )
+      }
+    })
+  };
+
+  const handleDayCountChange = (increment) => {
+    const newCount = dayCount + increment;
+    if (newCount >= 1 && newCount <= 10) {
+      setDayCount(newCount);
+      setEventDays(Array.from({ length: newCount }, (_, index) => ({
+        index: index + 1,
+        eventType: "onsite",
+        startDate: "",
+        startTime: "",
+        endTime: "",
+        location: "",
+        virtualLink: "",
+        password: "",
+      })));
+    }
+  };
+
+  return (
+    <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
+      <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+
+      <div className="flex-1 py-8 px-5 lg:px-8">
+    <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center  space-x-4">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "bg-[#121212]"}`}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+
+            <h1 className="hidden lg:flex text-2xl font-bold">Add New Event</h1>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search"
+                className={`pl-10 pr-4 py-2 rounded-[4rem] border ${theme === 'dark' ? 'bg-[#222]  border-[#444]' : 'bg-transparent  border-gray-400'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              />
+            </div>
+            <button
+              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              aria-label="Toggle theme"
+            >
+              <Bell fill={theme === "light" ? "#040171" : "white"} size={20} />
+            </button>
+            <button
+              onClick={toggleTheme}
+              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+
+            <DashboardHeader />
+          </div>
+        </div>
+
+        {/* Progress Steps */}
+        <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
+          {steps.map((s, index) => (
+            <>
+
+              {index !== 0 && (
+
+                <div
+                  className={`h-[.8rem] md:h-1 w-[.15rem] md:w-[2rem] ${step >= s.number ? 'bg-[#040171]' : 'bg-gray-300'}`}
+                />
+              )}
+              <div key={s.number} className="flex w-full px-[4rem] md:px-0 items-center">
 
 
-    get_user_event
+                <div
+                  className={`px-4  py-2 w-full rounded-full flex items-center justify-center text-l ${step >= s.number
+                    ? 'bg-[#040171] text-white'
+                    : 'bg-gray-300 text-gray-600'
+                    }`}
+                >
+                  {s.number}. {s.title}
+                </div>
+              </div>
+            </>
+          ))}
+        </div>
+
+
+
+
+
+
+
+        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
+              <span>6</span>
+            </div>
+            <h2 className="text-l font-medium">Create your Tickets</h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex flex-wrap justify-between mb-6">
+              {['Paid Ticket', 'Free Ticket', 'Group Ticket', 'Request Ticket', 'Guest List', 'Bottle List', 'Donation'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => addTicket(type)}
+                  className="bg-gray-500 text-white py-1 px-4 w-[47%] lg:w-[10rem] mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center"
+                >
+                  <span className="mr-1">+</span> {type}
+                </button>
+              ))}
+            </div>
+            {tickets.map((ticket, index) => {
+              console.log(ticket.fetched);
+              return (
+                <div key={ticket.id} className="mb-8 border border-gray-500 p-4 rounded">
+                  <h3 className='my-2'>{'Ticket ' + (index + 1) + '( ' + ticket.type + ')'} </h3>
+
+                  <div className="mb-4">
+                    <input
+                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      id={'ticket_name' + ticket.id}
+                      required="1"
+                      placeholder="Ticket Name"
+                      value={ticket.name}
+                      onChange={(e) => updateTicket(ticket.id, 'name', e.target.value)}
+                      type="text"
+
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <input
+                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      id={"ticket_quantity" + ticket.id}
+
+                      required="1"
+                      placeholder="Quantity"
+                      value={ticket.quantity}
+                      onChange={(e) => updateTicket(ticket.id, 'quantity', e.target.value)}
+                      type="number"
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <input
+                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      id={"fee" + ticket.id}
+                      required="1"
+                      placeholder={"Fee (" + "$" + ") - Set as 0 for a free ticket"}
+                      value={ticket.fee}
+                      disabled={ticket.isFeeDisabled}
+                      onChange={(e) => updateTicket(ticket.id, 'fee', e.target.value)}
+                      type={ticket.inputtype}
+
+                    />
+                  </div>
+
+                  <div className="mb-4">
+
+                    <div className="flex gap-5">
+                      <button
+                        onClick={() => addTimeSlot(ticket.id)}
+                        className="bg-gray-500 hidden text-white py-1 px-4 mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center"
+                      >
+                        <Plus size={17} className={'mr-2'} /> Add Time Slot
+                      </button>
+                      <button
+                        onClick={() => removeTicket(ticket.id)}
+                        className={`bg-red-500 text-white py-1 px-4 mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center ${ticket.fetched == 1 ? 'hidden' : ''}`}
+                      >
+                        <Trash2 size={17} className={'mr-2'} /> Delete Ticket
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+
+          </div>
+        </div>
+        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
+              <span>7</span>
+            </div>
+            <h2 className="text-l font-medium">Setup your Event Locations</h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <p className="text-center text-l">How many days?</p>
+              <div className="flex justify-center items-center">
+                <button
+                  onClick={() => handleDayCountChange(-1)}
+                  className="w-[5rem] h-12 bg-[#040171] text-white rounded-l-full flex items-center justify-center text-l"
+                >
+                  -
+                </button>
+                <span className={`w-[5rem] h-12   text-center text-l  flex items-center justify-center text-l   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{dayCount}</span>
+                <button
+                  onClick={() => handleDayCountChange(1)}
+                  className="w-[5rem] h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-l"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Pricing Table */}
+            <div className="space-y-4">
+              {eventDays.map((eventDay, index) => (
+                <div key={index} className={`${theme === "dark" ? "bg-[#121212] border border-[#ccc]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+                  <div className="space-y-6">
+                    <h4 className='font-bold'>Event Day {eventDay.index}</h4>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block mb-2 text-l">Select Event Type</label>
+                        <select
+                          value={eventDay.eventType}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].eventType = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}
+                        >
+                          <option value="onsite">On Site</option>
+                          <option value="virtual">Virtual</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block mb-2 text-l">Start Day</label>
+                        <input
+                          type="date"
+                          value={eventDay.startDate}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].startDate = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block mb-2 text-l">Door Open Time</label>
+                        <input
+                          type="time"
+                          value={eventDay.startTime}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].startTime = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-l">End Time</label>
+                        <input
+                          type="time"
+                          value={eventDay.endTime}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].endTime = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
+                    </div>
+
+                    {eventDay.eventType === "onsite" ? (
+                      <div>
+                        <label className="block mb-2 text-l">Enter the address of the event here</label>
+                        <MapAutocomplete
+                          value={eventDay.location}
+                          onChange={(address) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].location = address;
+                            setEventDays(updatedEventDays);
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <div>
+                          <label className="block mb-2 text-l">Virtual Event Link</label>
+                          <input
+                            type="url"
+                            placeholder="https://example.com"
+                            value={eventDay.virtualLink}
+                            onChange={(e) => {
+                              const updatedEventDays = [...eventDays];
+                              updatedEventDays[index].virtualLink = e.target.value;
+                              setEventDays(updatedEventDays);
+                            }}
+                            className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-2 text-l">Event Password</label>
+                          <input
+                            type="password"
+                            placeholder="Enter password"
+                            value={eventDay.password}
+                            onChange={(e) => {
+                              const updatedEventDays = [...eventDays];
+                              updatedEventDays[index].password = e.target.value;
+                              setEventDays(updatedEventDays);
+                            }}
+                            className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        {/* ... Rest of the component ... */}
+      </div>
+    </div>
+  );
+};
+
+export default PaymentSettings;
