@@ -37,12 +37,13 @@ const PaymentSettings = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
 
-    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
 
 
   const [step, setStep] = useState(2);
   const [isPublic, setIsPublic] = useState(false);
+  const [eventType, setEventType] = useState("onsite");
 
   const steps = [
     { number: 1, title: 'General Information', active: false },
@@ -53,11 +54,11 @@ const PaymentSettings = () => {
 
 
   useEffect(() => {
-     const handleResize = () => {
+    const handleResize = () => {
       if (window.innerWidth >= 1024) {
-         setIsOpen(true);
+        setIsOpen(true);
       } else {
-         setIsOpen(false);
+        setIsOpen(false);
       }
     };
 
@@ -304,7 +305,7 @@ const PaymentSettings = () => {
                       disabled={ticket.isFeeDisabled}
                       onChange={(e) => updateTicket(ticket.id, 'fee', e.target.value)}
                       type={ticket.inputtype}
- 
+
                     />
                   </div>
 
@@ -366,39 +367,88 @@ const PaymentSettings = () => {
             <div className="space-y-4">
               {[...Array(dayCount)].map((_, index) => (
 
+
                 <div key={index} className={`${theme === "dark" ? "bg-[#121212] border border-[#ccc]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-
-
                   <div className="space-y-6">
-                    <h4 className='font-bold'>Event {index + 1}</h4>
+                    <h4 className='font-bold'>Event Day {index + 1}</h4>
                     <div className="grid grid-cols-1 gap-4">
                       <div>
                         <label className="block mb-2 text-l">Select Event Type</label>
-                        <select className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}>
-                          <option>On Site</option>
-                          <option>Virtual</option>
+                        <select
+                          onChange={(e) => setEventType(e.target.value)}
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}
+                        >
+                          <option value="onsite">On Site</option>
+                          <option value="virtual">Virtual</option>
                         </select>
                       </div>
-
                     </div>
 
-                    <div>
-                      <label className="block mb-2 text-l">Enter the address of the event Here</label>
-                      <input
-                        type="text"
-                        className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
-                      />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block mb-2 text-l">Start Day</label>
+                        <input
+                          type="date"
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-l">End Day</label>
+                        <input
+                          type="date"
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
                     </div>
 
-                    {/* <p className="text-l text-gray-400">
-                      If you are a venue manager you can {' '}
-                      <a href="#" className="text-blue-600">create</a>
-                      {' '} your venue. After approval you will find your locations here in Menu {'>'} Venue
-                    </p> */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block mb-2 text-l">Door Open Time</label>
+                        <input
+                          type="time"
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-2 text-l">End Time</label>
+                        <input
+                          type="time"
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
+                    </div>
+
+                    {eventType === "onsite" ? (
+                      <div>
+                        <label className="block mb-2 text-l">Enter the address of the event here</label>
+                        <input
+                          type="text"
+                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <div>
+                          <label className="block mb-2 text-l">Virtual Event Link</label>
+                          <input
+                            type="url"
+                            placeholder="https://example.com"
+                            className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                          />
+                        </div>
+                        <div>
+                          <label className="block mb-2 text-l">Event Password</label>
+                          <input
+                            type="password"
+                            placeholder="Enter password"
+                            className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
-
-
                 </div>
+
               ))}
             </div>
           </div>

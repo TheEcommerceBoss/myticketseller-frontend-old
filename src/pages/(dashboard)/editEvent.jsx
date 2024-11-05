@@ -29,7 +29,7 @@ import Swal from "sweetalert2";
 import api from "../../api";
 import axios from 'axios';
 
-const CreateEvent = ({ manage }) => {
+const EditEvent = ({ manage }) => {
   let { id } = useParams();
   const [eventData, setEventData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -483,4 +483,4 @@ const CreateEvent = ({ manage }) => {
   );
 };
 
-export default CreateEvent;
+export default EditEvent;

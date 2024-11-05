@@ -216,23 +216,7 @@ const Dashboard = () => {
             <Calendar theme={theme} />
           </div>
         </div>
-        <div className={`mt-5 flex-1 py-5 px-3 rounded-xl ${theme === 'dark' ? 'bg-[#121212] ' : 'bg-white'}`}>
-          <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">Upcoming Events</h2>
-          <div className="grid md:grid-cols-3  lg:grid-cols-4  md:flex-row gap-3 ">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className={` p-4 rounded-xl ${theme === 'dark' ? 'bg-[#121212] shadow-[0_0px_4px_rgba(255,255,255,0.2)]' : 'bg-gray-100  '}`} >
-                <img src={eventImage} alt="Event" className="w-full h-48 object-cover rounded-xl mb-4" />
-                <div className="text-sm text-gray-500">Mon, Oct 31, 8:00 PM</div>
-                <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  to={'/event/view/' + i} >
-
-                  <div className={`text-xl font-medium  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Nicki Minaj Live at Los Angeles</div>
-                </Link>
-                <div className="text-sm text-gray-500 mt-1">152 Members</div>
-              </div>
-            ))}
-          </div>
-        </div>
+       
       </div>
     </div>
   );
