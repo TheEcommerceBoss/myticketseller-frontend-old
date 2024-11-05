@@ -25,6 +25,7 @@ import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
 import { Link } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
+import Greetings from '../../components/(snippets)/Greetings';
 
 // Sample data for the line chart
 const chartData = [
@@ -45,7 +46,8 @@ const Dashboard = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -83,8 +85,11 @@ const Dashboard = () => {
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            <h1 className="hidden lg:flex text-2xl font-bold">Dashboard</h1>
-            <span className="hidden lg:flex text-yellow-400">⭐</span>
+            <div className="">
+              <h1 className="hidden lg:flex text-2xl font-bold">Dashboard</h1>
+              <span className={`hidden lg:flex ${theme != 'dark' ? 'text-[#040171]' : 'text-white'} `}><Greetings /></span>
+              
+            </div>
           </div>
 
           <div className="flex items-center space-x-4">

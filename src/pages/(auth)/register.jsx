@@ -57,7 +57,7 @@ function SignupPage() {
          } catch (err) {
             setError(err.message);
         } finally {
-            setLoading(false); // End loading
+            setLoading(false);  
         }
     };
 

@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post("/signup", userData);
       const { token } = response.data.token;
+      console.log(response)
       
       Cookies.set("auth_token", token, { expires: 7 });
       setIsAuthenticated(true);
