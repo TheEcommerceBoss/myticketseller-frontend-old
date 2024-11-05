@@ -30,7 +30,6 @@ import Swal from 'sweetalert2';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import MapAutocomplete from '../../components/(maps)/Autocomplete';
 
-
 const PaymentSettings = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,8 +42,8 @@ const PaymentSettings = () => {
   const [location, setLocation] = useState('');
 
   const handleAddressSelect = (selectedAddress) => {
-      setLocation(selectedAddress);
-      console.log(selectedAddress)
+    setLocation(selectedAddress);
+    console.log(selectedAddress)
   };
 
   const [step, setStep] = useState(2);
@@ -57,7 +56,9 @@ const PaymentSettings = () => {
     { number: 3, title: 'Additional Information', active: false },
   ];
   const [tickets, setTickets] = useState([]);
-
+  const [eventDays, setEventDays] = useState([]);
+  console.log(eventDays)
+  console.log(tickets)
 
   useEffect(() => {
     const handleResize = () => {
@@ -102,7 +103,7 @@ const PaymentSettings = () => {
 
   const [isPaid, setIsPaid] = useState(false);
   const [pricingCount, setPricingCount] = useState(3);
-  const [dayCount, setdayCount] = useState(1);
+  const [dayCount, setDayCount] = useState(0);
 
   const handlePricingCountChange = (increment) => {
     const newCount = pricingCount + increment;
@@ -133,14 +134,12 @@ const PaymentSettings = () => {
     setTickets([...tickets, newTicket]);
   };
 
-
   const updateTicket = (id, key, value) => {
     const updatedTickets = tickets.map(ticket =>
       ticket.id === id ? { ...ticket, [key]: value } : ticket
     );
     setTickets(updatedTickets);
   };
-
 
   const removeTicket = (id) => {
     Swal.fire({
@@ -163,18 +162,26 @@ const PaymentSettings = () => {
     })
   };
 
-  const handledayCountChange = (increment) => {
+  const handleDayCountChange = (increment) => {
     const newCount = dayCount + increment;
     if (newCount >= 1 && newCount <= 10) {
-      setdayCount(newCount);
+      setDayCount(newCount);
+      setEventDays(Array.from({ length: newCount }, (_, index) => ({
+        index: index + 1,
+        eventType: "onsite",
+        startDate: "",
+        startTime: "",
+        endTime: "",
+        location: "",
+        virtualLink: "",
+        password: "",
+      })));
     }
   };
-
 
   return (
     <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-
 
       <div className="flex-1 py-8 px-5 lg:px-8">
         <div className="flex justify-between items-center mb-8">
@@ -349,19 +356,18 @@ const PaymentSettings = () => {
           </div>
 
           <div className="space-y-6">
-
             <div className="space-y-2">
               <p className="text-center text-l">How many days?</p>
               <div className="flex justify-center items-center">
                 <button
-                  onClick={() => handledayCountChange(-1)}
+                  onClick={() => handleDayCountChange(-1)}
                   className="w-[5rem] h-12 bg-[#040171] text-white rounded-l-full flex items-center justify-center text-l"
                 >
                   -
                 </button>
                 <span className={`w-[5rem] h-12   text-center text-l  flex items-center justify-center text-l   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{dayCount}</span>
                 <button
-                  onClick={() => handledayCountChange(1)}
+                  onClick={() => handleDayCountChange(1)}
                   className="w-[5rem] h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-l"
                 >
                   +
@@ -371,17 +377,20 @@ const PaymentSettings = () => {
 
             {/* Pricing Table */}
             <div className="space-y-4">
-              {[...Array(dayCount)].map((_, index) => (
-
-
+              {eventDays.map((eventDay, index) => (
                 <div key={index} className={`${theme === "dark" ? "bg-[#121212] border border-[#ccc]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
                   <div className="space-y-6">
-                    <h4 className='font-bold'>Event Day {index + 1}</h4>
+                    <h4 className='font-bold'>Event Day {eventDay.index}</h4>
                     <div className="grid grid-cols-1 gap-4">
                       <div>
                         <label className="block mb-2 text-l">Select Event Type</label>
                         <select
-                          onChange={(e) => setEventType(e.target.value)}
+                          value={eventDay.eventType}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].eventType = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
                           className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}
                         >
                           <option value="onsite">On Site</option>
@@ -395,10 +404,15 @@ const PaymentSettings = () => {
                         <label className="block mb-2 text-l">Start Day</label>
                         <input
                           type="date"
+                          value={eventDay.startDate}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].startDate = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
                           className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
-
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -406,6 +420,12 @@ const PaymentSettings = () => {
                         <label className="block mb-2 text-l">Door Open Time</label>
                         <input
                           type="time"
+                          value={eventDay.startTime}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].startTime = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
                           className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
@@ -413,15 +433,28 @@ const PaymentSettings = () => {
                         <label className="block mb-2 text-l">End Time</label>
                         <input
                           type="time"
+                          value={eventDay.endTime}
+                          onChange={(e) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].endTime = e.target.value;
+                            setEventDays(updatedEventDays);
+                          }}
                           className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
                     </div>
 
-                    {eventType === "onsite" ? (
+                    {eventDay.eventType === "onsite" ? (
                       <div>
                         <label className="block mb-2 text-l">Enter the address of the event here</label>
-                        <MapAutocomplete onAddressSelect={handleAddressSelect} />
+                        <MapAutocomplete
+                          value={eventDay.location}
+                          onChange={(address) => {
+                            const updatedEventDays = [...eventDays];
+                            updatedEventDays[index].location = address;
+                            setEventDays(updatedEventDays);
+                          }}
+                        />
                       </div>
                     ) : (
                       <>
@@ -430,6 +463,12 @@ const PaymentSettings = () => {
                           <input
                             type="url"
                             placeholder="https://example.com"
+                            value={eventDay.virtualLink}
+                            onChange={(e) => {
+                              const updatedEventDays = [...eventDays];
+                              updatedEventDays[index].virtualLink = e.target.value;
+                              setEventDays(updatedEventDays);
+                            }}
                             className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                           />
                         </div>
@@ -438,6 +477,12 @@ const PaymentSettings = () => {
                           <input
                             type="password"
                             placeholder="Enter password"
+                            value={eventDay.password}
+                            onChange={(e) => {
+                              const updatedEventDays = [...eventDays];
+                              updatedEventDays[index].password = e.target.value;
+                              setEventDays(updatedEventDays);
+                            }}
                             className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                           />
                         </div>
@@ -445,7 +490,6 @@ const PaymentSettings = () => {
                     )}
                   </div>
                 </div>
-
               ))}
             </div>
           </div>
@@ -458,9 +502,7 @@ const PaymentSettings = () => {
 
           </div>
 
-        </div>
-      </div>
-
+        </div>      </div>
     </div>
   );
 };
