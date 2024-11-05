@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Home, PlusCircle, ListChecks, Ticket, Megaphone, Settings, HelpCircle, Menu, ChevronLeft, ChevronRight, Search, Moon, Sun, CalendarCogIcon, BellDot, Bell, X } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
 import { Pencil, Trash2, Share2 } from 'lucide-react';
-
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
-import user from "../../assets/(user)/user.png";
-import eventImage from "../../assets/(landing)/event.png";
-import { Link } from 'react-router-dom';
+import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 
 const ManageEvent = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
-  const { theme, toggleTheme } = useTheme();
-    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
+  const { theme, toggleTheme } = useTheme();
+  const [isOpen, setIsOpen] = React.useState(window.innerWidth >= 1024);
 
   useEffect(() => {
     const handleResize = () => {
@@ -28,23 +23,41 @@ const ManageEvent = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const [selectedTab, setSelectedTab] = useState('All');
-
   const events = [
-    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active", published: true },
-    { id: 2, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status", published: true },
+    { id: 1, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Active" },
+    { id: 2, title: "K1 De Ultimate New Year Fest 4.0", category: "Musical Concert", date: "2024-05-17", location: "New York", status: "Status" },
+  ];
+
+  const columns = [
+    { field: 'title', headerName: 'Event Title', flex: 1 },
+    { field: 'category', headerName: 'Category', flex: 1 },
+    { field: 'date', headerName: 'Date', flex: 1 },
+    { field: 'location', headerName: 'Location', flex: 1 },
+    { field: 'status', headerName: 'Status', flex: 1 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      renderCell: () => (
+        <div className="flex gap-2">
+          <button className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+            <Pencil size={16} />
+          </button>
+          <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
+            <Trash2 size={16} />
+          </button>
+          <button className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900">
+            <Share2 size={16} />
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
     <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
-      <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-
+      <SideBar isOpen={isOpen} toggleSidebar={() => setIsOpen(!isOpen)} />
       <div className="flex-1 py-8 px-5 lg:px-8">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-4">
             <button onClick={() => setIsOpen(!isOpen)} className={`rounded-lg p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
@@ -52,7 +65,6 @@ const ManageEvent = () => {
             </button>
             <h1 className="hidden lg:flex text-2xl font-bold">Add New Event</h1>
           </div>
-
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -71,64 +83,20 @@ const ManageEvent = () => {
             <DashboardHeader />
           </div>
         </div>
-
-        {/* Table */}
-        <div className="border rounded-lg">
-          <table className=" table-auto lg:table-auto">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="w-4 p-4">
-                  <input type="checkbox" className="rounded" />
-                </th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Event Title</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Category</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Date</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Location</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {events.map((event, index) => (
-                <tr key={index} className="bg-white">
-                  <td className="w-4 p-4">
-                    <input type="checkbox" className="rounded" />
-                  </td>
-                  <td className="px-4 py-3 text-sm font-medium text-[#040171]">{event.title}</td>
-                  <td className="px-4 py-3 text-sm text-[#040171]">{event.category}</td>
-                  <td className="px-4 py-3 text-sm">
-                    <div className="flex flex-col">
-                      <span className="font-medium">Published</span>
-                      <span className="text-gray-500">{event.date}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="px-3 py-1 bg-orange-500 text-white rounded-full text-sm">
-                      {event.location}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                      {event.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-2">
-                      <button className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
-                        <Pencil size={16} />
-                      </button>
-                      <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
-                        <Trash2 size={16} />
-                      </button>
-                      <button className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900">
-                        <Share2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="h-[400px] w-full border rounded-lg">
+          <DataGrid
+            rows={events}
+            columns={columns}
+            pageSize={5}
+            checkboxSelection
+            disableSelectionOnClick
+            sx={{
+              '& .MuiDataGrid-cell': {
+                color: theme === 'dark' ? 'white' : '#040171',
+              },
+              backgroundColor: theme === 'dark' ? '#222' : 'white',
+            }}
+          />
         </div>
       </div>
     </div>

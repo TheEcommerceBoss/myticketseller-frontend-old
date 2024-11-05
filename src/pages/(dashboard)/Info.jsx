@@ -22,8 +22,9 @@ import {
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
+import Confetti from 'react-confetti';
 import eventImage from "../../assets/(landing)/event.png"
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 
 
@@ -34,9 +35,10 @@ const EventsInfo = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  const [showConfetti, setShowConfetti] = useState(false);
 
 
-    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
 
   const [guestCount, setGuestCount] = useState(3);
@@ -49,6 +51,7 @@ const EventsInfo = () => {
     { number: 2, title: 'Tickets and Location', active: false },
     { number: 3, title: 'Additional Information', active: true },
   ];
+  const navigate = useNavigate();
 
   const [expectedAttendees, setExpectedAttendees] = useState(100);
   const [specialGuests, setSpecialGuests] = useState(3);
@@ -73,33 +76,33 @@ const EventsInfo = () => {
   };
 
   useEffect(() => {
-    // Function to determine if screen is large or small
-    const handleResize = () => {
+     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        // True for large screens (lg breakpoint at 1024px and above)
-        setIsOpen(true);
+         setIsOpen(true);
       } else {
-        // False for smaller screens
-        setIsOpen(false);
+         setIsOpen(false);
       }
     };
 
-    // Call once when the component mounts
     handleResize();
 
-    // Add event listener to handle window resizing
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []); // Empty dependency array ensures this runs only on mount and unmount
+  }, []);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
   const [file, setFile] = useState(null);
+
+  const completeTicket = () => {
+    window.scrollTo(0, 0);
+    navigate('/dashboard/event/create/1/completed')
+    // setShowConfetti(true)
+  }
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -130,6 +133,7 @@ const EventsInfo = () => {
   return (
     <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      {showConfetti && <Confetti />}
 
 
       <div className="flex-1 py-8 px-5 lg:px-8">
@@ -426,7 +430,7 @@ const EventsInfo = () => {
             </div>
 
 
-           
+
           </div>
         </div>
         <div className="flex flex-col lg:flex-row items-center justify-between text-center">
@@ -434,7 +438,7 @@ const EventsInfo = () => {
 
           <div className="flex items-center gap-3 mt-2 lg:mt-0">
             <p className='text-[#040171] hidden lg:flex cursor-pointer'>Save to template</p>
-            <Link to={'/dashboard/event/create/1/info/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
+            <button onClick={() => completeTicket()} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Complete</button>
 
           </div>
           <p className='text-[#040171] mt-1 lg:hidden cursor-pointer'>Save to template</p>
