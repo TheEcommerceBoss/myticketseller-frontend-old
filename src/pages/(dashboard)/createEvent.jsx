@@ -23,41 +23,108 @@ import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
-import api from "../../api";
+import Cookies from "js-cookie";
 
+import Swal from "sweetalert2";
+import api from "../../api";
 
 const CreateEvent = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
   const { theme, toggleTheme } = useTheme();
-  const [categories, SetCategories] = useState([]);
-  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+   const navigate = useNavigate();
+ 
+  const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
+  const [categories, setCategories] = useState([]);
+  const [error, setError] = useState("");
 
+  const [formData, setFormData] = useState({
+    category: "",
+    specific_type: true,
+    event_title: "",
+    event_description: "",
+    event_image: "",
+  });
 
+  const handleTypeChange = (type) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      specific_type: type,
+    }));
+  };
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    setError("");
+  };
+
+  const CreateEventHandler = async () => {
+    // Check if all required fields are filled
+    const { category, specific_type, event_title, event_description, event_image } = formData;
+
+    if (!category || !event_title || !event_description || !event_image) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Incomplete Form',
+        text: 'Please fill in all required fields.',
+      });
+      return;
+    }
+
+    try {
+      const token = Cookies.get("auth_token"); // Retrieve the token first
+      const response = await api.post("/create-event", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,  
+        },
+      });
+    
+      Swal.fire({
+        icon: 'success',
+        title: 'Event Created',
+        text: 'Your event has been created successfully.',
+      });
+      
+      navigate('/dashboard/event/create/' + response.data.event_id + '/payments/ ');
+     
+
+    } catch (error) {
+      console.log(error)
+      if(error.response){
+        console.log(error.response.data.message)
+        if(error.response.data.message == 'Event already exists'){
+          navigate('/dashboard/event/create/' + error.response.data.event_id + '/payments/ ');
+
+          console.log(error.response.data.event_id)
+        }
+      }
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.message || 'Failed to create event.',
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await api.get("/get_categories", {
-          headers: {
-
-          },
-        });
-        SetCategories(response.data.categories);
+        const response = await api.get("/get_categories");
+        setCategories(response.data.categories);
       } catch (error) {
-        console.error("Failed to fetch user:", error);
+        console.error("Failed to fetch categories:", error);
       }
     };
-
     fetchCategories();
-
   }, []);
-
 
   const [step, setStep] = useState(1);
   const [isPublic, setIsPublic] = useState(false);
@@ -89,12 +156,18 @@ const CreateEvent = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
   const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null); // For image preview
+
 
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) setFile(droppedFile);
+    if (droppedFile) {
+      setFile(droppedFile);
+      convertToBase64(droppedFile);
+    }
   };
 
   const handleDragOver = (e) => {
@@ -103,7 +176,25 @@ const CreateEvent = () => {
 
   const handleFileInput = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile) setFile(selectedFile);
+    if (selectedFile) {
+      setFile(selectedFile);
+      convertToBase64(selectedFile);
+    }
+  };
+
+  const convertToBase64 = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setFormData((prevState) => ({
+        ...prevState,
+        event_image: reader.result,
+      }));
+      setPreview(reader.result); // Set preview for mini image display
+    };
+    reader.onerror = (error) => {
+      console.error("Error converting file to Base64:", error);
+    };
   };
   return (
     <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
@@ -187,7 +278,12 @@ const CreateEvent = () => {
                 What is the Category of your Event?
               </label>
             </div>
-            <select className="w-full p-3 border border-gray-300  text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
               <option value="" disabled>Select Event Category</option>
               {categories.map((category, index) => (
                 <option key={index} value={category.id}>{category.category}</option>
@@ -210,15 +306,15 @@ const CreateEvent = () => {
             </div>
             <div className={`flex ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} rounded-[5rem] p-1`}>
               <button
-                onClick={() => setIsPublic(false)}
-                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-l-[5rem] ${!isPublic ? 'bg-[#040171] text-white' : theme === "dark" ? "bg-[#222]" : ""
+                onClick={() => handleTypeChange(false)}
+                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-l-[5rem] ${formData.specific_type === false ? "bg-[#040171] text-white" : theme === "dark" ? "bg-[#222]" : ""
                   }`}
               >
                 Private
               </button>
               <button
-                onClick={() => setIsPublic(true)}
-                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-r-[5rem] ${isPublic ? 'bg-[#040171] text-white' : theme === "dark" ? "bg-[#222]" : ""
+                onClick={() => handleTypeChange(true)}
+                className={`px-[10vw] lg:px-[5vw] py-[.3rem] rounded-r-[5rem] ${formData.specific_type === true ? "bg-[#040171] text-white" : theme === "dark" ? "bg-[#222]" : ""
                   }`}
               >
                 Public
@@ -242,6 +338,9 @@ const CreateEvent = () => {
             </div>
             <input
               type="text"
+              name="event_title"
+              value={formData.event_title}
+              onChange={handleChange}
               className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter Event Title"
             />
@@ -257,6 +356,9 @@ const CreateEvent = () => {
               </label>
             </div>
             <textarea
+              name="event_description"
+              value={formData.event_description}
+              onChange={handleChange}
               rows="4"
               className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Describe the Event"
@@ -290,26 +392,34 @@ const CreateEvent = () => {
             onDragOver={handleDragOver}
             className={`${theme === "dark" ? "bg-[#222]" : "bg-[#04017117]"} w-full lg:w-[50%] flex flex-col items-center justify-center border-2 border-dashed border-[#040171] rounded-lg p-6 py-[5rem] mt-3 mb-[2rem] cursor-pointer`}
           >
-            <p className={`text-l font-normal  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'} mb-2`}>Drag & Drop</p>
-            <label className={` text-white bg-[#040171] px-4 py-2 rounded-md cursor-pointer`}>
+            <p className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'} mb-2`}>Drag & Drop</p>
+            <label className="text-white bg-[#040171] px-4 py-2 rounded-md cursor-pointer">
               Select File
               <input
                 type="file"
+                accept="image/*"
                 onChange={handleFileInput}
                 className="hidden"
               />
-            </label>
-          </div>
 
+            </label>
+
+          </div>
           {file && (
-            <div className="mt-4 text-center">
-              <p className="text-l text-gray-700">Selected file: {file.name}</p>
+            <div className="my-4 text-center">
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="mt-2  w-full h-[10rem] object-contain rounded-lg "
+                />
+              )}
             </div>
           )}
         </div>
 
         <div className="flex flex-col items-end text-center">
-          <Link to={'/dashboard/event/create/1/payments/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
+          <button onClick={() => CreateEventHandler()} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</button>
 
         </div>
       </div>

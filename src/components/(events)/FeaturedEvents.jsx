@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
 import { ChevronDown, Search, Calendar, MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import Select from "react-select";
@@ -10,11 +10,15 @@ import event2Image from "../../assets/(landing)/event2.png"
 import event3Image from "../../assets/(landing)/event3.png"
 import event4Image from "../../assets/(landing)/event4.png"
 import TicketModal from "./TicketModal";
+import api from "../../api";
+
 const options = [
     { value: "location1", label: "Location 1" },
     { value: "location2", label: "Location 2" },
     { value: "location3", label: "Location 3" },
 ];
+
+
 
 const eventTypeOptions = [
     { id: 1, value: "conference", label: "Conference", slug: "conference", image: "path/to/conference-image.jpg" },
@@ -70,6 +74,31 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
 
 function FeaturedEvents({ variation }) {
+
+    const [categories, SetCategories] = useState([]);
+    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
+
+
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await api.get("/get_categories", {
+                    headers: {
+
+                    },
+                });
+                SetCategories(response.data.categories);
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+            }
+        };
+
+        fetchCategories();
+
+    }, []);
+
     const { theme } = useTheme();
     const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -234,7 +263,7 @@ function FeaturedEvents({ variation }) {
                         <div className="px-4 py-2 w-full flex justify-between items-center md:items-start md:flex-col md:border-l md:border-b-0 border-b border-gray-300">
                             <p className="text-blue-800 font-semibold mb-1">Event Type</p>
                             <Select
-                                options={eventTypeOptions}
+                                options={categories}
                                 styles={customStyles}
                                 components={{ DropdownIndicator }}
                                 placeholder="Select Event Type"
@@ -289,7 +318,7 @@ function FeaturedEvents({ variation }) {
                             </div>
                         </div>
                         <Select
-                            options={eventTypeOptions}
+                            options={categories}
                             styles={customSearchStyles}
                             components={{ DropdownIndicator }}
                             placeholder="All"
@@ -299,13 +328,13 @@ function FeaturedEvents({ variation }) {
                     </div>
                     <div className="hidden lg:flex justify-center space-x-10 items-center my-8">
                         <a href="javascript:void(0)" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
-                        {eventTypeOptions.map((eventType, index) => (
+                        {categories.map((eventType, index) => (
                             <a
                                 key={eventType.id}
-                                href={`/${eventType.slug}`}
+                                href={`/category/${eventType.id}`}
                                 className={`text-sm hover:text-[#040171] ${theme === "light" ? "text-gray-700" : "text-white"}`}
                             >
-                                {eventType.label}
+                                {eventType.category}
                             </a>
                         ))}
                     </div>
@@ -335,8 +364,8 @@ function FeaturedEvents({ variation }) {
                                                         <span className="text-gray-500 flex w-2/5  items-center justify-end  gap-1 text-xs"><MapPin size={16} /> <span>{card.location}</span></span>
 
                                                     </div>
-                                                    <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
- to={'/event/view/' + card.id} className="text-xl my-2 text-black font-semibold ">
+                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                                        to={'/event/view/' + card.id} className="text-xl my-2 text-black font-semibold ">
                                                         {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                     </Link>
 
@@ -371,8 +400,8 @@ function FeaturedEvents({ variation }) {
 
 
 
-                                                        <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
- to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                        <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                                            to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
                                                             {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                         </Link>
 
