@@ -37,7 +37,7 @@ const CompletedCreation = () => {
         window.scrollTo(0, 0);
     }, []);
     const [showConfetti, setShowConfetti] = useState(true);
-
+    
 
 
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
