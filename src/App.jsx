@@ -17,6 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LogoutPage from './pages/(auth)/logout';
 import CompletedCreation from './pages/(dashboard)/CompletedCreation';
 import EditEvent from './pages/(dashboard)/editEvent';
+import Settings from './pages/(dashboard)/Settings';
 
 function App() {
   return (
@@ -31,11 +32,12 @@ function App() {
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard/event/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
             <Route path="/dashboard/event/manage" element={<ProtectedRoute><ManageEvent /></ProtectedRoute>} />
-            <Route path="/dashboard/event/create/:id" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
-            <Route path="/dashboard/event/manage/:id" element={<ProtectedRoute><EditEvent manage={true} /></ProtectedRoute>} />
+            <Route path="/dashboard/event/create/:id" element={<ProtectedRoute><CreateEvent  manage={true} /></ProtectedRoute>} />
+            <Route path="/dashboard/event/manage/:id" element={<ProtectedRoute><CreateEvent manage={true} /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/payments" element={<ProtectedRoute><PaymentSettings /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/info" element={<ProtectedRoute><EventsInfo /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/completed" element={<ProtectedRoute><CompletedCreation /></ProtectedRoute>} />
+            <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
             <Route path="/login" element={<LoginPage />} />
             <Route path="/logout" element={<LogoutPage />} />

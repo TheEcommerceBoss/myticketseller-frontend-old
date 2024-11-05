@@ -72,7 +72,8 @@ const Dashboard = () => {
   };
 
   const { userData } = useAuth();
-  
+  console.log(userData&&userData.user)
+
   // console.log(userData.user.fullname)
 
   return (
@@ -93,7 +94,7 @@ const Dashboard = () => {
             <div className="">
               <h1 className="hidden lg:flex text-2xl font-bold">Dashboard</h1>
               <span className={`hidden lg:flex ${theme != 'dark' ? 'text-[#040171]' : 'text-white'} `}><Greetings />, {userData && userData.user.fullname}</span>
-              
+
             </div>
           </div>
 
@@ -216,7 +217,7 @@ const Dashboard = () => {
             <Calendar theme={theme} />
           </div>
         </div>
-       
+
       </div>
     </div>
   );
