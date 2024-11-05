@@ -7,9 +7,11 @@ import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Cookies from "js-cookie";
 import api from "../../api";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const ManageEvent = () => {
+  // let { id } = useParams();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

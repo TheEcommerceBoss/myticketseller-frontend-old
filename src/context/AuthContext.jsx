@@ -20,17 +20,22 @@ export const AuthProvider = ({ children }) => {
               Authorization: `Bearer ${token}`,
             },
           });
-          setUserData(response.data); 
+          console.log(response)
+          setUserData(response.data);
         } catch (error) {
           console.error("Failed to fetch user:", error);
-          setIsAuthenticated(false);
-          Cookies.remove("auth_token");
-          navigate('/login'); // Redirect to login if fetch fails
-        }
+
+           if (error.response && error.response.status === 401) {
+            setIsAuthenticated(false);
+            Cookies.remove("auth_token");
+            navigate('/login');  
+          }
+         }
       };
       fetchUser();
     }
   }, [isAuthenticated, navigate]);
+
 
   const signup = async (userData) => {
     try {

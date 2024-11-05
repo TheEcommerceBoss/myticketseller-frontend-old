@@ -25,12 +25,15 @@ import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import eventImage from "../../assets/(landing)/event.png"
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import MapAutocomplete from '../../components/(maps)/Autocomplete';
+import axios from 'axios';
 
 const PaymentSettings = () => {
+  let { id } = useParams();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -112,6 +115,118 @@ const PaymentSettings = () => {
     }
   };
 
+  const submitPayment = () => {
+    if (tickets.length < 1) {
+      Swal.fire('Error', 'Please add at least one ticket before submitting.', 'error');
+      return;
+    }
+  
+    if (eventDays.length < 1) {
+      Swal.fire('Error', 'Please add at least one event day before submitting.', 'error');
+      return;
+    }
+  
+    // Check each ticket for completeness
+    for (const ticket of tickets) {
+      if (!ticket.name) {
+        Swal.fire('Error', 'Please complete the ticket name for ticket ' + (ticket.id) + '.', 'error');
+        return;
+      }
+      if (!ticket.quantity) {
+        Swal.fire('Error', `Please complete the quantity for ticket ${ticket.id}.`, 'error');
+        return;
+      }
+      // The fee is already managed in the jsonBody creation below, so no need to check here
+    }
+  
+    for (const day of eventDays) {
+      if (!day.startDate) {
+        Swal.fire('Error', 'Please complete the start date for the event day ' + (day.index) + '.', 'error');
+        return;
+      }
+      if (!day.startTime) {
+        Swal.fire('Error', 'Please complete the start time for the event day ' + (day.index) + '.', 'error');
+        return;
+      }
+      if (!day.endTime) {
+        Swal.fire('Error', 'Please complete the end time for the event day ' + (day.index) + '.', 'error');
+        return;
+      }
+  
+      // Check if the date is in the past
+      const currentDate = new Date();
+      const selectedDate = new Date(day.startDate);
+      if (selectedDate < currentDate) {
+        Swal.fire('Error', 'The start date cannot be in the past for the event day ' + (day.index) + '.', 'error');
+        return;
+      }
+  
+      // Check if start time is before end time
+      const [startHours, startMinutes] = day.startTime.split(':').map(Number);
+      const [endHours, endMinutes] = day.endTime.split(':').map(Number);
+      const startTime = new Date(selectedDate);
+      const endTime = new Date(selectedDate);
+      startTime.setHours(startHours, startMinutes);
+      endTime.setHours(endHours, endMinutes);
+  
+      if (startTime >= endTime) {
+        Swal.fire('Error', 'The start time must be before the end time for the event day ' + (day.index) + '.', 'error');
+        return;
+      }
+  
+      // Check location or virtual link and password based on event type
+      if (eventType === 'onsite') {
+        if (!day.location) {
+          Swal.fire('Error', 'Please complete the location for the event day ' + (day.index + 1) + '.', 'error');
+          return;
+        }
+      } else {
+        if (!day.virtualLink) {
+          Swal.fire('Error', 'Please provide a virtual link for the event day ' + (day.index + 1) + '.', 'error');
+          return;
+        }
+        if (!day.password) {
+          Swal.fire('Error', 'Please provide a password for the virtual event.', 'error');
+          return;
+        }
+      }
+    }
+  
+    // Construct the JSON body
+    const jsonBody = {
+      event_id: id,
+      tickets: tickets.map(ticket => ({
+        event_id: id,
+        name: ticket.name,
+        type: ticket.type,
+        price: ticket.type === "Free Ticket" ? 0 : ticket.fee, // Set fee to 0 for Free Ticket
+        currency: "NGN",  // Assuming currency is always NGN
+        quantity: ticket.quantity
+      })),
+      event_days: eventDays.map(day => ({
+        event_id: id,
+        event_type: day.eventType,
+        number_of_days: eventDays.length,
+        event_day: day.startDate, // Assuming you want the startDate for event_day
+        open_door: day.startTime,  // Assuming open_door is startTime
+        close_door: day.endTime,    // Assuming close_door is endTime
+        ...(day.eventType === 'virtual' ? {
+          event_link: day.virtualLink,
+          event_password: day.password
+        } : {
+          event_address: day.location
+        })
+      })) 
+    };
+  
+    // Log the JSON body to the console
+    console.log(JSON.stringify(jsonBody, null, 2));
+  
+    // Optionally, show a success message
+    Swal.fire('Success', 'Payment submitted successfully!', 'success');
+  };
+  
+
   const addTicket = (type) => {
     if (type === 'Guest List' && tickets.some(ticket => ticket.type === 'Guest List')) {
       Swal.fire('Error', 'You can only create one Guest List ticket!', 'error');
@@ -126,7 +241,7 @@ const PaymentSettings = () => {
       price: "",
       fetched: 0,
       inputtype: type === 'Free Ticket' ? "text" : "number",
-      fee: type === 'Free Ticket' ? "Free" : "",
+      fee: type === 'Free Ticket' ? 0 : "",
       timeSlots: [],
       isFeeDisabled: type === 'Free Ticket',
     };
@@ -352,7 +467,7 @@ const PaymentSettings = () => {
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
               <span>7</span>
             </div>
-            <h2 className="text-l font-medium">Setup your Event Locations</h2>
+            <h2 className="text-l font-medium">Setup your Event Days & Locations</h2>
           </div>
 
           <div className="space-y-6">
@@ -495,10 +610,10 @@ const PaymentSettings = () => {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row items-center justify-between text-center">
-          <Link to={'/dashboard/event/create/1'} className={`w-[12rem] bg-opacity-50 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Previous</Link>
+          <Link to={'/dashboard/event/create/' + id} className={`w-[12rem] bg-opacity-50 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Previous</Link>
 
           <div className="flex items-center gap-3 mt-2 lg:mt-0">
-            <Link to={'/dashboard/event/create/1/info/'} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</Link>
+            <button onClick={() => submitPayment()} className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Next</button>
 
           </div>
 
