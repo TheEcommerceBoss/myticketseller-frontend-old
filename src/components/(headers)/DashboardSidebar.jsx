@@ -18,6 +18,7 @@ import {
 const SideBar = ({ isOpen, toggleSidebar }) => {
   const { theme } = useTheme();
   const location = useLocation();
+  
 
   const NavItem = ({ icon, text, link, active }) => (
     <Link to={link}>
