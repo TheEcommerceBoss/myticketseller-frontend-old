@@ -5,7 +5,7 @@ import logo from '../../assets/(site_assets)/logo.png';
 import logoDark from '../../assets/(site_assets)/logo-dark.png';
 import { Link } from "react-router-dom";
 import { MapPin } from 'lucide-react';
-const HeaderMain = ({ variation, showsearch, hidemenu ,nobg}) => {
+const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
     const { theme, toggleTheme } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleMenu = () => {
@@ -43,12 +43,11 @@ const HeaderMain = ({ variation, showsearch, hidemenu ,nobg}) => {
                             {variation === 1 ?
                                 <> <Link to="#" className="text-orange-500 text-lg font-medium">Home</Link>
 
+                                    <Link to="/event/find" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Events</Link>
                                     <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>About Us</Link>
-                                    <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Services</Link>
+                                    <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Contact Us</Link>
                                     <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Pricing</Link>
-                                    <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Blog</Link>
-                                    <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Contact</Link>
-                                    <Link to="/login" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Login</Link>
+                                     <Link to="/login" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Login</Link>
                                 </>
                                 :
                                 showsearch ?
@@ -160,11 +159,10 @@ const HeaderMain = ({ variation, showsearch, hidemenu ,nobg}) => {
                 {isMenuOpen && (
                     <nav className="text-white text-2xl space-y-4">
                         <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Home</Link>
+                        <Link to="/event/find" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Events</Link>
                         <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">About Us</Link>
-                        <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Services</Link>
+                        <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Contact Us</Link>
                         <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Pricing</Link>
-                        <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Blog</Link>
-                        <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Contact</Link>
                         <Link to="/login" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Login</Link>
 
                     </nav>
