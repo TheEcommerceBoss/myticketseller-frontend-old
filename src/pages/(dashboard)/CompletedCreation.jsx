@@ -25,11 +25,55 @@ import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png"
 import Confetti from 'react-confetti';
 import eventImage from "../../assets/(landing)/event.png"
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
-
+import Cookies from "js-cookie";
+import Swal from "sweetalert2";
+import api from "../../api";
+import axios from 'axios';
 
 const CompletedCreation = () => {
+    let { id } = useParams();
+    const [eventData, setEventData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        category: "",
+        specific_type: true,
+        event_title: "",
+        event_description: "",
+        event_image: "",
+    });
+
+    console.log(formData)
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const token = Cookies.get("auth_token");
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/event_details`, {
+                    "event_id": id
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                console.log(response.data);
+
+                // Update the formData state with the fetched event details
+                if (response.data) {
+                    const { event_category, event_specific_type, event_title, event_description, event_image } = response.data.event_details;
+                   
+                    
+                }
+            } catch (error) {
+                console.error("Failed to fetch event details:", error);
+            }
+        };
+
+        fetchEvents();
+
+    }, [id]);
     const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
     const { theme, toggleTheme } = useTheme();
 
@@ -37,7 +81,7 @@ const CompletedCreation = () => {
         window.scrollTo(0, 0);
     }, []);
     const [showConfetti, setShowConfetti] = useState(true);
-    
+
 
 
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
@@ -134,37 +178,19 @@ const CompletedCreation = () => {
                                     <Check className="w-5 font-bold h-5 text-white" />
                                 </div>
                                 <div className="flex flex-col items-center justify-center ">
-                                    <h1 className="text-xl text-[#040171]">Event Has been Created successfully</h1>
+                                    <h1 className={`text-xl  ${theme != 'dark' ? 'text-[#040171]' : 'text-white'}`}>Event Has been Created successfully</h1>
                                 </div>
                             </div>
 
                             <div className="flex gap-5 items-end">
-                                <button className="px-5 py-2 text-sm bg-[#040171] text-white rounded-full hover:bg-[#040171] transition-colors">
+                                <Link to={'/dashboard/event/manage'} className="px-5 py-2 text-sm bg-[#040171] text-white rounded-full hover:bg-[#040171] transition-colors">
                                     Take me to my Dashboard
-                                </button>
+                                </Link>
 
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <p className="text-gray-600 text-xs font-medium">Event Name</p>
-                            <h2 className="text-2xl font-bold text-[#040171]">Nicki Minaj Live at Los Angeles</h2>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div>
-                                <h3 className="font-bold mb-2">5 Ticket Types</h3>
-                                <p className="text-gray-600">5 TIcket Types</p>
-                            </div>
-                            <div>
-                                <h3 className="font-bold mb-2">DATE</h3>
-                                <p className="text-gray-600">October 4 · 10pm - October 5 · 4am EDT</p>
-                            </div>
-                            <div>
-                                <h3 className="font-bold mb-2">LOCATION</h3>
-                                <p className="text-gray-600">Los Angeles, USA</p>
-                            </div>
-                        </div>
+                       
 
 
                     </div>

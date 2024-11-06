@@ -18,6 +18,7 @@ import LogoutPage from './pages/(auth)/logout';
 import CompletedCreation from './pages/(dashboard)/CompletedCreation';
 import EditEvent from './pages/(dashboard)/editEvent';
 import Settings from './pages/(dashboard)/Settings';
+import SupportPage from './pages/(dashboard)/Support';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/dashboard/event/create/:id/info" element={<ProtectedRoute><EventsInfo /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id/completed" element={<ProtectedRoute><CompletedCreation /></ProtectedRoute>} />
             <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/dashboard/support" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
 
             <Route path="/login" element={<LoginPage />} />
             <Route path="/logout" element={<LogoutPage />} />
