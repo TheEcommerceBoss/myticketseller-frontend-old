@@ -189,9 +189,23 @@ const ManageEvent = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <div className={`md:col-span-3 p-2 ${theme === "light" ? "bg-white" : "bg-[#121212] text-white"} shadow-lg rounded-lg`}>
               <div style={{ height: '100%', width: '100%' }}>
-                {loading ? (
-                  <div className="flex justify-center items-center h-96">
-                    <span>Loading...</span>
+                {loading  ? (
+                  <div className="flex justify-center items-center ">
+                    <div class="border border-gray-100 shadow rounded-md p-4 my-[5rem] max-w-5xl w-full mx-auto">
+                      <div class="animate-pulse flex space-x-4">
+                        <div class="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
+                        <div class="flex-1 space-y-6 py-1">
+                          <div class="h-[1rem] bg-slate-700 rounded"></div>
+                          <div class="space-y-3">
+                            <div class="grid grid-cols-3 gap-4">
+                              <div class="h-[1rem] bg-slate-700 rounded col-span-2"></div>
+                              <div class="h-[1rem] bg-slate-700 rounded col-span-1"></div>
+                            </div>
+                            <div class="h-[1rem] bg-slate-700 rounded"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ) : events.length === 0 ? (
                   <div className="flex justify-center items-center h-96">
