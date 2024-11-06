@@ -133,10 +133,10 @@ const CreateEvent = ({ manage }) => {
       Swal.fire({
         icon: 'success',
         title: 'Event Created',
-        text: 'Your event has been created successfully.',
+        text: manage ? 'Your event has been updated successfully.' : 'Your event has been created successfully.',
       });
-
-      navigate('/dashboard/event/create/' + response.data.event_id + '/payments/ ');
+      console.log(response.data)
+      // navigate('/dashboard/event/create/' + response.data.event_id + '/payments/ ');
 
     } catch (error) {
       if (error.response) {
