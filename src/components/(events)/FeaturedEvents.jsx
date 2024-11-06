@@ -296,7 +296,7 @@ function FeaturedEvents({ variation }) {
                                 className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
                             />
                             <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <Search size={20} className="text-gray-400" />
+                                <Search size={20} className="text-gray-600" />
                             </div>
                         </div>
                     </div>
@@ -314,7 +314,7 @@ function FeaturedEvents({ variation }) {
                                 className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
                             />
                             <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <Search size={20} className="text-gray-400" />
+                                <Search size={20} className="text-gray-600" />
                             </div>
                         </div>
                         <Select
@@ -405,7 +405,7 @@ function FeaturedEvents({ variation }) {
                                                             {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                         </Link>
 
-                                                        <div className="flex items-center font-semibold text-xs text-gray-400 mt-1 gap-1">
+                                                        <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
                                                             <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
                                                             <span>{card.location}</span>
                                                         </div>

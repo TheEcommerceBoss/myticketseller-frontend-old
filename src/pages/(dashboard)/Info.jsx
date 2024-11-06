@@ -255,7 +255,7 @@ const EventsInfo = () => {
 
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search"
@@ -425,7 +425,7 @@ const EventsInfo = () => {
                   type="text"
                   value={guestNames[index] || ''}
                   onChange={(e) => handleGuestNameChange(index, e.target.value)}
-                  className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                   placeholder="Guest name"
                 />
               ))}
@@ -514,7 +514,7 @@ const EventsInfo = () => {
                   type="text"
                   value={eventPassword}
                   onChange={(e) => setEventPassword(e.target.value)}
-                  className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                   placeholder="Enter Event Password"
                 />
               </div>
