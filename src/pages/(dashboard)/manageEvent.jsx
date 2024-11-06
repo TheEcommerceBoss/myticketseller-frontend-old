@@ -16,8 +16,9 @@ const ManageEvent = () => {
   }, []);
 
   const { theme, toggleTheme } = useTheme();
-  const [isOpen, setIsOpen] = React.useState(window.innerWidth >= 1024);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true); // Track loading state
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -31,6 +32,8 @@ const ManageEvent = () => {
         setEvents(response.data.events);
       } catch (error) {
         console.error("Failed to fetch events:", error);
+      } finally {
+        setLoading(false); // Stop loading after fetch
       }
     };
     fetchEvents();
@@ -44,6 +47,7 @@ const ManageEvent = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   const deleteEvent = async (eventId) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -74,7 +78,6 @@ const ManageEvent = () => {
       }
     });
   };
-
 
   const toggleEventStatus = async (eventId, currentStatus) => {
     try {
@@ -133,7 +136,7 @@ const ManageEvent = () => {
       width: 150,
       renderCell: (params) => (
         <div className="flex gap-2 mt-2">
-          <Link to={`/dashboard/event/manage/${params.value}`} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+          <Link to={`/dashboard/event/create/${params.value}`} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
             <Pencil size={16} />
           </Link>
           <button
@@ -186,25 +189,35 @@ const ManageEvent = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <div className={`md:col-span-3 p-2 ${theme === "light" ? "bg-white" : "bg-[#121212] text-white"} shadow-lg rounded-lg`}>
               <div style={{ height: '100%', width: '100%' }}>
-                <DataGrid
-                  rows={eventsWithIndex}
-                  columns={columns}
-                  pageSize={25}
-                  rowsPerPageOptions={[5]}
-                  checkboxSelection={false}
-                  disableSelectionOnClick
-                  sx={{
-                    '& .MuiDataGrid-columnHeaders': {
-                      backgroundColor: theme === 'dark' ? 'black' : '#f5f5f5',
-                    },
-                    '& .MuiDataGrid-cell': {
-                      color: theme === 'dark' ? 'white' : 'black',
-                    },
-                    '& .MuiDataGrid-footerContainer': {
-                      backgroundColor: 'white',
-                    },
-                  }}
-                />
+                {loading ? (
+                  <div className="flex justify-center items-center h-96">
+                    <span>Loading...</span>
+                  </div>
+                ) : events.length === 0 ? (
+                  <div className="flex justify-center items-center h-96">
+                    <span>No events found</span>
+                  </div>
+                ) : (
+                  <DataGrid
+                    rows={eventsWithIndex}
+                    columns={columns}
+                    pageSize={25}
+                    rowsPerPageOptions={[5]}
+                    checkboxSelection={false}
+                    disableSelectionOnClick
+                    sx={{
+                      '& .MuiDataGrid-columnHeaders': {
+                        backgroundColor: theme === 'dark' ? 'black' : '#f5f5f5',
+                      },
+                      '& .MuiDataGrid-cell': {
+                        color: theme === 'dark' ? 'white' : 'black',
+                      },
+                      '& .MuiDataGrid-footerContainer': {
+                        backgroundColor: 'white',
+                      },
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
