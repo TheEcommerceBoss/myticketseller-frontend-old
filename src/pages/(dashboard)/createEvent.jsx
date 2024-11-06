@@ -35,6 +35,7 @@ const CreateEvent = ({ manage }) => {
   const [loading, setLoading] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const [formData, setFormData] = useState({
+    event_id: "",
     category: "",
     specific_type: true,
     event_title: "",
@@ -67,6 +68,7 @@ const CreateEvent = ({ manage }) => {
             event_title: event_title || "",
             event_description: event_description || "",
             event_image: event_image || "",
+            event_id: id,
           });
         }
       } catch (error) {
@@ -122,7 +124,7 @@ const CreateEvent = ({ manage }) => {
 
     try {
       const token = Cookies.get("auth_token");
-      const response = await api.post("/create-event", formData, {
+      const response = await api.post(manage ? "/modify_event" : "/create-event", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
