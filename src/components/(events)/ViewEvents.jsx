@@ -73,6 +73,8 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
             {isModalOpen && (
                 <TicketModal
                     eventId={12}
+                    eventDetails={eventDetails}
+                    ticketDetails={ticketDetails}
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                 />
@@ -465,7 +467,8 @@ function ViewEventComponent({ variation }) {
                         ))}
                     </div>
                 </div>
-                <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventTitle="Nicki Minaj Live at Los Angeles" eventDateTime="October 4 · 10pm - October 5 · 4am EDT" />
+                <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id}  eventDetails={eventDetails}
+                    ticketDetails={ticketDetails} />
             </div>
         </section>
     );

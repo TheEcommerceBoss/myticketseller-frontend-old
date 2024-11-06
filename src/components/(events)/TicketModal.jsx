@@ -1,12 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, ArrowLeft, Check, Instagram, Facebook, Twitter, CheckCircle } from 'lucide-react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) => {
-    const [ticketCounts, setTicketCounts] = useState({
-        regular: 2,
-        vip: 0
-    });
+const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails, eventDetails, eventId }) => {
+    const [ticketCounts, setTicketCounts] = useState({});
+
+    useEffect(() => {
+        // Initialize ticket counts with 0 for each ticket type
+        const initialCounts = {};
+        ticketDetails.tickets.forEach(ticket => {
+            initialCounts[ticket.type] = 0;
+        });
+        setTicketCounts(initialCounts);
+    }, [ticketDetails]);
+    const handleTicketChange = (ticketName, operation) => {
+        setTicketCounts(prevCounts => {
+            const currentCount = prevCounts[ticketName] || 0;
+            const newCount = operation === 'add' ? currentCount + 1 : Math.max(currentCount - 1, 0); // Prevents negative counts
+            return {
+                ...prevCounts,
+                [ticketName]: newCount
+            };
+        });
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.toLocaleString("default", { month: "long" });
+        const year = date.getFullYear();
+
+        // Add the correct suffix for the day
+        const daySuffix = (day) => {
+            if (day >= 11 && day <= 13) return `${day}th`;
+            switch (day % 10) {
+                case 1:
+                    return `${day}st`;
+                case 2:
+                    return `${day}nd`;
+                case 3:
+                    return `${day}rd`;
+                default:
+                    return `${day}th`;
+            }
+        };
+
+        return `${daySuffix(day)} ${month}, ${year}`;
+    };
+
+
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -14,6 +58,23 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
     });
     const [showCheckout, setShowCheckout] = useState(false);
     const [showSummary, setShowSummary] = useState(false);
+    const [tickets, settickets] = useState([]);
+
+    useEffect(() => {
+        const fetchEventDetails = () => {
+            if (ticketDetails && ticketDetails.tickets) {
+                settickets(ticketDetails.tickets);
+            } else {
+                console.error(eventTitle)
+                console.error('ticketDetails is not defined or does not contain tickets');
+            }
+        };
+
+        fetchEventDetails();
+    }, [ticketDetails]);
+
+    console.log(tickets);
+
     const [marketingConsent, setMarketingConsent] = useState({
         organizer: false,
         platform: false
@@ -24,36 +85,41 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
 
     if (!isOpen) return null;
 
-    const handleTicketChange = (type, operation) => {
-        setTicketCounts(prev => ({
-            ...prev,
-            [type]: Math.max(0, prev[type] + (operation === 'add' ? 1 : -1))
-        }));
-    };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+        calculateTotal();
     };
-
     const calculateTotal = () => {
-        const ticketPrice = 10000;
-        const subtotal = (ticketCounts.regular + ticketCounts.vip) * ticketPrice;
-        const transactionFee = 350;
+        let subtotal = 0;
+        let totalTickets = 0; // Initialize ticket counter
+
+        tickets.forEach(ticket => {
+            const ticketCount = ticketCounts[ticket.ticket_name] || 0; // Default to 0 if not set
+            subtotal += ticketCount * ticket.price; // Calculate subtotal
+            totalTickets += ticketCount; // Count total number of tickets
+        });
+
+        const transactionFee = 300; // Flat transaction fee
         return {
             subtotal,
             transactionFee,
-            total: subtotal + transactionFee
+            total: subtotal + transactionFee,
+            totalTickets // Return total ticket count
         };
     };
 
     const handleContinue = (e) => {
         e.preventDefault();
-        setShowSummary(true);
-        setShowCheckout(true);
+        if (calculateTotal().totalTickets > 0) {
+            setShowSummary(true);
+            setShowCheckout(true);
+        } else {
+            alert('Atleast One Ticket is required')
+        }
     };
 
     const handleCheckout = async () => {
@@ -132,7 +198,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
 
     const OrderConfirmation = () => (
         <div className="w-full mx-auto p-6 space-y-8">
-             <div className="flex justify-between border-b pb-6 items-center">
+            <div className="flex justify-between border-b pb-6 items-center">
                 <div className="flex  flex-row items-center gap-3">
                     <div className="w-8 h-8 bg-green-500 rounded-full flex flex-col items-center justify-center">
                         <Check className="w-5 font-bold h-5 text-white" />
@@ -142,10 +208,10 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                     </div>
                 </div>
 
-                <div className="flex gap-5 items-end">
-                    <button className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors">
+                <div className="flex justify-end flex-wrap-reverse gap-5 items-end">
+                    <Link to={'/dashboard/ticket/all'} className="px-5  hidden md:flex py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors">
                         Take me to my Tickets
-                    </button>
+                    </Link>
                     <button
                         onClick={onClose}
                         className="p-2 bg-black bg-opacity-50 rounded-full"
@@ -155,27 +221,33 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                 </div>
             </div>
 
-             <div className="space-y-2">
+            <div className="space-y-2">
                 <p className="text-gray-600 text-xs font-medium">YOU ARE GOING TO</p>
-                <h2 className="text-2xl font-bold text-[#040171]">Nicki Minaj Live at Los Angeles</h2>
+                {/* {console.log(ticketDetails.days[0].event_address)} */}
+                <h2 className="text-2xl font-bold text-[#040171]">{eventDetails.event_title}</h2>
             </div>
 
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 className="font-bold text-black  mb-2">{ticketCounts.regular + ticketCounts.vip} TICKET(S) SENT TO</h3>
+                    <h3 className="font-bold text-black  mb-2">{calculateTotal().totalTickets} TICKET(S) SENT TO</h3>
                     <p className="text-gray-600">{formData.email}</p>
                 </div>
                 <div>
                     <h3 className="font-bold text-black  mb-2">DATE</h3>
-                    <p className="text-gray-600">October 4 · 10pm - October 5 · 4am EDT</p>
+                    <p className="text-gray-600">{formatDate(ticketDetails.days[0].start_day)}</p>
                 </div>
                 <div>
                     <h3 className="font-bold text-black  mb-2">LOCATION</h3>
-                    <p className="text-gray-600">Los Angeles, USA</p>
+                    <p className="text-gray-600">{ticketDetails.days[0].event_address}</p>
                 </div>
             </div>
+            <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">
+                    <Link to={'/dashboard/ticket/all'} className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors">
+                        Take me to my Tickets
+                    </Link>
+                 
+                </div>
 
-           
         </div>
     );
 
@@ -195,7 +267,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                 <h3 className="text-xl font-normal  lg:pt-[5rem] mb-4">Ticket Order Summary</h3>
                 <div className="space-y-4">
                     <div className="flex justify-between">
-                        <span>Ticket (x{ticketCounts.regular + ticketCounts.vip})</span>
+                        <span>Ticket (x{calculateTotal().totalTickets})</span>
                         <span>NGN {calculateTotal().subtotal.toLocaleString()}.00</span>
                     </div>
                     <div className="flex justify-between">
@@ -244,10 +316,17 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
 
                                         </div>
 
-                                        <div className='flex flex-col w-full justify-center items-center mb-6 pb-6 border-b '>
+                                        <div className='flex flex-col w-full justify-center items-center relative mb-6 pb-6 border-b '>
                                             <h2 className="text-2xl font-bold text-[#040171]">Checkout</h2>
                                             <p className="text-gray-600">Login for Faster Experience</p>
+                                            <button
+                                                onClick={onClose}
+                                                className="p-2 bg-black bg-opacity-50 absolute right-[.2rem] rounded-full"
+                                                >
+                                                <X className="w-6 h-6 text-white font-bold" />
+                                            </button>
                                         </div>
+
                                     </>
                             }
                             {!showCheckout ? (
@@ -257,58 +336,37 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                         <h3 className="text-xl font-semibold mb-4">Select Ticket</h3>
 
                                         {/* Regular Ticket */}
-                                        <div className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <p className="text-lg font-bold text-[#040171]">NGN 10,000</p>
-                                                    <p className="text-gray-600">REGULAR</p>
-                                                </div>
-                                                <div className="flex items-center gap-4">
-                                                    <button
-                                                        onClick={() => handleTicketChange('regular', 'subtract')}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <span className="w-8 text-center">{ticketCounts.regular}</span>
-                                                    <button
-                                                        onClick={() => handleTicketChange('regular', 'add')}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
-                                                    >
-                                                        +
-                                                    </button>
+                                        {tickets.map((ticket, index) => (
+                                            <div key={index} className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4">
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <p className="text-lg font-bold text-[#040171]">{ticket.currency} {ticket.price}</p>
+                                                        <p className="text-gray-600">{ticket.ticket_name} ({ticket.ticket_type})</p>
+                                                    </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <button
+                                                            onClick={() => handleTicketChange(ticket.ticket_name, 'subtract')}
+                                                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <span className="w-8 text-center">{ticketCounts[ticket.ticket_name] || 0}</span>
+                                                        <button
+                                                            onClick={() => handleTicketChange(ticket.ticket_name, 'add')}
+                                                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        ))}
 
-                                        {/* VIP Ticket */}
-                                        <div className="bg-white shadow-sm border rounded-lg text-black p-4">
-                                            <div className="flex justify-between items-center">
-                                                <div>
-                                                    <p className="text-lg font-bold text-[#040171]">NGN 10,000</p>
-                                                    <p className="text-gray-600">VIP</p>
-                                                </div>
-                                                <div className="flex items-center gap-4">
-                                                    <button
-                                                        onClick={() => handleTicketChange('vip', 'subtract')}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <span className="w-8 text-center">{ticketCounts.vip}</span>
-                                                    <button
-                                                        onClick={() => handleTicketChange('vip', 'add')}
-                                                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+
+                                    </div >
 
                                     {/* Attendee Information Form */}
-                                    <form onSubmit={handleContinue}>
+                                    < form onSubmit={handleContinue} >
                                         <h3 className="text-xl font-semibold mb-4">Attendee Information</h3>
 
                                         <div className="space-y-4">

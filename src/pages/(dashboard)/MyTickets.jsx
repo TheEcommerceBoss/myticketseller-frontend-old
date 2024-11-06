@@ -29,7 +29,7 @@ import Swal from "sweetalert2";
 import api from "../../api";
 import { useAuth } from '../../context/AuthContext';
 
-const ScannerPage = () => {
+const MyTicketsPage = () => {
   const { userData } = useAuth();
   const [formData, setFormData] = useState({
     email: userData && userData.user.email,
@@ -130,8 +130,7 @@ const ScannerPage = () => {
         </div>
 
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-          
-        <h5>Ticket Scanner</h5>
+            <h5>My Tickets</h5>
           
         </div>
  
@@ -140,4 +139,4 @@ const ScannerPage = () => {
   );
 };
 
-export default ScannerPage;
+export default MyTicketsPage;

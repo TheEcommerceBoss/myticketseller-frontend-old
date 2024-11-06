@@ -20,6 +20,7 @@ import EditEvent from './pages/(dashboard)/editEvent';
 import Settings from './pages/(dashboard)/Settings';
 import SupportPage from './pages/(dashboard)/Support';
 import ScannerPage from './pages/(dashboard)/Scanner';
+import MyTicketsPage from './pages/(dashboard)/MyTickets';
  
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
             <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/dashboard/support" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
             <Route path="/dashboard/ticket/scanner" element={<ProtectedRoute><ScannerPage /></ProtectedRoute>} />
+            <Route path="/dashboard/ticket/all" element={<ProtectedRoute><MyTicketsPage /></ProtectedRoute>} />
  
             <Route path="/login" element={<LoginPage />} />
             <Route path="/logout" element={<LogoutPage />} />

@@ -33,6 +33,7 @@ const CreateEvent = ({ manage }) => {
   let { id } = useParams();
   const [eventData, setEventData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fetchingdataloading, setfetchingdataLoading] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const [formData, setFormData] = useState({
     event_id: "",
@@ -44,8 +45,10 @@ const CreateEvent = ({ manage }) => {
   });
 
   console.log(formData)
+
   useEffect(() => {
     const fetchEvents = async () => {
+      setfetchingdataLoading(true)
       try {
         const token = Cookies.get("auth_token");
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/event_details`, {
@@ -73,6 +76,8 @@ const CreateEvent = ({ manage }) => {
         }
       } catch (error) {
         console.error("Failed to fetch event details:", error);
+      } finally {
+        setfetchingdataLoading(false)
       }
     };
 
@@ -82,7 +87,7 @@ const CreateEvent = ({ manage }) => {
 
   }, [manage, id]);
 
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -311,7 +316,15 @@ const CreateEvent = ({ manage }) => {
           ))}
         </div>
 
-
+         {fetchingdataloading ? (
+          <div className={`md:col-span-3 p-2 ${theme === "light" ? "bg-white" : "bg-[#121212] text-white"} shadow-lg rounded-lg`}>
+            <div style={{ height: '100%', width: '100%' }}>
+              <div className="flex justify-center items-center h-96">
+                <span>Loading...</span>
+              </div>
+            </div>
+          </div>
+        ) : <>
         <div className={` ${theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"} rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}>
           <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
             <div className="flex items-center mb-[2rem] mt-2">
@@ -475,12 +488,13 @@ const CreateEvent = ({ manage }) => {
         <div className="flex flex-col items-end text-center">
           <button
             onClick={() => CreateEventHandler()}
-            disabled={loading}  
+            disabled={loading}
             className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-800'}`}
           >
             {loading ? 'Loading...' : 'Next'}
           </button>
         </div>
+        </>}
       </div>
 
     </div>
