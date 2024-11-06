@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
 import { ChevronDown, Search, Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Heart, Upload } from "lucide-react";
 import Select from "react-select";
@@ -14,17 +14,42 @@ import map from "../../assets/(utils)/map.png"
 import { Share2 } from 'lucide-react';
 import TicketModal from "./TicketModal";
 import { useParams } from "react-router-dom";
-// Header Component
+import axios from 'axios';
 
-const Header = ({ theme, id }) => {
+const Header = ({ theme, eventDetails, ticketDetails, id }) => {
+    console.log(ticketDetails)
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.toLocaleString("default", { month: "long" });
+        const year = date.getFullYear();
+
+        // Add the correct suffix for the day
+        const daySuffix = (day) => {
+            if (day >= 11 && day <= 13) return `${day}th`;
+            switch (day % 10) {
+                case 1:
+                    return `${day}st`;
+                case 2:
+                    return `${day}nd`;
+                case 3:
+                    return `${day}rd`;
+                default:
+                    return `${day}th`;
+            }
+        };
+
+        return `${daySuffix(day)} ${month}, ${year}`;
+    };
 
     return (
 
         <div className="mb-8">
             <div className="flex justify-between items-center">
                 <div className="text-gray-600 flex flex-col items-center">
-                    <p>Friday, September 28</p>
+                    <p>{ticketDetails.days[0] && formatDate(ticketDetails.days[0].start_day)}</p>
                 </div>
                 <div className="">
                     <button className="p-2 hover:bg-gray-100 rounded-full">
@@ -36,7 +61,7 @@ const Header = ({ theme, id }) => {
             </div>
             <div className="flex flex-col md:flex-row mt-4 justify-between items-start">
                 <h1 className={`text-2xl md:text-3xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                    Nicki Minaj Concert Live at<br />Los Angeles
+                    {eventDetails.event_title}
                 </h1>
                 <div className="flex gap-2">
                     <button onClick={() => setIsModalOpen(true)} className="bg-orange-500 text-white px-4 py-2 mt-2 md:mt-0 rounded-md">
@@ -93,19 +118,48 @@ const HostInfo = ({ theme }) => (
 );
 
 // DateTime Component
-const DateTime = ({ theme }) => (
-    <div className="mb-8">
-        <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Date and Time</h2>
-        <div className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-600' : 'text-[#040171]'}`}>
-            <Calendar className="w-5 h-5" />
-            <span>October 4 · 10pm - October 5 · 4am EDT</span>
+const DateTime = ({ theme, eventDetails, ticketDetails, day, id }) => {
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.toLocaleString("default", { month: "long" });
+        const year = date.getFullYear();
+
+        // Add the correct suffix for the day
+        const daySuffix = (day) => {
+            if (day >= 11 && day <= 13) return `${day}th`;
+            switch (day % 10) {
+                case 1:
+                    return `${day}st`;
+                case 2:
+                    return `${day}nd`;
+                case 3:
+                    return `${day}rd`;
+                default:
+                    return `${day}th`;
+            }
+        };
+
+        return `${daySuffix(day)} ${month}, ${year}`;
+    };
+
+    console.log(day)
+
+    return (
+        <div className="mb-8">
+            <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Date and Time</h2>
+            <div className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-600' : 'text-[#040171]'}`}>
+                <Calendar className="w-5 h-5" />
+                <span>{day && formatDate(day.start_day)} · {day && (day.open_door_time)} - {day && (day.close_door_time)}</span>
+            </div>
         </div>
-    </div>
-);
+    )
+}
 
 // Location Component
-const Location = ({ theme }) => {
-    const [showMap, setShowMap] = useState(true);
+const Location = ({ theme, ticketDetails, day,index }) => {
+    const [showMap, setShowMap] = useState(index == 0);
 
     return (
         <div className="mb-8">
@@ -113,8 +167,8 @@ const Location = ({ theme }) => {
             <div className={`flex items-start gap-2 ${theme === 'dark' ? 'text-gray-600' : 'text-[#040171]'}`}>
                 <MapPin className="w-5 h-5 mt-1" />
                 <div>
-                    <div className="font-medium">POLYGON BROOKLYN</div>
-                    <div>299 Vandervoort Avenue Brooklyn, NY 11211</div>
+                    <div className="font-medium">  {day && (day.event_address)}</div>
+
                 </div>
             </div>
             <button
@@ -206,30 +260,98 @@ const Tags = ({ theme }) => {
 }
 
 function ViewEventComponent({ variation }) {
+
     const { theme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const {id} = useParams();
+    const { id } = useParams();
+    const [eventDetails, setEventDetails] = useState({
+        event_category: '',
+        event_specific_type: true,
+        event_title: '',
+        event_description: '',
+        event_image: '',
+        event_id: '',
+        days: [],
+        tickets: [],
+    });
+
+    const [ticketDetails, setTicketDetails] = useState({
+        event_category: '',
+        event_specific_type: true,
+        event_title: '',
+        event_description: '',
+        event_image: '',
+        event_id: '',
+        days: [],
+        tickets: [],
+    });
+
+    console.log(eventDetails.days)
+
+    useEffect(() => {
+        const fetchEventDetails = async () => {
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/event_details`, {
+                    event_id: id,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.data) {
+                    const { event_category, event_specific_type, event_title, event_description, event_image } = response.data.event_details;
+                    setEventDetails({
+                        event_category,
+                        event_specific_type,
+                        event_title,
+                        event_description,
+                        event_image,
+                        event_id: id,
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to fetch event details:', error);
+            }
+        };
+
+        fetchEventDetails();
+    }, [id]);
+
+
+    useEffect(() => {
+        const fetchTicketEventDetails = async () => {
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/get-event-details`, {
+                    event_id: id,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.data) {
+                    console.log(response.data)
+                    setTicketDetails({
+                        days: response.data.event_days,
+                        tickets: response.data.tickets,
+                    });
+
+                }
+            } catch (error) {
+                console.error('Failed to fetch event details:', error);
+            }
+        };
+
+        fetchTicketEventDetails();
+    }, [id]);
+
     console.log(id);
-  
+
 
 
     const cards = [
-        {
-            id: 1,
-            title: "Nicki Minaj Live at Los Angeles",
-            date: "24 Jan 2024",
-            location: "Lagos, Nigeria",
-            description: "This is a description for event 1, It will show some info about this event.",
-            image: eventImage,
-        },
-        {
-            id: 2,
-            title: "        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorum pariatur repellat quaerat eius, ratione accusamus at officia voluptatibus, numquam error eligendi est iusto ab, saepe dignissimos quam dolore. Voluptas amet corporis, ut rem suscipit cumque dolore commodi nemo nesciunt adipisci architecto aliquid maiores, quam non optio, fuga consequatur quo laboriosam?",
-            date: "24 Jan 2024",
-            location: "Texas, USA",
-            description: "This is a description for event 2, It will show some info about this event.",
-            image: event2Image,
-        },
+
     ];
 
 
@@ -237,30 +359,40 @@ function ViewEventComponent({ variation }) {
         <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#111]' : 'bg-gray-100'}`}>
 
             <div className="flex flex-col  items-center p-5">
-                <img src={event2Image} className="w-full  lg:w-4/5 mb-5 rounded-[2rem]" alt="" />
+                {eventDetails.event_image && <img src={eventDetails.event_image} className="w-full h-[30rem] object-cover lg:w-4/5 mb-5 rounded-[2rem]" alt="" />}
             </div>
             <div className="max-w-7xl mx-auto p-6">
-                <Header theme={theme} id={1} />
-                <HostInfo theme={theme} />
-                <DateTime theme={theme} />
-                <Location theme={theme} />
+                <Header theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} id={1} />
+                <HostInfo theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} />
+                <div className="mb-5">
+                    <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
+                    <p className={`${theme === 'dark' ? 'text-gray-600' : 'text-gray-600'}`}>
+                        {eventDetails.event_description}
+                    </p>
+                </div>
 
+                {ticketDetails.days.map((day, index) => (
+                    <>
+
+                        <div className={`flex items-center my-6 pb-2 `}>
+
+                            <span className={`text-l mx-4 font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Day {index + 1}</span>
+                            <div className="flex-1 border-t border-gray-300"></div>
+                        </div>
+
+                        <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                        <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                    </>
+                ))
+                }
                 <div className="mb-8">
                     <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
                     <p className={`${theme === 'dark' ? 'text-gray-600' : 'text-gray-600'}`}>No Refund</p>
                 </div>
 
-                <div className="mb-8">
-                    <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
-                    <p className={`${theme === 'dark' ? 'text-gray-600' : 'text-gray-600'}`}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
-                </div>
 
-                <FAQ theme={theme} />
+
+                {/* <FAQ theme={theme} /> */}
 
                 <div>
                     <Tags theme={theme} />
@@ -300,8 +432,8 @@ function ViewEventComponent({ variation }) {
 
 
 
-                                                    <Link   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
- to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                                        to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
                                                         {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                     </Link>
 
@@ -333,7 +465,7 @@ function ViewEventComponent({ variation }) {
                         ))}
                     </div>
                 </div>
-                    <TicketModal  isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventTitle="Nicki Minaj Live at Los Angeles" eventDateTime="October 4 · 10pm - October 5 · 4am EDT" />
+                <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventTitle="Nicki Minaj Live at Los Angeles" eventDateTime="October 4 · 10pm - October 5 · 4am EDT" />
             </div>
         </section>
     );

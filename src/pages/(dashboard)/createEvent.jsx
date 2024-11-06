@@ -81,6 +81,8 @@ const CreateEvent = ({ manage }) => {
     }
 
   }, [manage, id]);
+
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

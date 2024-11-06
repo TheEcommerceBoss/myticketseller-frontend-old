@@ -79,7 +79,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
 
     const PaymentOptions = () => (
         <div className="grid grid-cols-2 gap-4">
-            <label className="relative border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
+            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-50">
                 <input
                     type="radio"
                     name="payment"
@@ -95,7 +95,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                     <span className="font-medium">Card Payment</span>
                 </div>
             </label>
-            <label className="relative border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
+            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-50">
                 <input
                     type="radio"
                     name="payment"
@@ -111,7 +111,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                     <span className="font-medium">Bank Transfer</span>
                 </div>
             </label>
-            <label className="relative border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
+            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-50">
                 <input
                     type="radio"
                     name="payment"
@@ -162,15 +162,15 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
 
              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <h3 className="font-bold mb-2">{ticketCounts.regular + ticketCounts.vip} TICKET(S) SENT TO</h3>
+                    <h3 className="font-bold text-black  mb-2">{ticketCounts.regular + ticketCounts.vip} TICKET(S) SENT TO</h3>
                     <p className="text-gray-600">{formData.email}</p>
                 </div>
                 <div>
-                    <h3 className="font-bold mb-2">DATE</h3>
+                    <h3 className="font-bold text-black  mb-2">DATE</h3>
                     <p className="text-gray-600">October 4 · 10pm - October 5 · 4am EDT</p>
                 </div>
                 <div>
-                    <h3 className="font-bold mb-2">LOCATION</h3>
+                    <h3 className="font-bold text-black  mb-2">LOCATION</h3>
                     <p className="text-gray-600">Los Angeles, USA</p>
                 </div>
             </div>
@@ -257,7 +257,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                         <h3 className="text-xl font-semibold mb-4">Select Ticket</h3>
 
                                         {/* Regular Ticket */}
-                                        <div className="bg-white shadow-sm border rounded-lg p-4 mb-4">
+                                        <div className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4">
                                             <div className="flex justify-between items-center">
                                                 <div>
                                                     <p className="text-lg font-bold text-[#040171]">NGN 10,000</p>
@@ -282,7 +282,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                         </div>
 
                                         {/* VIP Ticket */}
-                                        <div className="bg-white shadow-sm border rounded-lg p-4">
+                                        <div className="bg-white shadow-sm border rounded-lg text-black p-4">
                                             <div className="flex justify-between items-center">
                                                 <div>
                                                     <p className="text-lg font-bold text-[#040171]">NGN 10,000</p>
@@ -313,40 +313,40 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
 
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block mb-2">Full Name</label>
+                                                <label className="block text-black  mb-2">Full Name</label>
                                                 <input
                                                     type="text"
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter Full Name"
-                                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full p-3 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block mb-2">Email Address</label>
+                                                <label className="block text-black  mb-2">Email Address</label>
                                                 <input
                                                     type="email"
                                                     name="email"
                                                     value={formData.email}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter Email Address"
-                                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full p-3 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block mb-2">Phone Number</label>
+                                                <label className="block text-black  mb-2">Phone Number</label>
                                                 <input
                                                     type="tel"
                                                     name="phone"
                                                     value={formData.phone}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter Phone Number"
-                                                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full p-3 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     required
                                                 />
                                             </div>
@@ -369,7 +369,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
 
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block mb-2">Full Name</label>
+                                                <label className="block text-black  mb-2">Full Name</label>
                                                 <input
                                                     type="text"
                                                     name="name"
@@ -377,13 +377,13 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                                     value={formData.name}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter Full Name"
-                                                    className="w-full p-3 border bg-gray-100 opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block mb-2">Email Address</label>
+                                                <label className="block text-black  mb-2">Email Address</label>
                                                 <input
                                                     type="email"
                                                     name="email"
@@ -391,13 +391,13 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                                     value={formData.email}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter Email Address"
-                                                    className="w-full p-3 border bg-gray-100 opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block mb-2">Phone Number</label>
+                                                <label className="block text-black  mb-2">Phone Number</label>
                                                 <input
                                                     type="tel"
                                                     name="phone"
@@ -405,7 +405,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, eventId }) =>
                                                     value={formData.phone}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter Phone Number"
-                                                    className="w-full p-3 border bg-gray-100 opacity-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                     required
                                                 />
                                             </div>

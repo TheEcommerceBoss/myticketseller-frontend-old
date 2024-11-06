@@ -7,6 +7,7 @@ import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Cookies from "js-cookie";
 import api from "../../api";
+import Swal from "sweetalert2";
 import { Link } from 'react-router-dom';
 
 const ManageEvent = () => {
@@ -43,24 +44,56 @@ const ManageEvent = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
   const deleteEvent = async (eventId) => {
-    try {
-      await api.post("/delete_event", { event_id: eventId });
-      setEvents(events.filter(event => event.event_id !== eventId));
-    } catch (error) {
-      console.error("Failed to delete event:", error);
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await api.post("/delete_event", { event_id: eventId });
+          setEvents(events.filter(event => event.event_id !== eventId));
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'The event has been deleted.',
+          });
+        } catch (error) {
+          console.error("Failed to delete event:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to delete event.',
+          });
+        }
+      }
+    });
   };
+
 
   const toggleEventStatus = async (eventId, currentStatus) => {
     try {
       await api.post(`/toggle-status/${currentStatus === 0 ? 1 : 0}`, { event_id: eventId });
-      setEvents(events.map(event => 
+      setEvents(events.map(event =>
         event.event_id === eventId ? { ...event, status: currentStatus === 0 ? 1 : 0 } : event
       ));
+      Swal.fire({
+        icon: 'success',
+        title: 'Updated',
+        text: `The event status has been changed to ${currentStatus === 0 ? 'Live' : 'Draft'}.`,
+      });
     } catch (error) {
       console.error("Failed to toggle event status:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to update event status.',
+      });
     }
   };
 
