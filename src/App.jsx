@@ -19,6 +19,7 @@ import CompletedCreation from './pages/(dashboard)/CompletedCreation';
 import EditEvent from './pages/(dashboard)/editEvent';
 import Settings from './pages/(dashboard)/Settings';
 import SupportPage from './pages/(dashboard)/Support';
+import ScannerPage from './pages/(dashboard)/Scanner';
  
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="/dashboard/event/create/:id/completed" element={<ProtectedRoute><CompletedCreation /></ProtectedRoute>} />
             <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/dashboard/support" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
+            <Route path="/dashboard/ticket/scanner" element={<ProtectedRoute><ScannerPage /></ProtectedRoute>} />
  
             <Route path="/login" element={<LoginPage />} />
             <Route path="/logout" element={<LogoutPage />} />
