@@ -191,7 +191,7 @@ const ManageEvent = () => {
               <div style={{ height: '100%', width: '100%' }}>
                 {loading  ? (
                   <div className="flex justify-center items-center ">
-                    <div class="border border-gray-100 shadow rounded-md p-4 my-[5rem] max-w-5xl w-full mx-auto">
+                    <div class="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
                       <div class="animate-pulse flex space-x-4">
                         <div class="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
                         <div class="flex-1 space-y-6 py-1">
