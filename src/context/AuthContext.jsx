@@ -25,12 +25,10 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
           console.error("Failed to fetch user:", error);
 
-           if (error.response && error.response.status === 401) {
-            setIsAuthenticated(false);
-            Cookies.remove("auth_token");
-            navigate('/login');  
-          }
-         }
+          setIsAuthenticated(false);
+          Cookies.remove("auth_token");
+          navigate('/login');
+        }
       };
       fetchUser();
     }

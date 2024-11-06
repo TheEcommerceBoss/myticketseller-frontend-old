@@ -12,7 +12,8 @@ import {
   Settings,
   HelpCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ScanTextIcon
 } from 'lucide-react';
 
 const SideBar = ({ isOpen, toggleSidebar }) => {
@@ -100,17 +101,17 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
             active={location.pathname === '/dashboard/event/manage'}
           />
           <NavItem
-            icon={<TicketCheck size={24} />}
-            link="/dashboard/ticket/management"
-            text="Ticket Management"
-            active={location.pathname === '/dashboard/ticket/management'}
+            icon={<ScanTextIcon size={24} />}
+            link="/dashboard/ticket/scanner"
+            text="Ticket Scanner"
+            active={location.pathname === '/dashboard/ticket/scanner'}
           />
-          <NavItem
+          {/* <NavItem
             icon={<Megaphone size={24} />}
             link="/dashboard/event/promotion"
             text="Event Promotion Tools"
             active={location.pathname === '/dashboard/event/promotion'}
-          />
+          /> */}
           <NavItem
             icon={<Settings size={24} />}
             link="/dashboard/settings"
