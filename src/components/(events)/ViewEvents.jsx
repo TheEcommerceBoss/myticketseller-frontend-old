@@ -49,7 +49,7 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
         <div className="mb-8">
             <div className="flex justify-between items-center">
                 <div className="text-gray-600 flex flex-col items-center">
-                    <p>{ticketDetails.days[0] && formatDate(ticketDetails.days[0].start_day)}</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{ticketDetails.days[0] && formatDate(ticketDetails.days[0].start_day)}</p>
                 </div>
                 <div className="">
                     <button className="p-2 hover:bg-gray-100 rounded-full">
@@ -151,7 +151,7 @@ const DateTime = ({ theme, eventDetails, ticketDetails, day, id }) => {
     return (
         <div className="mb-8">
             <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Date and Time</h2>
-            <div className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-600' : 'text-[#040171]'}`}>
+            <div className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-300' : 'text-[#040171]'}`}>
                 <Calendar className="w-5 h-5" />
                 <span>{day && formatDate(day.start_day)} · {day && (day.open_door_time)} - {day && (day.close_door_time)}</span>
             </div>
@@ -160,13 +160,13 @@ const DateTime = ({ theme, eventDetails, ticketDetails, day, id }) => {
 }
 
 // Location Component
-const Location = ({ theme, ticketDetails, day,index }) => {
+const Location = ({ theme, ticketDetails, day, index }) => {
     const [showMap, setShowMap] = useState(index == 0);
 
     return (
         <div className="mb-8">
             <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Location</h2>
-            <div className={`flex items-start gap-2 ${theme === 'dark' ? 'text-gray-600' : 'text-[#040171]'}`}>
+            <div className={`flex items-start gap-2 ${theme === 'dark' ? 'text-gray-300' : 'text-[#040171]'}`}>
                 <MapPin className="w-5 h-5 mt-1" />
                 <div>
                     <div className="font-medium">  {day && (day.event_address)}</div>
@@ -266,6 +266,8 @@ function ViewEventComponent({ variation }) {
     const { theme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { id } = useParams();
+    const [fetchingdataloading, setfetchingdataLoading] = useState(true);
+
     const [eventDetails, setEventDetails] = useState({
         event_category: '',
         event_specific_type: true,
@@ -318,10 +320,7 @@ function ViewEventComponent({ variation }) {
         };
 
         fetchEventDetails();
-    }, [id]);
 
-
-    useEffect(() => {
         const fetchTicketEventDetails = async () => {
             try {
                 const response = await axios.post(`${import.meta.env.VITE_API_URL}/get-event-details`, {
@@ -342,6 +341,8 @@ function ViewEventComponent({ variation }) {
                 }
             } catch (error) {
                 console.error('Failed to fetch event details:', error);
+            } finally {
+                setfetchingdataLoading(false)
             }
         };
 
@@ -360,116 +361,129 @@ function ViewEventComponent({ variation }) {
     return (
         <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#111]' : 'bg-gray-100'}`}>
 
-            <div className="flex flex-col  items-center p-5">
-                {eventDetails.event_image && <img src={eventDetails.event_image} className="w-full h-[30rem] object-cover lg:w-4/5 mb-5 rounded-[2rem]" alt="" />}
-            </div>
-            <div className="max-w-7xl mx-auto p-6">
-                <Header theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} id={1} />
-                <HostInfo theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} />
-                <div className="mb-5">
-                    <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
-                    <p className={`${theme === 'dark' ? 'text-gray-600' : 'text-gray-600'}`}>
-                        {eventDetails.event_description}
-                    </p>
-                </div>
-
-                {ticketDetails.days.map((day, index) => (
-                    <>
-
-                        <div className={`flex items-center my-6 pb-2 `}>
-
-                            <span className={`text-l mx-4 font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Day {index + 1}</span>
-                            <div className="flex-1 border-t border-gray-300"></div>
+            {fetchingdataloading ? (
+                <div className={`md:col-span-3  p-2  bg-transparent   rounded-lg`}>
+                    <div style={{ height: '100%', width: '100%' }}>
+                        <div className="flex justify-center items-center h-96">
+                            <span>Loading...</span>
                         </div>
-
-                        <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
-                        <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
-                    </>
-                ))
-                }
-                <div className="mb-8">
-                    <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
-                    <p className={`${theme === 'dark' ? 'text-gray-600' : 'text-gray-600'}`}>No Refund</p>
-                </div>
-
-
-
-                {/* <FAQ theme={theme} /> */}
-
-                <div>
-                    <Tags theme={theme} />
-                </div>
-                <div className={`flex flex-col items-center my-[3rem]`}>
-                    <div className="flex flex-col w-full px-2 my-5 items-start text-start">
-                        <h2 className={`text-xl font-bold text-start  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>More Events From this Organizer</h2>
-
                     </div>
-                    <div className={`flex flex-col gap-8 px-2 `}>
-                        {cards.map((card, index) => (
-                            <>
-                                {
+                </div>
+            ) : <>
+                <div className="flex flex-col  items-center p-5">
+                    {eventDetails.event_image && <img src={eventDetails.event_image} className="w-full h-[30rem] object-cover lg:w-4/5 mb-5 rounded-[2rem]" alt="" />}
+                </div>
+                <div className="max-w-7xl mx-auto p-6">
+                    <Header theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} id={1} />
+                    <HostInfo theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} />
 
-                                    <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md   lg:rounded-none lg:shadow-none   flex flex-col lg:flex-row  lg:gap-5 mb-4">
-                                        <img
-                                            src={card.image}
-                                            alt={card.title}
-                                            className=" w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
-                                        />
-                                        <div className="rounded-xl lg:shadow-md  bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
-                                            <div className="flex justify-between items-start">
-                                                <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
-                                                    <div className="">
-                                                        <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
-                                                            <div className="flex font-semibold items-center gap-1">
-                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
-                                                                <span>{card.date}</span>
+                    <div className="mb-5">
+                        <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
+                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {eventDetails.event_description}
+                        </p>
+                    </div>
+
+                    {ticketDetails.days.map((day, index) => (
+                        <>
+
+                            <div className={`flex items-center my-6 pb-2 `}>
+
+                                <span className={`text-l mx-4 font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Day {index + 1}</span>
+                                <div className="flex-1 border-t border-gray-300"></div>
+                            </div>
+
+                            <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                            <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                        </>
+                    ))
+                    }
+                    <div className="mb-8">
+                        <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
+                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>No Refund</p>
+                    </div>
+
+
+
+
+
+                    <div>
+                        <Tags theme={theme} />
+                    </div>
+                    <div className={`flex flex-col items-center my-[3rem]`}>
+                        <div className="flex flex-col w-full px-2 my-5 items-start text-start">
+                            <h2 className={`text-xl font-bold text-start  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>More Events From this Organizer</h2>
+
+                        </div>
+                        <div className={`flex flex-col gap-8 px-2 `}>
+                            {cards.map((card, index) => (
+                                <>
+                                    {
+
+                                        <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md   lg:rounded-none lg:shadow-none   flex flex-col lg:flex-row  lg:gap-5 mb-4">
+                                            <img
+                                                src={card.image}
+                                                alt={card.title}
+                                                className=" w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
+                                            />
+                                            <div className="rounded-xl lg:shadow-md  bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
+                                                        <div className="">
+                                                            <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
+                                                                <div className="flex font-semibold items-center gap-1">
+                                                                    <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                    <span>{card.date}</span>
+                                                                </div>
+                                                                <div className="flex font-bold items-center gap-1">
+                                                                    <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                    <span>{card.date}</span>
+                                                                </div>
                                                             </div>
-                                                            <div className="flex font-bold items-center gap-1">
-                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
-                                                                <span>{card.date}</span>
-                                                            </div>
+                                                        </div>
+
+
+
+
+                                                        <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                                            to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                            {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
+                                                        </Link>
+
+                                                        <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
+                                                            <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                            <span>{card.location}</span>
+                                                        </div>
+                                                        <div className="h-full  md:hidden mt-4 flex ">
+
+                                                            <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                                Buy Tickets
+                                                            </button>
                                                         </div>
                                                     </div>
 
 
+                                                    <div className="h-full hidden md:flex md:border-l pl-3 items-center">
 
-
-                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                                        to={'/event/view/' + card.id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
-                                                        {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
-                                                    </Link>
-
-                                                    <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
-                                                        <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
-                                                        <span>{card.location}</span>
-                                                    </div>
-                                                    <div className="h-full  md:hidden mt-4 flex ">
-
-                                                        <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                        <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
                                                             Buy Tickets
                                                         </button>
                                                     </div>
                                                 </div>
-
-
-                                                <div className="h-full hidden md:flex md:border-l pl-3 items-center">
-
-                                                    <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
-                                                        Buy Tickets
-                                                    </button>
-                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                }
-                            </>
-                        ))}
+                                    }
+                                </>
+                            ))}
+                        </div>
                     </div>
+                    <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventDetails={eventDetails}
+                        ticketDetails={ticketDetails} />
+
                 </div>
-                <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id}  eventDetails={eventDetails}
-                    ticketDetails={ticketDetails} />
-            </div>
+            </>
+            }
         </section>
     );
 }

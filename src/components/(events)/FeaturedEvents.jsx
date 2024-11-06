@@ -368,22 +368,23 @@ function FeaturedEvents({ variation }) {
                                                         </div>
                                                         <div className="h-full  md:hidden mt-4 flex ">
 
-                                                            <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                            <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                                                to={'/event/view/' + card.event_id} className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
                                                                 Buy Tickets
-                                                            </button>
+                                                            </Link>
                                                         </div>
                                                     </div>
 
 
                                                     <div className="h-full hidden md:flex md:border-l pl-3 items-center">
 
-                                                        <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                        <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                                            to={'/event/view/' + card.event_id} className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
                                                             Buy Tickets
-                                                        </button>
+                                                        </Link>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={card.event_id} eventTitle="Nicki Minaj Live at Los Angeles" eventDateTime="October 4 · 10pm - October 5 · 4am EDT" />
 
                                         </div>
                                     )
