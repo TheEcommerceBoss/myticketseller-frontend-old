@@ -1,30 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Pencil, Trash2, Share2 } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Cookies from "js-cookie";
 import api from "../../api";
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ManageEvent = () => {
-  // let { id } = useParams();
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const ModifyEvent = () => {
-    alert(1);
-  };
-
-
   const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = React.useState(window.innerWidth >= 1024);
-  const [events, setEvents] = useState('')
-
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -37,13 +29,11 @@ const ManageEvent = () => {
         });
         setEvents(response.data.events);
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        console.error("Failed to fetch events:", error);
       }
     };
     fetchEvents();
   }, []);
-
-  console.log(events)
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,11 +44,29 @@ const ManageEvent = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const deleteEvent = async (eventId) => {
+    try {
+      await api.post("/delete_event", { event_id: eventId });
+      setEvents(events.filter(event => event.event_id !== eventId));
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+    }
+  };
 
+  const toggleEventStatus = async (eventId, currentStatus) => {
+    try {
+      await api.post(`/toggle-status/${currentStatus === 0 ? 1 : 0}`, { event_id: eventId });
+      setEvents(events.map(event => 
+        event.event_id === eventId ? { ...event, status: currentStatus === 0 ? 1 : 0 } : event
+      ));
+    } catch (error) {
+      console.error("Failed to toggle event status:", error);
+    }
+  };
 
-  const eventsWithIndex = events && events.map((event, index) => ({
+  const eventsWithIndex = events.map((event, index) => ({
     ...event,
-    id: index + 1, // Change to start index from 1
+    id: index + 1,
   }));
 
   const columns = [
@@ -77,7 +85,10 @@ const ManageEvent = () => {
       ),
     },
     {
-      field: 'status', headerName: 'Status', width: 120, renderCell: (params) => (
+      field: 'status',
+      headerName: 'Status',
+      width: 120,
+      renderCell: (params) => (
         <div>
           {params.value === 0 ? 'Draft' : 'Live'}
         </div>
@@ -87,24 +98,25 @@ const ManageEvent = () => {
       field: 'event_id',
       headerName: 'Actions',
       width: 150,
-      renderCell: (params) => {
-        const eventId = params.value;  
-        const eventLink = `/dashboard/event/manage/${eventId}`; 
-
-        return (
-          <div className="flex gap-2 mt-2">
-            <Link to={eventLink}  className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
-                <Pencil size={16} />
-             </Link>
-            <button className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
-              <Trash2 size={16} />
-            </button>
-            <button className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900">
-              <Share2 size={16} />
-            </button>
-          </div>
-        );
-      },
+      renderCell: (params) => (
+        <div className="flex gap-2 mt-2">
+          <Link to={`/dashboard/event/manage/${params.value}`} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+            <Pencil size={16} />
+          </Link>
+          <button
+            onClick={() => deleteEvent(params.value)}
+            className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
+          >
+            <Trash2 size={16} />
+          </button>
+          <button
+            onClick={() => toggleEventStatus(params.value, params.row.status)}
+            className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900"
+          >
+            <Eye size={16} />
+          </button>
+        </div>
+      ),
     },
   ];
 
@@ -121,7 +133,7 @@ const ManageEvent = () => {
           </div>
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search"

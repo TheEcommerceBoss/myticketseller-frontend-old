@@ -141,7 +141,7 @@ const SettingsPage = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter Email"
             />
           </div>
@@ -157,7 +157,7 @@ const SettingsPage = () => {
               name="fullname"
               value={formData.fullname}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter Full Name"
             />
           </div>
@@ -173,7 +173,7 @@ const SettingsPage = () => {
               name="instagram"
               value={formData.instagram}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter Instagram Handle"
             />
           </div>
@@ -189,7 +189,7 @@ const SettingsPage = () => {
               name="tiktok"
               value={formData.tiktok}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter TikTok Handle"
             />
           </div>
@@ -205,7 +205,7 @@ const SettingsPage = () => {
               name="twitter"
               value={formData.twitter}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter Twitter Handle"
             />
           </div>

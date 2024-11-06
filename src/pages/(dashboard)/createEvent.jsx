@@ -136,7 +136,7 @@ const CreateEvent = ({ manage }) => {
         text: manage ? 'Your event has been updated successfully.' : 'Your event has been created successfully.',
       });
       console.log(response.data)
-      // navigate('/dashboard/event/create/' + response.data.event_id + '/payments/ ');
+      navigate('/dashboard/event/create/' + response.data.event_id + '/payments/ ');
 
     } catch (error) {
       if (error.response) {
@@ -258,7 +258,7 @@ const CreateEvent = ({ manage }) => {
 
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search"
@@ -324,7 +324,7 @@ const CreateEvent = ({ manage }) => {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
             >
               <option value="" disabled>Select Event Category</option>
               {categories.map((category, index) => (
@@ -383,7 +383,7 @@ const CreateEvent = ({ manage }) => {
               name="event_title"
               value={formData.event_title}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Enter Event Title"
             />
           </div>
@@ -402,7 +402,7 @@ const CreateEvent = ({ manage }) => {
               value={formData.event_description}
               onChange={handleChange}
               rows="4"
-              className="w-full p-3 border border-gray-300 text-gray-400 font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
               placeholder="Describe the Event"
             />
           </div>

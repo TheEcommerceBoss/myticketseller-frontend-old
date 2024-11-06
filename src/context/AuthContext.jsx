@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
               Authorization: `Bearer ${token}`,
             },
           });
-          console.log(response)
+          console.log(token)
           setUserData(response.data);
         } catch (error) {
           console.error("Failed to fetch user:", error);

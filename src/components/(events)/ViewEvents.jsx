@@ -96,7 +96,7 @@ const HostInfo = ({ theme }) => (
 const DateTime = ({ theme }) => (
     <div className="mb-8">
         <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Date and Time</h2>
-        <div className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-400' : 'text-[#040171]'}`}>
+        <div className={`flex items-center gap-2 ${theme === 'dark' ? 'text-gray-600' : 'text-[#040171]'}`}>
             <Calendar className="w-5 h-5" />
             <span>October 4 · 10pm - October 5 · 4am EDT</span>
         </div>
@@ -110,7 +110,7 @@ const Location = ({ theme }) => {
     return (
         <div className="mb-8">
             <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Location</h2>
-            <div className={`flex items-start gap-2 ${theme === 'dark' ? 'text-gray-400' : 'text-[#040171]'}`}>
+            <div className={`flex items-start gap-2 ${theme === 'dark' ? 'text-gray-600' : 'text-[#040171]'}`}>
                 <MapPin className="w-5 h-5 mt-1" />
                 <div>
                     <div className="font-medium">POLYGON BROOKLYN</div>
@@ -161,7 +161,7 @@ const FAQ = ({ theme }) => {
                     >
                         <span className={`${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>{q.question}</span>
                         <ChevronDown
-                            className={`w-5 h-5 text-gray-400 transform transition-transform ${openIndex === index ? 'rotate-180' : ''
+                            className={`w-5 h-5 text-gray-600 transform transition-transform ${openIndex === index ? 'rotate-180' : ''
                                 }`}
                         />
                     </button>
@@ -247,12 +247,12 @@ function ViewEventComponent({ variation }) {
 
                 <div className="mb-8">
                     <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
-                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>No Refund</p>
+                    <p className={`${theme === 'dark' ? 'text-gray-600' : 'text-gray-600'}`}>No Refund</p>
                 </div>
 
                 <div className="mb-8">
                     <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
-                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <p className={`${theme === 'dark' ? 'text-gray-600' : 'text-gray-600'}`}>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
                         aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
@@ -305,7 +305,7 @@ function ViewEventComponent({ variation }) {
                                                         {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                     </Link>
 
-                                                    <div className="flex items-center font-semibold text-xs text-gray-400 mt-1 gap-1">
+                                                    <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
                                                         <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
                                                         <span>{card.location}</span>
                                                     </div>
