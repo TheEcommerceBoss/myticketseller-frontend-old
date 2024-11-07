@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Pencil, Trash2, Eye } from 'lucide-react';
+import { Pencil, Trash2, Eye, ToggleLeftIcon } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
@@ -107,8 +107,18 @@ const ManageEvent = () => {
 
   const columns = [
     { field: 'id', headerName: '#', width: 50, sortable: false, hideSortIcons: true },
+    {
+      field: 'event_img',
+      headerName: 'Image',
+      width: 50,
+      renderCell: (params) => (
+        <div className='flex flex-col items-center w-full'>
+           <img src={params.value} className='w-[2rem] mt-2 h-[2rem]' alt="" />
+        </div>
+      ),
+    },
     { field: 'event_title', headerName: 'Event Title', width: 250 },
-    { field: 'event_category', headerName: 'Category', width: 150 },
+    { field: 'category_name', headerName: 'Category', width: 150 },
     { field: 'event_description', headerName: 'Description', width: 300 },
     {
       field: 'event_specific_type',
@@ -123,10 +133,13 @@ const ManageEvent = () => {
     {
       field: 'status',
       headerName: 'Status',
-      width: 120,
+      width: 150,
       renderCell: (params) => (
-        <div>
-          {params.value === 0 ? 'Draft' : 'Live'}
+        <div className="flex items-center gap-2">
+          <span>
+            {params.value === 0 ? 'Draft' : 'Live'}
+          </span>
+          
         </div>
       ),
     },
@@ -145,12 +158,10 @@ const ManageEvent = () => {
           >
             <Trash2 size={16} />
           </button>
-          <button
-            onClick={() => toggleEventStatus(params.value, params.row.status)}
-            className="p-2 bg-[#040171] text-white rounded-lg hover:bg-blue-900"
-          >
+          <Link to={`/event/view/${params.value}`} target='_blank' className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
             <Eye size={16} />
-          </button>
+          </Link>
+          
         </div>
       ),
     },
@@ -191,17 +202,17 @@ const ManageEvent = () => {
               <div style={{ height: '100%', width: '100%' }}>
                 {loading  ? (
                   <div className="flex justify-center items-center ">
-                    <div class="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
-                      <div class="animate-pulse flex space-x-4">
-                        <div class="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                        <div class="flex-1 space-y-6 py-1">
-                          <div class="h-[1rem] bg-slate-700 rounded"></div>
-                          <div class="space-y-3">
-                            <div class="grid grid-cols-3 gap-4">
-                              <div class="h-[1rem] bg-slate-700 rounded col-span-2"></div>
-                              <div class="h-[1rem] bg-slate-700 rounded col-span-1"></div>
+                    <div className="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
+                      <div className="animate-pulse flex space-x-4">
+                        <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
+                        <div className="flex-1 space-y-6 py-1">
+                          <div className="h-[1rem] bg-slate-700 rounded"></div>
+                          <div className="space-y-3">
+                            <div className="grid grid-cols-3 gap-4">
+                              <div className="h-[1rem] bg-slate-700 rounded col-span-2"></div>
+                              <div className="h-[1rem] bg-slate-700 rounded col-span-1"></div>
                             </div>
-                            <div class="h-[1rem] bg-slate-700 rounded"></div>
+                            <div className="h-[1rem] bg-slate-700 rounded"></div>
                           </div>
                         </div>
                       </div>

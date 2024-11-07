@@ -27,7 +27,8 @@ import { Link } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Greetings from '../../components/(snippets)/Greetings';
 import { useAuth } from '../../context/AuthContext';
-
+import Cookies from "js-cookie";
+import api from "../../api";
 // Sample data for the line chart
 const chartData = [
   { time: '12am', sold: 0.2, remaining: 0.8 },
@@ -72,9 +73,33 @@ const Dashboard = () => {
   };
 
   const { userData } = useAuth();
-  console.log(userData&&userData.user)
+  // console.log(userData&&userData.user)
 
   // console.log(userData.user.fullname)
+
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true); // Track loading state
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = Cookies.get("auth_token");
+        const response = await api.get("/get_user_events", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setEvents(response.data.events);
+      } catch (error) {
+        console.error("Failed to fetch events:", error);
+      } finally {
+        setLoading(false); // Stop loading after fetch
+      }
+    };
+    fetchEvents();
+  }, []);
+
+
 
   return (
     <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
@@ -129,7 +154,7 @@ const Dashboard = () => {
         <div className=" grid lg:grid-cols-3 gap-6 mb-8">
           <StatCard title="Tickets Sold" value="149k" color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-blue-300" iconColor="text-blue-700" />
           <StatCard title="Event Attendance Rate" value="90.5%" color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-green-300" iconColor="text-green-700" />
-          <StatCard title="Top Selling Events" value="10" color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-orange-300" iconColor="text-orange-700" />
+          <StatCard title="Events Created" value={events.length} color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-orange-300" iconColor="text-orange-700" />
         </div>
 
         {/* Chart Section */}
@@ -183,24 +208,47 @@ const Dashboard = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Ongoing Events */}
           <div className={`flex-1 py-5 px-3 rounded-xl ${theme === 'dark' ? 'bg-[#121212] ' : 'bg-white'}`}>
-            <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">Ongoing Events</h2>
+            <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">Recent Events</h2>
             <div className="grid md:grid-cols-2 md:flex-row gap-3 ">
-              {[1, 2].map((i) => (
-                <div key={i} className={` p-4 rounded-xl ${theme === 'dark' ? 'bg-[#121212] shadow-[0_0px_4px_rgba(255,255,255,0.2)]' : 'bg-gray-100  '}`} >
-                  <img src={eventImage} alt="Event" className="w-full h-48 object-cover rounded-xl mb-4" />
-                  <div className="text-sm text-gray-500">Mon, Oct 31, 8:00 PM</div>
+              {loading ? (
+                <div className="flex justify-center items-center ">
+                  <div className="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
+                    <div className="animate-pulse flex space-x-4">
+                      <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
+                      <div className="flex-1 space-y-6 py-1">
+                        <div className="h-[1rem] bg-slate-700 rounded"></div>
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="h-[1rem] bg-slate-700 rounded col-span-2"></div>
+                            <div className="h-[1rem] bg-slate-700 rounded col-span-1"></div>
+                          </div>
+                          <div className="h-[1rem] bg-slate-700 rounded"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : events.length === 0 ? (
+                <div className="flex justify-center items-center h-96">
+                  <span>No events found</span>
+                </div>
+              ) : events.slice(0, 2).map((event, index) => (
+                <div key={index} className={` p-4 rounded-xl ${theme === 'dark' ? 'bg-[#121212] shadow-[0_0px_4px_rgba(255,255,255,0.2)]' : 'bg-gray-100  '}`} >
+                  <img src={event.event_img} alt="Event" className="w-full h-48 object-cover rounded-xl mb-4" />
+                  <div className="text-sm text-gray-500">{event.created_at}</div>
                   <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    to={'/event/view/' + i} >
+                    to={'/event/view/' + event.event_id} >
 
-                    <div className={`text-xl font-medium  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Nicki Minaj Live at Los Angeles</div>
+                    <div className={`text-xl font-medium  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>{event.event_title}</div>
                   </Link>
-                  <div className="text-sm text-gray-500 mt-1">152 Members</div>
+                  {/* {console.log(event)} */}
+
+                  <div className="text-sm text-gray-500 mt-1">{event.category_name}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Calendar */}
           <div className={`fw-96 p-6 mt-5 lg:mt-0 rounded-xl ${theme === 'dark' ? 'bg-[#121212]' : 'bg-white'}`}>
 
             <div className="flex justify-between items-center mb-4">
@@ -219,7 +267,7 @@ const Dashboard = () => {
         </div>
 
       </div>
-    </div>
+    </div >
   );
 };
 

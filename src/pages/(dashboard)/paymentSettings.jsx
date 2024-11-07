@@ -52,40 +52,43 @@ const PaymentSettings = () => {
             },
           }
         );
-    
-        console.log(response.data);
-    
-        // Format event days with the specified structure
-        const formattedEventDays = response.data.event_days.map((day, index) => ({
-          index: index + 1,
-          eventType: day.event_type,
-          startDate: day.start_day,
-          startTime: day.open_door_time,
-          endTime: day.close_door_time,
-          location: day.event_type === "onsite" ? day.event_address : "",
-          virtualLink: day.event_type === "virtual" ? day.event_link : "",
-          password: day.event_type === "virtual" ? day.event_password : "",
-        }));
-    
-        setEventDays(formattedEventDays);
-        setDayCount(response.data.event_days.length);
-    
-        // Format tickets
-        const formattedTickets = response.data.tickets.map(ticket => ({
-          event_id: ticket.event_id,
-          name: ticket.ticket_name,
-          type: ticket.ticket_type,
-          fee: ticket.ticket_type === "Free Ticket" ? 0 : ticket.price,
-          currency: ticket.currency,
-          quantity: ticket.quantity,
-        }));
-    
-        setTickets(formattedTickets);
+
+        console.log(response.data.event_days);
+        if (response.data.event_days && response.data.event_days.length > 0) {
+
+          // Format event days with the specified structure
+          const formattedEventDays = response.data.event_days.map((day, index) => ({
+            index: index + 1,
+            eventType: day.event_type,
+            startDate: day.start_day,
+            startTime: day.open_door_time,
+            endTime: day.close_door_time,
+            location: day.event_type === "onsite" ? day.event_address : "",
+            virtualLink: day.event_type === "virtual" ? day.event_link : "",
+            password: day.event_type === "virtual" ? day.event_password : "",
+          }));
+
+
+          setEventDays(formattedEventDays);
+          setDayCount(response.data.event_days.length);
+
+          // Format tickets
+          const formattedTickets = response.data.tickets.map(ticket => ({
+            event_id: ticket.event_id,
+            name: ticket.ticket_name,
+            type: ticket.ticket_type,
+            fee: ticket.ticket_type === "Free Ticket" ? 0 : ticket.price,
+            currency: ticket.currency,
+            quantity: ticket.quantity,
+          }));
+
+          setTickets(formattedTickets);
+        }
       } catch (error) {
         console.error("Failed to fetch event details:", error);
       }
     };
-    
+
 
 
     // Call the function
@@ -274,7 +277,7 @@ const PaymentSettings = () => {
         },
       });
 
-      console.log(response.data);
+      // console.log(response.data);
       Swal.fire('Success', 'Location details submitted successfully!', 'success');
       navigate('/dashboard/event/create/' + id + '/info')
     } catch (error) {
