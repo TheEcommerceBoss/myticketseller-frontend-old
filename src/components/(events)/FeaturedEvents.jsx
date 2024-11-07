@@ -11,6 +11,8 @@ import event3Image from "../../assets/(landing)/event3.png"
 import event4Image from "../../assets/(landing)/event4.png"
 import TicketModal from "./TicketModal";
 import api from "../../api";
+import MapAutocomplete from "../(maps)/Autocomplete";
+import LocationSearch from "../(maps)/LocationSearch";
 
 const options = [
     { value: "location1", label: "Location 1" },
@@ -66,6 +68,12 @@ function FeaturedEvents({ variation }) {
     const [categories, SetCategories] = useState([]);
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
+    const formattedCategories = categories
+        .filter(category => category.status === 1) // Only show active categories (status: 1)
+        .map(category => ({
+            label: category.category,  // Display the category name
+            value: category.id         // Use the category id as the value
+        }));
 
     const [cards, setcards] = useState([]); // State for the selected date
 
@@ -185,7 +193,11 @@ function FeaturedEvents({ variation }) {
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchLocation, setSearchLocation] = useState('');
 
+    const handleLocationChange = (newLocation) => {
+        setSearchLocation(newLocation);
+    };
     return (
         <section className={`py-16 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-gray-100'}`}>
             <div className={`${variation == 2 ? 'hidden' : 'flex'} relative z-10  flex-col -mt-[6.5rem] items-center justify-center h-full text-white px-4`}>
@@ -209,18 +221,12 @@ function FeaturedEvents({ variation }) {
                         </div>
                         <div className="px-4 py-2 w-full flex justify-between items-center md:items-start md:flex-col md:border-l md:border-b-0 border-b border-gray-300">
                             <p className="text-blue-800 font-semibold mb-1">Location</p>
-                            <Select
-                                options={options}
-                                styles={customSearchStyles}
-                                components={{ DropdownIndicator }}
-                                placeholder="Select Location"
-                                isSearchable={true}
-                            />
+                            {/* <LocationSearch value={searchLocation} onChange={handleLocationChange} /> */}
                         </div>
                         <div className="px-4 py-2 w-full flex justify-between items-center md:items-start md:flex-col md:border-l md:border-b-0 border-b border-gray-300">
                             <p className="text-blue-800 font-semibold mb-1">Event Type</p>
                             <Select
-                                options={categories}
+                                options={formattedCategories}
                                 styles={customStyles}
                                 components={{ DropdownIndicator }}
                                 placeholder="Select Event Type"
@@ -275,7 +281,7 @@ function FeaturedEvents({ variation }) {
                             </div>
                         </div>
                         <Select
-                            options={categories}
+                            options={formattedCategories}
                             styles={customSearchStyles}
                             components={{ DropdownIndicator }}
                             placeholder="All"
