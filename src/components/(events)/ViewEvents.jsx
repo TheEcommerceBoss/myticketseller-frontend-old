@@ -14,6 +14,9 @@ import map from "../../assets/(utils)/map.png"
 import { Share2 } from 'lucide-react';
 import TicketModal from "./TicketModal";
 import { useParams } from "react-router-dom";
+import { GoogleMapsProvider } from '../GoogleMapsContext';
+import SimpleMap from '../props/Map';
+
 import axios from 'axios';
 
 const Header = ({ theme, eventDetails, ticketDetails, id }) => {
@@ -84,7 +87,7 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
 }
 
 // Host Info Component
-const HostInfo = ({ theme,eventDetails }) => (
+const HostInfo = ({ theme, eventDetails }) => (
     <div className={`lg:w-1/2 rounded-lg p-6 shadow-sm mb-8 ${theme === 'dark' ? 'bg-[#000]' : 'bg-white '}`}>
         <div className="flex items-center gap-4">
             <img
@@ -189,6 +192,12 @@ const Location = ({ theme, ticketDetails, day, index }) => {
                     />
                 </div>
             )}
+
+            <GoogleMapsProvider>
+                <SimpleMap width={'100%'} height={'10rem'} name={day.event_address} />
+            </GoogleMapsProvider>
+
+
         </div>
     );
 };
@@ -308,7 +317,7 @@ function ViewEventComponent({ variation }) {
 
                 if (response.data) {
                     console.log(response.data)
-                    const { event_category, event_specific_type, event_title, event_description, event_img, user_details,total_events_by_this_user_with_status_1 } = response.data.event_info;
+                    const { event_category, event_specific_type, event_title, event_description, event_img, user_details, total_events_by_this_user_with_status_1 } = response.data.event_info;
                     setEventDetails({
                         event_category,
                         event_specific_type,
@@ -326,16 +335,16 @@ function ViewEventComponent({ variation }) {
                 }
             } catch (error) {
                 console.error('Failed to fetch event details:', error);
-            }finally {
+            } finally {
                 setfetchingdataLoading(false)
             }
-        
+
         };
 
         fetchSingleEventDetails();
 
- 
- 
+
+
     }, [id]);
 
     // console.log(id);
