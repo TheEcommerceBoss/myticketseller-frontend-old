@@ -21,6 +21,8 @@ import Settings from './pages/(dashboard)/Settings';
 import SupportPage from './pages/(dashboard)/Support';
 import ScannerPage from './pages/(dashboard)/Scanner';
 import MyTicketsPage from './pages/(dashboard)/MyTickets';
+import { GoogleMapsProvider } from './components/GoogleMapsContext';
+
  
 function App() {
   return (
@@ -30,7 +32,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/event/find" element={<FindEvent />} />
-            <Route path="/event/view/:id" element={<ViewEvent />} />
+            <Route path="/event/view/:id" element={<GoogleMapsProvider><ViewEvent /></GoogleMapsProvider>} />
 
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard/event/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
