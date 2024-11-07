@@ -167,35 +167,33 @@ const Location = ({ theme, ticketDetails, day, index }) => {
     const [showMap, setShowMap] = useState(index == 0);
 
     return (
-        <div className="mb-8">
+        <div className="my-8">
             <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Location</h2>
             <div className={`flex items-start gap-2 ${theme === 'dark' ? 'text-gray-300' : 'text-[#040171]'}`}>
                 <MapPin className="w-5 h-5 mt-1" />
                 <div>
-                    <div className="font-medium">  {day && (day.event_address)}</div>
+                    <div className="font-medium">  {day && day.event_type == 'virtual' ? 'Virtual Event' : day.event_address}</div>
 
                 </div>
             </div>
-            <button
-                className="text-blue-600 font-medium flex items-center gap-1 mt-2"
-                onClick={() => setShowMap(!showMap)}
-            >
-                {showMap ? 'Hide Map' : 'Show Map'}
-                <ChevronDown className={`w-4 h-4 transform ${showMap ? 'rotate-180' : ''}`} />
-            </button>
-            {showMap && (
-                <div className="mt-4 h-64 bg-gray-200 rounded-[2rem] overflow-hidden">
-                    <img
-                        src={map}
-                        alt="Map"
-                        className="w-full h-full object-cover"
-                    />
-                </div>
-            )}
 
-            <GoogleMapsProvider>
-                <SimpleMap width={'100%'} height={'10rem'} name={day.event_address} />
-            </GoogleMapsProvider>
+            {day.event_type != 'virtual' ?
+                (
+                    <>
+                        <button
+                            className="text-blue-600 font-medium flex items-center gap-1 mt-2"
+                            onClick={() => setShowMap(!showMap)}
+                        >
+                            {showMap ? 'Hide Map' : 'Show Map'}
+                            <ChevronDown className={`w-4 h-4 transform ${showMap ? 'rotate-180' : ''}`} />
+                        </button>
+
+                             {showMap && (
+                                <SimpleMap width={'100%'} height={'10rem'} name={day.event_address} />
+                            )}
+                     </>
+                ) : ''}
+
 
 
         </div>
@@ -287,6 +285,7 @@ function ViewEventComponent({ variation }) {
         days: [],
         tickets: [],
         user: [],
+        additional_info: [],
         total_events_by_this_user_with_status_1: 0
     });
 
@@ -317,7 +316,7 @@ function ViewEventComponent({ variation }) {
 
                 if (response.data) {
                     console.log(response.data)
-                    const { event_category, event_specific_type, event_title, event_description, event_img, user_details, total_events_by_this_user_with_status_1 } = response.data.event_info;
+                    const { event_category, event_specific_type, event_title, event_description, event_img, user_details, total_events_by_this_user_with_status_1, additional_info } = response.data.event_info;
                     setEventDetails({
                         event_category,
                         event_specific_type,
@@ -326,7 +325,8 @@ function ViewEventComponent({ variation }) {
                         event_image: event_img,
                         event_id: id,
                         user: user_details,
-                        total_events_by_this_user_with_status_1
+                        total_events_by_this_user_with_status_1,
+                        additional_info
                     });
                     setTicketDetails({
                         days: response.data.event_info.event_days,
@@ -381,9 +381,36 @@ function ViewEventComponent({ variation }) {
                             {eventDetails.event_description}
                         </p>
                     </div>
+                    <div className="mb-5">
+                        <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Restrictions</h2>
+                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.restrictions}</p>
+                    </div>
+
+
+
+                    <div className="mb-8">
+                        {eventDetails.additional_info.special_guests && eventDetails.additional_info.special_guests.trim() !== '' && (
+                            <>
+                                <h2 className={`text-l font-bold ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                                    Special Guests
+                                </h2>
+                                <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                    {eventDetails.additional_info.special_guests.split(',').map((guest, index) => (
+                                        <span key={index} className="bg-gray-100 text-gray-600 px-4 py-2 mr-2 rounded-full text-sm">
+                                            {guest.trim()}
+                                            {index < eventDetails.additional_info.special_guests.split(',').length - 1 && ' '}
+                                        </span>
+                                    ))}
+                                </p>
+                            </>
+                        )}
+                    </div>
+
+
+
 
                     {ticketDetails.days.map((day, index) => (
-                        <>
+                        <div className="mb-5 px-5 rounded-l border">
 
                             <div className={`flex items-center my-6 pb-2 `}>
 
@@ -393,7 +420,7 @@ function ViewEventComponent({ variation }) {
 
                             <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
                             <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
-                        </>
+                        </div>
                     ))
                     }
                     <div className="mb-8">
@@ -405,10 +432,15 @@ function ViewEventComponent({ variation }) {
 
 
 
-                    <div>
-                        <Tags theme={theme} />
+                    <div className="mb-8">
+                        {eventDetails.additional_info.authority_notification && (
+                            <>
+                                <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Notified Authorities</h2>
+                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.authority_notification}</p></>
+                        )}
                     </div>
-                    <div className={`flex flex-col items-center my-[3rem]`}>
+
+                    {/* <div className={`flex flex-col items-center my-[3rem]`}>
                         <div className="flex flex-col w-full px-2 my-5 items-start text-start">
                             <h2 className={`text-xl font-bold text-start  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>More Events From this Organizer</h2>
 
@@ -475,7 +507,7 @@ function ViewEventComponent({ variation }) {
                                 </>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                     <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventDetails={eventDetails}
                         ticketDetails={ticketDetails} />
 
