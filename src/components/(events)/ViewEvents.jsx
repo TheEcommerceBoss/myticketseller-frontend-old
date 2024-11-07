@@ -89,16 +89,18 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
 // Host Info Component
 const HostInfo = ({ theme, eventDetails }) => (
     <div className={`lg:w-1/2 rounded-lg p-6 shadow-sm mb-8 ${theme === 'dark' ? 'bg-[#000]' : 'bg-white '}`}>
-        <div className="flex items-center gap-4">
-            <img
-                src={user}
-                alt="Host"
-                className="w-12 h-12 object-cover object-center rounded-full"
-            />
-            <div className="flex-grow">
-                <div className={`text-xl font-medium  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}  >Hosted by: {eventDetails.user.fullname}</div>
-                <div className="bg-orange-500 text-white text-sm px-3 py-1 rounded-full inline-block mt-1">
-                    {eventDetails.total_events_by_this_user_with_status_1} {eventDetails.total_events_by_this_user_with_status_1 > 1 ? 'Events' : 'Event'} Hosted
+        <div className="flex flex-col md:flex-row  md:items-center gap-4">
+            <div className="flex items-center gap-4">
+                <img
+                    src={user}
+                    alt="Host"
+                    className="w-12 h-12 object-cover object-center rounded-full"
+                />
+                <div className="flex-grow">
+                    <div className={`text-xl font-medium  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}  >Hosted by: {eventDetails.user.fullname}</div>
+                    <div className="bg-orange-500 text-white text-sm px-3 py-1 rounded-full inline-block mt-1">
+                        {eventDetails.total_events_by_this_user_with_status_1} {eventDetails.total_events_by_this_user_with_status_1 > 1 ? 'Events' : 'Event'} Hosted
+                    </div>
                 </div>
             </div>
             <div className="flex gap-4">
@@ -188,10 +190,10 @@ const Location = ({ theme, ticketDetails, day, index }) => {
                             <ChevronDown className={`w-4 h-4 transform ${showMap ? 'rotate-180' : ''}`} />
                         </button>
 
-                             {showMap && (
-                                <SimpleMap width={'100%'} height={'10rem'} name={day.event_address} />
-                            )}
-                     </>
+                        {showMap && (
+                            <SimpleMap width={'100%'} height={'10rem'} name={day.event_address} />
+                        )}
+                    </>
                 ) : ''}
 
 
