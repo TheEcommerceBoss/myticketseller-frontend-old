@@ -221,7 +221,7 @@ function FeaturedEvents({ variation }) {
                         </div>
                         <div className="px-4 py-2 w-full flex justify-between items-center md:items-start md:flex-col md:border-l md:border-b-0 border-b border-gray-300">
                             <p className="text-blue-800 font-semibold mb-1">Location</p>
-                            <LocationSearch value={searchLocation} onChange={handleLocationChange} />
+                            {/* <LocationSearch value={searchLocation} onChange={handleLocationChange} /> */}
                         </div>
                         <div className="px-4 py-2 w-full flex justify-between items-center md:items-start md:flex-col md:border-l md:border-b-0 border-b border-gray-300">
                             <p className="text-blue-800 font-semibold mb-1">Event Type</p>
