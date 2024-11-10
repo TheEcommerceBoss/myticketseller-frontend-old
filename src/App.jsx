@@ -22,6 +22,7 @@ import SupportPage from './pages/(dashboard)/Support';
 import ScannerPage from './pages/(dashboard)/Scanner';
 import MyTicketsPage from './pages/(dashboard)/MyTickets';
 import { GoogleMapsProvider } from './components/GoogleMapsContext';
+import ValidatePayment from './pages/(payments)/validatePayment';
 
  
 function App() {
@@ -47,6 +48,9 @@ function App() {
             <Route path="/dashboard/ticket/scanner" element={<ProtectedRoute><ScannerPage /></ProtectedRoute>} />
             <Route path="/dashboard/ticket/all" element={<ProtectedRoute><MyTicketsPage /></ProtectedRoute>} />
  
+            <Route path="/validatePayment/" element={<ValidatePayment />} />
+
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/logout" element={<LogoutPage />} />
             <Route path="/register" element={<SignupPage />} />
