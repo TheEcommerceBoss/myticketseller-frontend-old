@@ -26,7 +26,6 @@ function ValidatePayment() {
         const fetchEvents = async () => {
             setFetchingDataLoading(true);
             try {
-                const token = Cookies.get("auth_token");
                 const response = await axios.post(
                     `${import.meta.env.VITE_API_URL}validateEvent`,
                     {
@@ -36,7 +35,6 @@ function ValidatePayment() {
                     {
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`,
                         },
                     }
                 );
@@ -58,7 +56,7 @@ function ValidatePayment() {
 
     return (
         <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-            <main>
+            <main className="p-5 fw-bold">
                 <h5>Validating Payment</h5>
                 <p>Reference: {reference}</p>
                 <p>Transaction Reference: {trxref}</p>
