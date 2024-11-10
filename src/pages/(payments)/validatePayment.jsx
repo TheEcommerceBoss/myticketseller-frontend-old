@@ -21,6 +21,7 @@ function ValidatePayment() {
 
     const { theme } = useTheme();
     const [fetchingDataLoading, setFetchingDataLoading] = useState(false);
+    const [completed, setcompleted] = useState(false);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -41,6 +42,7 @@ function ValidatePayment() {
                 console.log(response.data);
                 // handle success, e.g., show a success message
                 Swal.fire("Payment Validated", response.data.paystack.message, "success");
+                setcompleted(true)
             } catch (error) {
                 console.error(error.response.data.error);
                 Swal.fire("Error", error.response.data.error, "error");
@@ -57,10 +59,16 @@ function ValidatePayment() {
     return (
         <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
             <main className="p-5 fw-bold">
-                <h5>Validating Payment</h5>
-                <p>Reference: {reference}</p>
-                <p>Transaction Reference: {trxref}</p>
-                {fetchingDataLoading && <p>Loading...</p>}
+                {completed ? (
+                    <h5>Payment has been processed, Please Check your MAIL and click the "X" icon at the top right of your screen to close this popup</h5>
+                ) : (
+                    <>
+                        <h5>Validating Payment</h5>
+                        <p>Reference: {reference}</p>
+                        <p>Transaction Reference: {trxref}</p>
+                        {fetchingDataLoading && <p>Loading...</p>}
+                    </>
+                )}
             </main>
         </div>
     );
