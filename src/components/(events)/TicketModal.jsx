@@ -9,6 +9,8 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
     const [ticketCounts, setTicketCounts] = useState({}); // Initialize as an object
     const [tickets, settickets] = useState([]);
     // console.log(eventDetails.event_id)
+    const [showPaystack, setshowPaystack] = useState(false);
+    const [showPaystackLink, setshowPaystackLink] = useState('');
 
     useEffect(() => {
         // Initialize ticket counts with 0 for each ticket type
@@ -147,11 +149,20 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
             });
             // setIsConfirmed(true);
             console.log(response.data)
+            console.log(response.data.paystack.data.authorization_url)
+            if (response.data.paystack.data.authorization_url) {
+                setshowPaystack(true);
+                setshowPaystackLink(response.data.paystack.data.authorization_url);
+            } else {
+                Swal.fire('Error', 'Unable to Initiate Paystack', 'error');
+
+            }
+            console.log(response.data)
         } catch (error) {
             // if (error.status == 400) {
-                console.error(error.response.data);
-                Swal.fire('Error', error.response.data.error ? error.response.data.error : 'Error', 'error');
- 
+            console.error(error.response.data);
+            Swal.fire('Error', error.response.data.error ? error.response.data.error : 'Error', 'error');
+
 
         } finally {
             setIsLoading(false);
@@ -298,12 +309,45 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
         </>
     );
 
+
+    const PaystackModal = ({ paystack }) => (
+        <>
+            <div className="bg-[#000080] h-full text-white rounded-lg p-6">
+                <div className="flex flex-col items-end">
+                    <button
+                        onClick={onClose}
+                        className="p-2 bg-white bg-opacity-50 rounded-full"
+                    >
+                        <X className="w-6 h-6 text-white font-bold" />
+                    </button>
+                </div>
+                <h3 className="text-xl font-normal mb-4">Checkout</h3>
+                <div className="space-y-4">
+                    <iframe
+                        src={paystack}
+                        title="Paystack Payment"
+                        width="100%"
+                        height="500"
+                        frameBorder="0"
+                        allow="payment"
+                        className="rounded-lg"
+                    ></iframe>
+                </div>
+            </div>
+        </>
+    );
+    
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
                 <div className="p-6">
 
-
+                    {showPaystack ? (
+                        <div className="w-full">
+                            <PaystackModal paystack={showPaystackLink} />
+                        </div>
+                    ) : 
                     <div className="flex flex-col md:flex-row gap-6">
                         <div className="flex-1">
                             {
@@ -515,7 +559,13 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                 <OrderSummary />
                             </div>
                         )}
+
+
+
+
                     </div>
+
+                }
                 </div>
             </div>
         </div>
