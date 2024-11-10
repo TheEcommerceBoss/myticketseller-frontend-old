@@ -356,7 +356,7 @@ function FeaturedEvents({ variation }) {
                                                         <div className="flex items-center">
                                                             <span className="text-gray-500 flex w-2/5 items-center gap-1 text-xs"><Calendar size={16} /> <span>{card.event_days[0].start_day}</span></span>
                                                             <span className="text-orange-500 text-center w-1/5">|</span>
-                                                            <span className="text-gray-500 flex w-2/5 items-center justify-end gap-1 text-xs"><MapPin size={16} /> <span>{card.event_days[0].event_address.split(", ").slice(-2).join(", ")}</span></span>
+                                                            <span className="text-gray-500 flex w-2/5 items-center justify-end gap-1 text-xs"><MapPin size={16} /> <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address.split(", ").slice(-2).join(", ")}</span></span>
                                                         </div>
                                                         <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="text-xl my-2 text-black font-semibold">
                                                             {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
@@ -393,7 +393,7 @@ function FeaturedEvents({ variation }) {
 
                                                                 <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
                                                                     <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
-                                                                    <span>{card.event_days[0].event_address}</span>
+                                                                    <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address}</span>
                                                                 </div>
                                                                 <div className="h-full md:hidden mt-4 flex ">
                                                                     <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="bg-orange-500 text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
