@@ -28,7 +28,7 @@ function WhyUs() {
                 <div className="flex flex-col md:flex-row gap-[1rem]  justify-around">
                     {ReasonsOption.map((eventType, index) => (
 
-                        <div className="flex p-5 px-[3rem] lg:px-[5rem] gap-2 items-center flex-col">
+                        <div key={index} className="flex p-5 px-[3rem] lg:px-[5rem] gap-2 items-center flex-col">
                             <img src={eventType.image} className="w-[4rem]" alt="" />
                             <h4 className="text-xl font-bold text-white text-center">
                                 {eventType.title}

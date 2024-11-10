@@ -236,7 +236,7 @@ function FeaturedEvents({ variation }) {
                             <input
                                 type="text"
                                 placeholder="Enter event location"
-                                value={''}
+                                // value={''}
                                 className="px-4 py-2 flex w-[400px] bg-transparent text-black outline-none  border border-[#d1d5db] rounded-sm"
                                 style={{ width: '100%' }}
                             />                        </div>
@@ -307,7 +307,7 @@ function FeaturedEvents({ variation }) {
 
                     </div>
                     <div className="hidden lg:flex justify-center space-x-10 items-center my-8">
-                        <a href="javascript:void(0)" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
+                        <a href="#" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
                         {categories.map((eventType, index) => (
                             <a
                                 key={eventType.id}
