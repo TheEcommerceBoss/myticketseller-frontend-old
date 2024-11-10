@@ -4,11 +4,10 @@ import { LoadScript } from '@react-google-maps/api';
 const GoogleMapsContext = createContext();
 
 export const GoogleMapsProvider = ({ children }) => {
-  const apiKey = 'AIzaSyC73yaRGGiQ-W1qpni-3WlKJJ3A1vWtmUs'; 
-  const [isLoading, setIsLoading] = useState(true);
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY; // Access the API key with Vite's import.meta.env
+  const [isLoading, setIsLoading] = useState(!window.google);
 
   useEffect(() => {
-    // Check if Google Maps script is already loaded
     if (window.google && window.google.maps) {
       setIsLoading(false); // Skip loading if the API is already loaded
     }
@@ -16,13 +15,17 @@ export const GoogleMapsProvider = ({ children }) => {
 
   return (
     <GoogleMapsContext.Provider value={{ apiKey, isLoading }}>
-      <LoadScript
-        googleMapsApiKey={apiKey}
-        onLoad={() => setIsLoading(false)}
-        onError={() => setIsLoading(false)} // handle potential errors as well
-      >
-        {children}
-      </LoadScript>
+      {!window.google ? (
+        <LoadScript
+          googleMapsApiKey={apiKey}
+          onLoad={() => setIsLoading(false)}
+          onError={() => setIsLoading(false)}
+        >
+          {children}
+        </LoadScript>
+      ) : (
+        children
+      )}
     </GoogleMapsContext.Provider>
   );
 };

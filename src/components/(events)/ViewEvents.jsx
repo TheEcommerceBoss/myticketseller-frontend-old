@@ -151,7 +151,7 @@ const DateTime = ({ theme, eventDetails, ticketDetails, day, id }) => {
         return `${daySuffix(day)} ${month}, ${year}`;
     };
 
-    console.log(day)
+    // console.log(day)
 
     return (
         <div className="mb-8">
@@ -317,7 +317,7 @@ function ViewEventComponent({ variation }) {
                 });
 
                 if (response.data) {
-                    console.log(response.data)
+                    // console.log(response.data)
                     const { event_category, event_specific_type, event_title, event_description, event_img, user_details, total_events_by_this_user_with_status_1, additional_info } = response.data.event_info;
                     setEventDetails({
                         event_category,

@@ -2,18 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { X, ArrowLeft, Check, Instagram, Facebook, Twitter, CheckCircle } from 'lucide-react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import api from '../../api';
+import Swal from 'sweetalert2';
 
 const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails, eventDetails, eventId }) => {
-    const [ticketCounts, setTicketCounts] = useState({});
+    const [ticketCounts, setTicketCounts] = useState({}); // Initialize as an object
+    const [tickets, settickets] = useState([]);
+    // console.log(eventDetails.event_id)
 
     useEffect(() => {
         // Initialize ticket counts with 0 for each ticket type
         const initialCounts = {};
         ticketDetails.tickets.forEach(ticket => {
-            initialCounts[ticket.type] = 0;
+            initialCounts[ticket.ticket_id] = 0;
         });
+        // console.log(ticketDetails.tickets)
         setTicketCounts(initialCounts);
     }, [ticketDetails]);
+
     const handleTicketChange = (ticketName, operation) => {
         setTicketCounts(prevCounts => {
             const currentCount = prevCounts[ticketName] || 0;
@@ -24,6 +30,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
             };
         });
     };
+
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -58,7 +65,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
     });
     const [showCheckout, setShowCheckout] = useState(false);
     const [showSummary, setShowSummary] = useState(false);
-    const [tickets, settickets] = useState([]);
+    // console.table(tickets)
 
     useEffect(() => {
         const fetchEventDetails = () => {
@@ -73,7 +80,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
         fetchEventDetails();
     }, [ticketDetails]);
 
-    console.log(tickets);
+    // console.log(tickets);
 
     const [marketingConsent, setMarketingConsent] = useState({
         organizer: false,
@@ -98,7 +105,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
         let totalTickets = 0; // Initialize ticket counter
 
         tickets.forEach(ticket => {
-            const ticketCount = ticketCounts[ticket.ticket_name] || 0; // Default to 0 if not set
+            const ticketCount = ticketCounts[ticket.ticket_id] || 0; // Default to 0 if not set
             subtotal += ticketCount * ticket.price; // Calculate subtotal
             totalTickets += ticketCount; // Count total number of tickets
         });
@@ -124,20 +131,28 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
 
     const handleCheckout = async () => {
         setIsLoading(true);
-        setIsConfirmed(true);
-
+        // setIsConfirmed(true);
+        // console.log(ticketCounts)
         try {
             // Replace with your actual API endpoint
-            const response = await axios.post('/api/orders', {
-                tickets: ticketCounts,
-                customer: formData,
+            const response = await api.post('/requestTicket', {
+                ticketdata: ticketCounts,
+                email: formData.email,
+                phone_number: formData.phone,
+                fullname: formData.name,
+                event_id: eventDetails.event_id,
                 paymentMethod,
                 marketingConsent,
                 total: calculateTotal().total
             });
-            setIsConfirmed(true);
+            // setIsConfirmed(true);
+            console.log(response.data)
         } catch (error) {
-            console.error('Checkout failed:', error);
+            // if (error.status == 400) {
+                console.error(error.response.data);
+                Swal.fire('Error', error.response.data.error ? error.response.data.error : 'Error', 'error');
+ 
+
         } finally {
             setIsLoading(false);
         }
@@ -242,11 +257,11 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                 </div>
             </div>
             <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">
-                    <Link to={'/dashboard/ticket/all'} className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors">
-                        Take me to my Tickets
-                    </Link>
-                 
-                </div>
+                <Link to={'/dashboard/ticket/all'} className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors">
+                    Take me to my Tickets
+                </Link>
+
+            </div>
 
         </div>
     );
@@ -322,7 +337,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                             <button
                                                 onClick={onClose}
                                                 className="p-2 bg-black bg-opacity-50 absolute right-[.2rem] rounded-full"
-                                                >
+                                            >
                                                 <X className="w-6 h-6 text-white font-bold" />
                                             </button>
                                         </div>
@@ -345,14 +360,14 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                     </div>
                                                     <div className="flex items-center gap-4">
                                                         <button
-                                                            onClick={() => handleTicketChange(ticket.ticket_name, 'subtract')}
+                                                            onClick={() => handleTicketChange(ticket.ticket_id, 'subtract')}
                                                             className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
                                                         >
                                                             -
                                                         </button>
-                                                        <span className="w-8 text-center">{ticketCounts[ticket.ticket_name] || 0}</span>
+                                                        <span className="w-8 text-center">{ticketCounts[ticket.ticket_id] || 0}</span>
                                                         <button
-                                                            onClick={() => handleTicketChange(ticket.ticket_name, 'add')}
+                                                            onClick={() => handleTicketChange(ticket.ticket_id, 'add')}
                                                             className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
                                                         >
                                                             +
