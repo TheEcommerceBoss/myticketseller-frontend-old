@@ -27,7 +27,7 @@ function ValidatePayment() {
             setFetchingDataLoading(true);
             try {
                 const response = await axios.post(
-                    `${import.meta.env.VITE_API_URL}validateEvent`,
+                    `${import.meta.env.VITE_API_URL}/validateEvent`,
                     {
                         reference: reference,
                         trxref: trxref,
