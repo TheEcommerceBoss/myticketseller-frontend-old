@@ -309,7 +309,6 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
         </>
     );
 
-
     const PaystackModal = ({ paystack }) => (
         <>
             <div className="bg-[#000080] h-full text-white rounded-lg p-6">
