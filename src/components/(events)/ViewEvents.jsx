@@ -412,7 +412,7 @@ function ViewEventComponent({ variation }) {
 
 
                     {ticketDetails.days.map((day, index) => (
-                        <div className="mb-5 px-5 rounded-l border">
+                        <div key={index} className="mb-5 px-5 rounded-l border">
 
                             <div className={`flex items-center my-6 pb-2 `}>
 
