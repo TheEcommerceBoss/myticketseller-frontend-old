@@ -31,12 +31,15 @@ import { useAuth } from '../../context/AuthContext';
 
 const SettingsPage = () => {
   const { userData } = useAuth();
+  const [loading, setLoading] = useState(true); // Track loading state
+
+  console.log(userData && userData.user.email)
   const [formData, setFormData] = useState({
     email: userData && userData.user.email,
     fullname: userData && userData.user.fullname,
-    instagram: '',  // Add Instagram field
-    tiktok: '',     // Add TikTok field
-    twitter: '',    // Add Twitter field
+    instagram: userData && userData.user.instagram,  // Add Instagram field
+    tiktok: userData && userData.user.tiktok,     // Add TikTok field
+    twitter: userData && userData.user.twitter,    // Add Twitter field
   });
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -79,33 +82,34 @@ const SettingsPage = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      const token = Cookies.get("auth_token");
-      await api.put('/update-profile', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      Swal.fire({
-        icon: 'success',
-        title: 'Profile Updated',
-        text: 'Your profile has been updated successfully.',
-      });
+        const token = Cookies.get("auth_token");
+        await api.post('/update_details', formData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated',
+            text: 'Your profile has been updated successfully.',
+        });
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to update profile.',
-      });
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update profile.',
+        });
     }
-  };
+};
+
 
   return (
     <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex-1 py-8 px-5 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-4">
+        <div className="flex justify-between  mb-8">
+          <div className="flex  space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}
@@ -116,7 +120,7 @@ const SettingsPage = () => {
             <h1 className="hidden lg:flex text-2xl font-bold">Settings</h1>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex  space-x-4">
             <button
               onClick={toggleTheme}
               className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
@@ -130,24 +134,10 @@ const SettingsPage = () => {
         </div>
 
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-          <div className="mb-8 flex items-center flex-col justify-center text-center">
-            <div className="flex items-center mb-4">
-              <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
-                Email
-              </label>
-            </div>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-              placeholder="Enter Email"
-            />
-          </div>
+         
 
-          <div className="mb-8 flex items-center flex-col justify-center text-center">
-            <div className="flex items-center mb-4">
+          <div className="mb-8 flex  flex-col justify-center text-center">
+            <div className="flex  mb-4">
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Full Name
               </label>
@@ -162,8 +152,8 @@ const SettingsPage = () => {
             />
           </div>
 
-          <div className="mb-8 flex items-center flex-col justify-center text-center">
-            <div className="flex items-center mb-4">
+          <div className="mb-8 flex  flex-col justify-center text-center">
+            <div className="flex  mb-4">
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Instagram
               </label>
@@ -178,8 +168,8 @@ const SettingsPage = () => {
             />
           </div>
 
-          <div className="mb-8 flex items-center flex-col justify-center text-center">
-            <div className="flex items-center mb-4">
+          <div className="mb-8 flex  flex-col justify-center text-center">
+            <div className="flex  mb-4">
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 TikTok
               </label>
@@ -194,8 +184,8 @@ const SettingsPage = () => {
             />
           </div>
 
-          <div className="mb-8 flex items-center flex-col justify-center text-center">
-            <div className="flex items-center mb-4">
+          <div className="mb-8 flex  flex-col justify-center text-center">
+            <div className="flex  mb-4">
               <label className={`text-l font-normal mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#000]'}`}>
                 Twitter
               </label>

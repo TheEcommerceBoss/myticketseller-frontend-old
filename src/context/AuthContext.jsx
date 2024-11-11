@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
       const fetchUser = async () => {
         try {
           const token = Cookies.get("auth_token");
+          console.log(token)
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
             headers: {
               Authorization: `Bearer ${token}`,

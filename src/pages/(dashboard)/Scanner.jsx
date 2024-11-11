@@ -1,23 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Home,
-  PlusCircle,
-  ListChecks,
-  Ticket,
-  Megaphone,
-  HelpCircle,
-  Settings,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Moon,
-  Sun,
-  CalendarCogIcon,
-  BellDot,
-  Bell,
-  X,
-} from 'lucide-react';
+import { Home, PlusCircle, ListChecks, Ticket, Megaphone, HelpCircle, Settings, Menu, ChevronLeft, ChevronRight, Search, Moon, Sun, CalendarCogIcon, BellDot, Bell, X } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import user from "../../assets/(user)/user.png";
@@ -28,23 +10,24 @@ import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import api from "../../api";
 import { useAuth } from '../../context/AuthContext';
-
+import { Scanner } from '@yudiel/react-qr-scanner';
+import axios from 'axios';
 const ScannerPage = () => {
   const { userData } = useAuth();
   const [formData, setFormData] = useState({
     email: userData && userData.user.email,
     fullname: userData && userData.user.fullname,
-    instagram: '',  // Add Instagram field
-    tiktok: '',     // Add TikTok field
-    twitter: '',    // Add Twitter field
+    instagram: '',
+    tiktok: '',
+    twitter: '',
   });
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
+
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
@@ -69,35 +52,64 @@ const ScannerPage = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
 
-  const handleUpdateProfile = async () => {
-    try {
-      const token = Cookies.get("auth_token");
-      await api.put('/update-profile', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      Swal.fire({
-        icon: 'success',
-        title: 'Profile Updated',
-        text: 'Your profile has been updated successfully.',
-      });
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to update profile.',
-      });
+  const [result, setResult] = useState('No result');
+  const [resultData, setresultData] = useState([]);
+
+  // Handle QR scan result
+  const handleScan = async (data) => {
+    if (data && data[0]) {
+      const scannedValue = data[0].rawValue;
+      setResult('verifying...');
+
+      console.log('Scanned result:', scannedValue);
+
+      try {
+        setresultData([])
+        const token = Cookies.get("auth_token");
+
+        const response = await axios.post(import.meta.env.VITE_API_URL + 'scanTicket', {
+          ticket_code: scannedValue
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        console.log(response.data);
+        setResult("QR Valid");
+        setresultData(response.data)
+        console.log(response.data.data)
+      } catch (error) {
+        console.error('API error:', error);
+        console.log(error.response.data.message)
+        setResult(error.response.data.message);
+
+      }
+    } else {
+      console.log('Failed to parse QR code');
     }
   };
+
+  // Handle scan errors
+  const handleError = (err) => {
+    console.error(err);
+    alert('Error: ' + err);
+  };
+
+  const CenteredHr = ({ text, style = "", type = 1 }) => {
+    return (
+      <div className={`flex items-center my-6 pb-2 ${style}`}>
+        {type == 1 ? (
+          <div className="flex-1 border-t border-gray-300"></div>
+        ) : ('')}
+        {text && (
+          <span className="mx-4 text-sm font-bold text-white">{text}</span>
+        )}
+        <div className="flex-1 border-t border-gray-300"></div>
+      </div>
+    );
+  };
+
 
   return (
     <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
@@ -130,11 +142,75 @@ const ScannerPage = () => {
         </div>
 
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-          
-        <h5>Ticket Scanner</h5>
-          
+          <h5 className='text-center mt-[1rem] mb-[2rem]'>Ticket Scanner</h5>
+          <div className="flex flex-col items-center justify-center ">
+            <div className="bg-white shadow-lg rounded-lg w-full lg:w-[40rem] p-6 mb-6">
+              <Scanner
+                onScan={handleScan}
+                onError={handleError}
+                allowMultiple={true}
+                scanDelay={3000}
+              />
+              {resultData && resultData.status ? (
+                resultData.status != 'success' ? (
+                  <div className="w-full mt-5 h-auto bg-red-500 text-white p-4 rounded-lg">
+                    <div className="mb-4">
+
+                      <h2 className="text-2xl font-bold text-center mt-2">Invalid Ticket</h2>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full mt-5 h-auto bg-black text-white p-4 rounded-lg">
+                    {/* Main Event Info */}
+                    <div className="mb-4">
+
+                      <h2 className="text-2xl font-bold text-center mt-2">{resultData.event_title || 'Untitled Event'}</h2>
+                    </div>
+
+                    <div className="mb-4">
+                      <CenteredHr text="Scan Info" />
+                      <p>Scan Times: {resultData.scan_times}</p>
+                      <p>Last Scanned: {resultData.last_scanned}</p>
+                    </div>
+
+                    <div className="mb-4">
+                      <CenteredHr text="User Info" />
+                      <p>Name: {resultData.fullname}</p>
+                      <p>Email: {resultData.buyer_email}</p>
+                      <p>Phone Number: {resultData.phone_number}</p>
+                    </div>
+
+
+                    <div className="mb-4">
+                      <CenteredHr text="Ticket Info" />
+                      <p>Ticket Name: {resultData.ticket_name}</p>
+                      <p>Ticket Type: {resultData.ticket_type}</p>
+                    </div>
+
+                    <div className="mb-4">
+                      <CenteredHr text="Payment Info" />
+                      <p>Price: NGN {resultData.price}</p>
+                      <p>Purchase Date: {resultData.purchase_date}</p>
+                      <p>Payment Status: {resultData.status}</p>
+                    </div>
+
+                  </div>
+                )
+              ) : (result ? (
+
+                <div className="w-full mt-5 h-auto bg-red-800 text-white p-4 rounded-lg">
+                  <div className="mb-4">
+
+                    <h2 className="text-l font-bold text-center mt-2">{result}</h2>
+                  </div>
+                </div>
+
+              ) : '')}
+
+              {/* {console.log(result)} */}
+            </div>
+          </div>
         </div>
- 
       </div>
     </div>
   );

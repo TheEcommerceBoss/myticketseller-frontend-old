@@ -13,7 +13,9 @@ import {
   HelpCircle,
   ChevronLeft,
   ChevronRight,
-  ScanTextIcon
+  ScanTextIcon,
+  ScanQrCodeIcon,
+  LucideScanFace
 } from 'lucide-react';
 
 const SideBar = ({ isOpen, toggleSidebar }) => {
@@ -100,8 +102,14 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
             text="Manage Events"
             active={location.pathname === '/dashboard/event/manage'}
           />
+           <NavItem
+            icon={<LucideScanFace size={24} />}
+            link="/dashboard/event/scan"
+            text="Scan Manager"
+            active={location.pathname.startsWith('/dashboard/event/scan')}
+          />
           <NavItem
-            icon={<ScanTextIcon size={24} />}
+            icon={<ScanQrCodeIcon size={24} />}
             link="/dashboard/ticket/scanner"
             text="Ticket Scanner"
             active={location.pathname === '/dashboard/ticket/scanner'}
