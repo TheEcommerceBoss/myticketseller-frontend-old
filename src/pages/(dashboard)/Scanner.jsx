@@ -157,7 +157,7 @@ const ScannerPage = () => {
                     <div className="mb-4">
 
                       <h2 className="text-2xl font-bold text-center mt-2">Invalid Ticket</h2>
-                    </div>
+                    </div> 
                   </div>
                 ) : (
                   <div className="w-full mt-5 h-auto bg-black text-white p-4 rounded-lg">
