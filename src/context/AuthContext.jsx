@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
           });
           // console.log(token)
           setUserData(response.data);
+          console.log(response.data);
         } catch (error) {
           console.error("Failed to fetch user:", error);
 
