@@ -149,7 +149,7 @@ const ScannerPage = () => {
                 onScan={handleScan}
                 onError={handleError}
                 allowMultiple={true}
-                scanDelay={3000}
+                scanDelay={5000}
               />
               {resultData && resultData.status ? (
                 resultData.status != 'success' ? (
