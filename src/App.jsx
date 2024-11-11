@@ -23,6 +23,8 @@ import ScannerPage from './pages/(dashboard)/Scanner';
 import MyTicketsPage from './pages/(dashboard)/MyTickets';
 import { GoogleMapsProvider } from './components/GoogleMapsContext';
 import ValidatePayment from './pages/(payments)/validatePayment';
+import ScanManager from './pages/(dashboard)/ScanManager';
+import ModifyScanner from './pages/(dashboard)/ModifyScanner';
 
  
 function App() {
@@ -47,6 +49,8 @@ function App() {
             <Route path="/dashboard/support" element={<ProtectedRoute><SupportPage /></ProtectedRoute>} />
             <Route path="/dashboard/ticket/scanner" element={<ProtectedRoute><ScannerPage /></ProtectedRoute>} />
             <Route path="/dashboard/ticket/all" element={<ProtectedRoute><MyTicketsPage /></ProtectedRoute>} />
+            <Route path="/dashboard/event/scan" element={<ProtectedRoute><ScanManager /></ProtectedRoute>} />
+            <Route path="/dashboard/event/scan/:id" element={<ProtectedRoute><ModifyScanner /></ProtectedRoute>} />
  
             <Route path="/validatePayment/" element={<ValidatePayment />} />
 
