@@ -33,21 +33,35 @@ const SettingsPage = () => {
   const { userData } = useAuth();
   const [loading, setLoading] = useState(true); // Track loading state
 
-  console.log(userData && userData.user.email)
   const [formData, setFormData] = useState({
-    email: userData && userData.user.email,
-    fullname: userData && userData.user.fullname,
-    instagram: userData && userData.user.instagram,  // Add Instagram field
-    tiktok: userData && userData.user.tiktok,     // Add TikTok field
-    twitter: userData && userData.user.twitter,    // Add Twitter field
+    email: '',
+    fullname: '',
+    instagram: '',
+    tiktok: '',
+    twitter: '',
   });
+
+  // Load user data into formData on component mount or when userData updates
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        email: userData.user.email || '',
+        fullname: userData.user.fullname || '',
+        instagram: userData.user.instagram || '',
+        tiktok: userData.user.tiktok || '',
+        twitter: userData.user.twitter || '',
+      });
+      setLoading(false)
+    }
+  }, [userData]);
+
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
+
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
@@ -82,25 +96,29 @@ const SettingsPage = () => {
 
   const handleUpdateProfile = async () => {
     try {
-        const token = Cookies.get("auth_token");
-        await api.post('/update_details', formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        Swal.fire({
-            icon: 'success',
-            title: 'Profile Updated',
-            text: 'Your profile has been updated successfully.',
-        });
+      setLoading(true)
+      const token = Cookies.get("auth_token");
+      await api.post('/update_details', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      Swal.fire({
+        icon: 'success',
+        title: 'Profile Updated',
+        text: 'Your profile has been updated successfully.',
+      });
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to update profile.',
-        });
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to update profile.',
+      });
+    } finally {
+      setLoading(false)
+
     }
-};
+  };
 
 
   return (
@@ -134,7 +152,7 @@ const SettingsPage = () => {
         </div>
 
         <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-         
+
 
           <div className="mb-8 flex  flex-col justify-center text-center">
             <div className="flex  mb-4">
@@ -204,9 +222,10 @@ const SettingsPage = () => {
         <div className="flex flex-col items-end text-center">
           <button
             onClick={() => handleUpdateProfile()}
-            className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
+            disabled={loading}
+            className={`w-[12rem] 	 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} ${loading ? 'bg-opacity-50 cursor-wait ' : ''} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
           >
-            Save Settings
+            {!loading ? 'Save Settings' : 'loading...' }
           </button>
         </div>
       </div>
