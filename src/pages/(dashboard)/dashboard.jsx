@@ -227,7 +227,7 @@ const Dashboard = () => {
 
         {/* Stats Cards */}
         <div className=" grid lg:grid-cols-3 gap-6 mb-8">
-          <StatCard title="Balance" value={"₦" + (userData && userData.user.balance)} color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-green-300" iconColor="text-green-700" />
+          <StatCard title="Balance" value={"₦" + (userData ? userData.user.balance : 0.00)} color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-green-300" iconColor="text-green-700" />
           <StatCard title="Tickets Sold" value={totalTickets} color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-blue-300" iconColor="text-blue-700" />
           <StatCard title="Events Created" value={events.length} color={theme === 'dark' ? 'bg-[#121212]' : 'bg-white'} textColor={theme != 'dark' ? 'text-[#121212]' : 'text-white'} cardColor="bg-orange-300" iconColor="text-orange-700" />
         </div>
