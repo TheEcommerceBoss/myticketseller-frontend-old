@@ -110,14 +110,14 @@ const Dashboard = () => {
         const formatMonthYear = (month, year) => `${monthNames[month - 1]} '${year.toString().slice(-2)}`;
 
         // Transform original data for events
-        const transformedEventData = response.data.event_creation_rate.map((entry) => ({
+        const transformedEventData = response.data.event_creation_rate && response.data.event_creation_rate.map((entry) => ({
           month: entry.month,
           year: entry.year,
           total_events: entry.total_events,
         }));
 
         // Transform original data for successful transactions
-        const transformedSuccessfulTransactions = response.data.successful_transactions.map((entry) => ({
+        const transformedSuccessfulTransactions = response.data && response.data.successful_transactions.map((entry) => ({
           month: entry.month,
           year: entry.year,
           total_scans: entry.total_scans,
@@ -143,7 +143,7 @@ const Dashboard = () => {
         }
 
         // Update requiredMonths with actual data from both transformed data arrays
-        const paddedData = requiredMonths.map((required) => {
+        const paddedData = requiredMonths && requiredMonths.map((required) => {
           const eventData = transformedEventData.find(
             (entry) => entry.month === required.month && entry.year === required.year
           );
@@ -425,7 +425,7 @@ const Calendar = ({ theme, Stats }) => {
       </div>
 
       <div className="grid grid-cols-7 gap-2 mb-2">
-        {days.map((day) => (
+        {days && days.map((day) => (
           <div key={day} className="text-center text-sm text-gray-500">
             {day}
           </div>
@@ -433,7 +433,7 @@ const Calendar = ({ theme, Stats }) => {
       </div>
 
       <div className="grid grid-cols-7 gap-2">
-        {dates.map((date) => {
+        {dates && dates.map((date) => {
           const eventId = isEventDay(date); // Check if there's an event for this date
           return (
             <div
