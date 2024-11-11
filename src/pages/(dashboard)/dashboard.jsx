@@ -93,6 +93,7 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         const token = Cookies.get("auth_token");
+        
         const response = await api.post("/get-dashboard-stats", {
           headers: {
             Authorization: `Bearer ${token}`,
