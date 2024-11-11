@@ -93,14 +93,14 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         const token = Cookies.get("auth_token");
-        
+
         const response = await api.post("/get-dashboard-stats", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        // console.log(response.data.event_days);
+        console.log(response.data);
         setStats(response.data.event_days)
 
         // Month names for formatting
