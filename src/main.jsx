@@ -6,7 +6,8 @@ import "@fontsource/gochi-hand";
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <App />
-  </StrictMode>,
+  // </StrictMode>
+  ,
 )
