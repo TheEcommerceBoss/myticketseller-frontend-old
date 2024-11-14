@@ -3,7 +3,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { Sun, Moon, Search, X, Menu } from "lucide-react";
 import logo from '../../assets/(site_assets)/logo.png';
 import logoDark from '../../assets/(site_assets)/logo-dark.png';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MapPin } from 'lucide-react';
 const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
     const { theme, toggleTheme } = useTheme();
@@ -12,7 +12,8 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
         setIsMenuOpen(!isMenuOpen);
     };
     const [searchQuery, setSearchQuery] = useState('');
-    const [location, setLocation] = useState('New York');
+    const [location, setLocation] = useState('');
+    const navigate = useNavigate();
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -27,6 +28,13 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
             document.body.classList.remove('overflow-hidden');
         }
     }, [isMenuOpen]);
+
+    const searchEvent = () => {
+        if (searchQuery) {
+            navigate('/event/search/' + searchQuery);
+            // alert(searchQuery)
+        }
+    }
 
     return (
         <header className={` flex items-center justify-center ${variation === 1 ? 'absolute w-full' : ''}`}>
@@ -47,7 +55,7 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                                     <Link to="/about" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>About Us</Link>
                                     <Link to="/contact" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Contact Us</Link>
                                     <Link to="/pricing" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Pricing</Link>
-                                     <Link to="/login" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Login</Link>
+                                    <Link to="/login" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Login</Link>
                                 </>
                                 :
                                 showsearch ?
@@ -62,9 +70,10 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                                                     <div className="flex items-center flex-1 px-4 py-1">
                                                         <Search className="w-5 h-5 text-gray-600 mr-3" />
                                                         <input
-                                                            type="text"
+                                                            type="search"
                                                             placeholder="Search events"
                                                             value={searchQuery}
+                                                            onSubmit={searchEvent}
                                                             onChange={(e) => setSearchQuery(e.target.value)}
                                                             className="w-full outline-none text-gray-700 placeholder-gray-500 text-lg"
                                                         />
@@ -77,15 +86,18 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                                                             type="text"
                                                             placeholder="Location"
                                                             value={location}
+                                                            onSubmit={searchEvent}
                                                             onChange={(e) => setLocation(e.target.value)}
                                                             className="w-40 outline-none text-gray-700 placeholder-gray-500 text-lg"
                                                         />
                                                     </div>
                                                 </div>
 
-                                                {/* Search Button */}
                                                 <button
                                                     type="submit"
+                                                    onClick={searchEvent}
+                                                    onSubmit={searchEvent}
+
                                                     className="p-4 bg-orange-500 hover:bg-orange-600 transition-colors"
                                                 >
                                                     <Search className="w-6 h-6 text-white" />

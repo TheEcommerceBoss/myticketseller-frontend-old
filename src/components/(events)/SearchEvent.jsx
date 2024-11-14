@@ -13,6 +13,7 @@ import TicketModal from "./TicketModal";
 import api from "../../api";
 import MapAutocomplete from "../(maps)/Autocomplete";
 import LocationSearch from "../(maps)/LocationSearch";
+import { useParams } from "react-router-dom";
 
 const options = [
     { value: "location1", label: "Location 1" },
@@ -63,11 +64,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 
-function FeaturedEvents({ variation }) {
+function SearchEventComponent({ variation }) {
+    const { search } = useParams();
+    const [searchParam, UseSearchParam] = useState('');
 
+    const navigate = useNavigate();
     const [categories, SetCategories] = useState([]);
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
-    const navigate = useNavigate();
 
     const formattedCategories = categories
         .filter(category => category.status === 1) // Only show active categories (status: 1)
@@ -77,50 +80,62 @@ function FeaturedEvents({ variation }) {
         }));
 
     const [cards, setcards] = useState([]); // State for the selected date
-    const [searchQuery, setSearchQuery] = useState('');
-    const handleSearch = (e) => {
-        e.preventDefault();
-        // Handle search logic here
-        console.log('Searching:', searchQuery, 'in', location);
-    };
-    const searchEvent = () => {
-        if (searchQuery) {
-            navigate('/event/search/' + searchQuery);
-            // alert(searchQuery)
-        }
-    }
-
     useEffect(() => {
-        const fetchCategories = async () => {
+        UseSearchParam(search)
+
+    }, [search]);
+    const searchEvent = async () => {
+        if (searchParam) {
+            navigate('/event/search/' + searchParam);
+            setLoading(true)
             try {
-                const response = await api.get("/get_categories", {
-                    headers: {
-
-                    },
-                });
-                SetCategories(response.data.categories);
-            } catch (error) {
-                console.error("Failed to fetch user:", error);
-            }
-        };
-
-        fetchCategories();
-
-    }, []);
-    const [loading, setLoading] = useState(true); // Track loading state
-
-    useEffect(() => {
-        const fetchEvents = async () => {
-            try {
-                const response = await api.get("/events", {
+                const response = await api.post("/search_events",
+                    {
+                        query: searchParam,
+                    }, {
                     headers: {
 
                     },
                 });
                 setcards(response.data.events_list);
-                // console.log(response.data.events_list);
+                console.log(response.data);
             } catch (error) {
                 console.error("Failed to fetch user:", error);
+                if (error.status == 404) {
+                    setcards([]);
+                }
+            } finally {
+                setLoading(false)
+            }
+            // alert(searchQuery)
+        }
+    }
+    const handleSearch = (e) => {
+        e.preventDefault();
+        searchEvent()
+    };
+
+    const [loading, setLoading] = useState(true); // Track loading state
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            console.log(search)
+            try {
+                const response = await api.post("/search_events",
+                    {
+                        query: search,
+                    }, {
+                    headers: {
+
+                    },
+                });
+                setcards(response.data.events_list);
+                console.log(response.data);
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+                if (error.status == 404) {
+                    setcards([]);
+                }
             } finally {
                 setLoading(false)
             }
@@ -223,84 +238,35 @@ function FeaturedEvents({ variation }) {
         setSearchLocation(newLocation);
     };
     return (
-        <section className={`py-16 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-gray-100'}`}>
-            <div className={`${variation == 2 ? 'hidden' : 'flex'} relative z-10  flex-col -mt-[6.5rem] items-center justify-center h-full text-white px-4`}>
+        <section className={`py-10 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-gray-100'}`}>
 
-                <form
-                    onSubmit={handleSearch}
-                    className={`${theme === 'dark' ? 'bg-gray-100' : 'bg-white'} rounded-[2rem] p-2 w-full max-w-6xl flex flex-col md:flex-row items-center shadow-lg`}
-                >  <p className="flex-grow px-6 py-3 rounded-[2rem] focus:outline-none text-gray-500 placeholder-gray-400">
-                        Search by name or type
-                    </p>
-
-                    <div className="flex flex-col md:flex-row w-full gap-1">
-                        <div className="px-4 py-2 w-full flex justify-between items-center md:items-start md:flex-col md:border-l md:border-b-0 border-b border-gray-300">
-                            <p className="text-blue-800 font-semibold mb-1">Event Name</p>
-                            <input
-                                type="text"
-                                placeholder="Enter event name"
-                                value={searchQuery}
-                                onSubmit={searchEvent}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="px-4 py-2 flex w-[400px] bg-transparent text-black outline-none  border border-[#d1d5db] rounded-sm"
-                                style={{ width: '100%' }}
-                            />                        </div>
-                        <div className="px-4 py-2 w-full flex justify-between md:flex-col items-center md:items-start md:border-l md:border-b-0 border-b border-gray-300">
-                            <p className="text-blue-800 font-semibold mb-1">Date</p>
-                            <div className="relative">
-                                <DatePicker
-                                    selected={selectedDate}
-                                    onChange={(date) => setSelectedDate(date)}
-                                    placeholderText="Select Date"
-                                    dateFormat="MMMM d, yyyy"
-                                    className={`border p-2 rounded w-[200px] pl-[1.3rem] bg-transparent text-black border-[#d1d5db] custom-datepicker`}
-                                />
-                                <Calendar className="absolute right-2 top-2 w-5 h-5 text-gray-500" />
-                            </div>
-                        </div>
-
-                        <div className="px-4 py-2 w-full flex justify-between items-center md:items-start md:flex-col md:border-l md:border-b-0 border-b border-gray-300">
-                            <p className="text-blue-800 font-semibold mb-1">Event Type</p>
-                            <Select
-                                options={formattedCategories}
-                                styles={customStyles}
-                                components={{ DropdownIndicator }}
-                                placeholder="Select Event Type"
-                                isSearchable={false}
-                            />
-                        </div>
-                    </div>
-                    <div className="w-full md:w-auto md:mr-3 flex justify-end items-center mt-2  md:mt-0">
-                        <button type="submit"
-                            onClick={searchEvent}
-                            onSubmit={searchEvent}
-                            className="bg-blue-600 text-white p-4 rounded-full ml-2">
-                            <Search size={24} />
-                        </button>
-                    </div>
-                </form>
-            </div>
             <div className={`${variation == 2 ? '' : 'mt-[6rem]'} container mx-auto px-4 `}>
                 <div className={`${variation == 2 ? 'text-start' : 'text-center '} mb-8`}>
 
                     <div className={`${variation == 2 ? 'flex flex-col md:flex-row justify-between' : ''} `}>
-                        <h2 className={`${variation == 2 ? ' text-lg  md:text-2xl  ' : ' text-xl  md:text-3xl  '}font-bold pb-1 mb-3 relative inline-block font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                            {variation == 2 ? 'Browse Events' : 'Featured Events Around You'}
 
-                            <span className={` absolute bottom-0 ${variation == 2 ? ' left-0 ' : ' right-0 '} w-[5rem] h-[.1rem] bg-orange-500 `}></span>
-                            <span className={` absolute bottom-1 ${variation == 2 ? ' left-0 ' : ' right-0 '} w-[5rem] h-[.1rem] bg-orange-500 `}></span>
-                        </h2>
+                        <div className={`${variation == 2 ? 'flex justify-center w-full' : 'hidden'}`}>
+                            <div className="relative w-full max-w-7xl flex items-center justify-center">
+                                <form
+                                    onSubmit={handleSearch}
+                                    className="w-full px-2"
+                                >
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        value={searchParam}
+                                        onSubmit={searchEvent}
+                                        onChange={(e) => UseSearchParam(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
+                                    />
 
-                        <div className={`${variation == 2 ? 'relative max-w-[200px] md:max-w-auto mx-auto  hidden lg:flex items-center' : 'hidden'} `}>
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
-                            />
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <Search size={20} className="text-gray-600" />
+                                </form>
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-5">
+                                    <Search size={20} className="text-gray-600" />
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
 
@@ -308,38 +274,7 @@ function FeaturedEvents({ variation }) {
                     <p className={`${variation == 2 ? 'hidden' : ''} text-sm px-5  ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         Check out what’s trending now and grab your tickets before they sell out!
                     </p>
-                    <div className="flex  lg:hidden flex-row justify-around items-center gap-2 mt-5">
-                        <div className={`${variation == 2 ? 'relative w-1/2 mx-auto  flex items-center' : 'hidden'} `}>
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
-                            />
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <Search size={20} className="text-gray-600" />
-                            </div>
-                        </div>
-                        <Select
-                            options={formattedCategories}
-                            styles={customSearchStyles}
-                            components={{ DropdownIndicator }}
-                            placeholder="All"
-                            isSearchable={false}
-                        />
 
-                    </div>
-                    <div className="hidden lg:flex justify-center space-x-10 items-center my-8">
-                        <a href="#" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
-                        {categories.map((eventType, index) => (
-                            <a
-                                key={eventType.id}
-                                href={`/category/${eventType.id}`}
-                                className={`text-sm hover:text-[#040171] ${theme === "light" ? "text-gray-700" : "text-white"}`}
-                            >
-                                {eventType.category}
-                            </a>
-                        ))}
-                    </div>
 
                 </div>
                 {loading ? (
@@ -454,4 +389,4 @@ function FeaturedEvents({ variation }) {
     );
 }
 
-export default FeaturedEvents;
+export default SearchEventComponent;
