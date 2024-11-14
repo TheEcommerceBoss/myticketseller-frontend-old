@@ -41,6 +41,7 @@ function App() {
             <Route path="/event/find" element={<FindEvent />} />
             <Route path="/event/search/:search" element={<SearchEvent />} />
             <Route path="/event/view/:id" element={<GoogleMapsProvider><ViewEvent /></GoogleMapsProvider>} />
+            <Route path="/category/:id" element={<FindEvent />} />
 
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard/event/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
