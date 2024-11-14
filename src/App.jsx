@@ -29,6 +29,7 @@ import UnProtectedRoute from './components/UnProtectedRoute';
 import AboutUs from './pages/(landing)/About';
 import ContactPage from './pages/(landing)/Contact';
 import PricingPage from './pages/(landing)/Pricing';
+import SearchEvent from './pages/(events)/SearchEvent';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/event/find" element={<FindEvent />} />
+            <Route path="/event/search/:search" element={<SearchEvent />} />
             <Route path="/event/view/:id" element={<GoogleMapsProvider><ViewEvent /></GoogleMapsProvider>} />
 
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
