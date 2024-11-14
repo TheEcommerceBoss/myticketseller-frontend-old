@@ -40,7 +40,7 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                 {!hidemenu && (
                     <>
                         <div className="hidden lg:flex space-x-6">
-                            {variation === 1 ?
+                            {variation === 1 || variation === 4 ?
                                 <> <Link to="#" className="text-orange-500 text-lg font-medium">Home</Link>
 
                                     <Link to="/event/find" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Events</Link>
