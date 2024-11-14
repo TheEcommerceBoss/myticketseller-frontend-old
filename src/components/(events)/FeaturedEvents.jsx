@@ -69,6 +69,7 @@ function FeaturedEvents({ variation, sortcategory }) {
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
     const navigate = useNavigate();
     // sortcategory ? alert(sortcategory) : alert('none')
+    const [searchParam, UseSearchParam] = useState('');
 
     const formattedCategories = categories
         .filter(category => category.status === 1) // Only show active categories (status: 1)
@@ -82,11 +83,14 @@ function FeaturedEvents({ variation, sortcategory }) {
     const handleSearch = (e) => {
         e.preventDefault();
         // Handle search logic here
-        console.log('Searching:', searchQuery, 'in', location);
+        console.log('Searching:', searchParam, 'in', location);
+        navigate('/event/search/' + searchParam);
+
     };
+
     const searchEvent = () => {
-        if (searchQuery) {
-            navigate('/event/search/' + searchQuery);
+        if (searchParam) {
+            navigate('/event/search/' + searchParam);
             // alert(searchQuery)
         }
     }
@@ -292,16 +296,28 @@ function FeaturedEvents({ variation, sortcategory }) {
                             <span className={` absolute bottom-1 ${variation == 2 ? ' left-0 ' : ' right-0 '} w-[5rem] h-[.1rem] bg-orange-500 `}></span>
                         </h2>
 
-                        <div className={`${variation == 2 ? 'relative max-w-[200px] md:max-w-auto mx-auto  hidden lg:flex items-center' : 'hidden'} `}>
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
-                            />
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <Search size={20} className="text-gray-600" />
+                        <div className={`${variation == 2 ? 'flex justify-center w-full' : 'hidden'}`}>
+                            <div className="relative w-full max-w-7xl flex items-center justify-center">
+                                <form
+                                    onSubmit={handleSearch}
+                                    className="w-full px-2"
+                                >
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        value={searchParam}
+                                        onSubmit={searchEvent}
+                                        onChange={(e) => UseSearchParam(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
+                                    />
+
+                                </form>
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-5">
+                                    <Search size={20} className="text-gray-600" />
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
 
@@ -309,26 +325,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                     <p className={`${variation == 2 ? 'hidden' : ''} text-sm px-5  ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         Check out what’s trending now and grab your tickets before they sell out!
                     </p>
-                    <div className="flex  lg:hidden flex-row justify-around items-center gap-2 mt-5">
-                        <div className={`${variation == 2 ? 'relative w-1/2 mx-auto  flex items-center' : 'hidden'} `}>
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-10 pr-4 py-2 border border-[#d1d5db] bg-transparent rounded-lg focus:outline-none"
-                            />
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <Search size={20} className="text-gray-600" />
-                            </div>
-                        </div>
-                        <Select
-                            options={formattedCategories}
-                            styles={customSearchStyles}
-                            components={{ DropdownIndicator }}
-                            placeholder="All"
-                            isSearchable={false}
-                        />
 
-                    </div>
                     <div className="hidden lg:flex justify-center space-x-10 items-center my-8">
                         <a href="#" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
                         {categories.map((eventType, index) => (
@@ -362,93 +359,94 @@ function FeaturedEvents({ variation, sortcategory }) {
                         </div>
                     </div>
                 ) : (
-                    <>
-                        <div className={`${variation == 2 ? '' : 'flex flex-col items-center'}`}>
-                            <div className={`${variation == 2 ? 'lg:px-[5rem]' : 'max-w-7xl grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} w-full grid gap-8 px-2`}>
-                                {currentCards && currentCards.map((card, index) => (
-                                    <div key={index}>
-                                        {
-                                            variation !== 2 ? (
-                                                <div className={`bg-white shadow-lg  rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
-                                                    <img
-                                                        src={card.event_img}
-                                                        alt={card.event_title}
-                                                        className="w-full h-[8rem] md:h-[10rem] object-cover"
-                                                    />
-                                                    <div className={`flex flex-col justify-between p-6 py-4 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                        <div className="flex items-center">
-                                                            <span className="text-gray-500 flex w-2/5 items-center gap-1 text-xs"><Calendar size={16} /> <span>{card.event_days[0].start_day}</span></span>
-                                                            <span className="text-orange-500 text-center w-1/5">|</span>
-                                                            <span className="text-gray-500 flex w-2/5 items-center justify-end gap-1 text-xs"><MapPin size={16} /> <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address.split(", ").slice(-2).join(", ")}</span></span>
+                    currentCards.length == 0 ? <p className="text-center">No Event Found</p> :
+                        <>
+                            <div className={`${variation == 2 ? '' : 'flex flex-col items-center'}`}>
+                                <div className={`${variation == 2 ? 'lg:px-[5rem]' : 'max-w-7xl grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} w-full grid gap-8 px-2`}>
+                                    {currentCards && currentCards.map((card, index) => (
+                                        <div key={index}>
+                                            {
+                                                variation !== 2 ? (
+                                                    <div className={`bg-white shadow-lg  rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+                                                        <img
+                                                            src={card.event_img}
+                                                            alt={card.event_title}
+                                                            className="w-full h-[8rem] md:h-[10rem] object-cover"
+                                                        />
+                                                        <div className={`flex flex-col justify-between p-6 py-4 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
+                                                            <div className="flex items-center">
+                                                                <span className="text-gray-500 flex w-2/5 items-center gap-1 text-xs"><Calendar size={16} /> <span>{card.event_days[0].start_day}</span></span>
+                                                                <span className="text-orange-500 text-center w-1/5">|</span>
+                                                                <span className="text-gray-500 flex w-2/5 items-center justify-end gap-1 text-xs"><MapPin size={16} /> <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address.split(", ").slice(-2).join(", ")}</span></span>
+                                                            </div>
+                                                            <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="text-xl my-2 text-black font-semibold">
+                                                                {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
+                                                            </Link>
+                                                            <span className="text-gray-500 text-sm">{card.event_description.length > 100 ? `${card.event_description.substring(0, 100)}...` : card.event_description}</span>
                                                         </div>
-                                                        <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="text-xl my-2 text-black font-semibold">
-                                                            {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
-                                                        </Link>
-                                                        <span className="text-gray-500 text-sm">{card.event_description.length > 100 ? `${card.event_description.substring(0, 100)}...` : card.event_description}</span>
                                                     </div>
-                                                </div>
-                                            ) : (
-                                                <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4">
-                                                    <img
-                                                        src={card.event_img}
-                                                        alt={card.event_title}
-                                                        className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
-                                                    />
-                                                    <div className="rounded-xl lg:shadow-md bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
-                                                        <div className="flex justify-between items-start">
-                                                            <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
-                                                                <div className="">
-                                                                    <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
-                                                                        <div className="flex font-semibold items-center gap-1">
-                                                                            <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
-                                                                            <span>{card.event_days[0].start_day}</span>
+                                                ) : (
+                                                    <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4">
+                                                        <img
+                                                            src={card.event_img}
+                                                            alt={card.event_title}
+                                                            className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
+                                                        />
+                                                        <div className="rounded-xl lg:shadow-md bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
+                                                            <div className="flex justify-between items-start">
+                                                                <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
+                                                                    <div className="">
+                                                                        <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
+                                                                            <div className="flex font-semibold items-center gap-1">
+                                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                                <span>{card.event_days[0].start_day}</span>
+                                                                            </div>
+                                                                            <div className="flex font-bold items-center gap-1">
+                                                                                <Clock color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                                <span>{card.event_days[0].open_door_time}</span>
+                                                                            </div>
                                                                         </div>
-                                                                        <div className="flex font-bold items-center gap-1">
-                                                                            <Clock color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
-                                                                            <span>{card.event_days[0].open_door_time}</span>
-                                                                        </div>
+                                                                    </div>
+
+                                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                                        {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
+                                                                    </Link>
+
+                                                                    <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
+                                                                        <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                        <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address}</span>
+                                                                    </div>
+                                                                    <div className="h-full md:hidden mt-4 flex ">
+                                                                        <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="bg-orange-500 text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                                            Buy Tickets
+                                                                        </Link>
                                                                     </div>
                                                                 </div>
 
-                                                                <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
-                                                                    {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
-                                                                </Link>
-
-                                                                <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
-                                                                    <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
-                                                                    <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address}</span>
-                                                                </div>
-                                                                <div className="h-full md:hidden mt-4 flex ">
-                                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="bg-orange-500 text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                                <div className="h-full hidden md:flex md:border-l pl-3 items-center">
+                                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="bg-orange-500 text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
                                                                         Buy Tickets
                                                                     </Link>
                                                                 </div>
                                                             </div>
-
-                                                            <div className="h-full hidden md:flex md:border-l pl-3 items-center">
-                                                                <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="bg-orange-500 text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
-                                                                    Buy Tickets
-                                                                </Link>
-                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        }
-                                    </div>
-                                ))}
+                                                )
+                                            }
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Pagination */}
-                        <div className="p-4">
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={setCurrentPage}
-                            />
-                        </div>
-                    </>
+                            {/* Pagination */}
+                            <div className="p-4">
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onPageChange={setCurrentPage}
+                                />
+                            </div>
+                        </>
                 )}
             </div>
         </section>

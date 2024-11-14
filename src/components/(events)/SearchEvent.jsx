@@ -296,6 +296,8 @@ function SearchEventComponent({ variation }) {
                         </div>
                     </div>
                 ) : (
+                    currentCards.length == 0 ? <p className="text-center">No Event Found</p> :
+
                     <>
                         <div className={`${variation == 2 ? '' : 'flex flex-col items-center'}`}>
                             <div className={`${variation == 2 ? 'lg:px-[5rem]' : 'max-w-7xl grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} w-full grid gap-8 px-2`}>
