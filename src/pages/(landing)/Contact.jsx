@@ -4,6 +4,7 @@ import FeaturedEvents from "../../components/(events)/FeaturedEvents";
 import WhyUs from "../../components/(others)/WhyUs";
 import EventCalendar from "../../components/(others)/HowItWorks";
 import Footer from "../../components/(footers)/Footer";
+import contactdesign from "../../assets/(landing)/contactdesign.png"
 import { useTheme } from "../../context/ThemeContext";
 import { Phone, Mail, MapPin, Twitter, Instagram, Twitch } from 'lucide-react'
 
@@ -19,7 +20,7 @@ function ContactPage() {
 
                     <div className="flex flex-col md:flex-row max-w-7xl mx-auto my-10 shadow-lg rounded-lg overflow-hidden">
                         {/* Left sidebar */}
-                        <div className={`bg-[#000] shadow-lg shadow-inner text-white p-8 md:w-1/3`}>
+                        <div className={`bg-[#000] relative shadow-lg shadow-inner text-white p-8 md:w-1/3`}>
                             <h2 className="text-3xl font-bold mb-2">Contact Information</h2>
                             <p className="mb-8 font-normal text-gray-500">Say something to start a live chat!</p>
 
@@ -38,11 +39,12 @@ function ContactPage() {
                                 </div>
                             </div>
 
-                            <div className="flex space-x-4 mt-20">
+                            <div className="flex space-x-4 mt-[12rem]">
                                 <Twitter className="cursor-pointer" />
                                 <Instagram className="cursor-pointer" />
                                 <Twitch className="cursor-pointer" />
                             </div>
+                            <img src={contactdesign} className="absolute opacity-60 bottom-0 w-[12rem] right-0" alt="" />
                         </div>
 
                         {/* Right form area */}
