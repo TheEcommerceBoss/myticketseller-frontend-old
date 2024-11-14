@@ -34,7 +34,7 @@ import Cookies from "js-cookie";
 import api from "../../api";
 import { DataGrid } from '@mui/x-data-grid';
 import Swal from 'sweetalert2';
-const ModifyScanner = () => {
+const CreateBannerPage = () => {
   const { theme, toggleTheme } = useTheme();
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -370,7 +370,7 @@ const ModifyScanner = () => {
             </button>
 
             <div className="">
-              <h1 className="hidden lg:flex text-2xl font-bold">Scan Manager</h1>
+              <h1 className="hidden lg:flex text-2xl font-bold">Generate Poster</h1>
               <span className={`hidden lg:flex ${theme != 'dark' ? 'text-[#040171]' : 'text-white'} `}><Greetings />, {userData && userData.user.fullname}</span>
 
             </div>
@@ -409,124 +409,17 @@ const ModifyScanner = () => {
           {/* Ongoing Events */}
           <div className={`w-full py-5 px-3 pb-[5rem] rounded-xl ${theme === 'dark' ? 'bg-[#121212] ' : 'bg-white'}`}>
             <div className="flex mb-3 justify-between">
-              <h2 className="text-lg font-semibold mb-1 pt-1 px-3 pb-1">Scan Manager</h2>
-              <button
-                onClick={openAddPermissionModal}
-                className="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
-              >
-                Add Permission
-              </button>
+              <h2 className="text-lg font-semibold mb-1 pt-1 px-3 pb-1">Generate Poster</h2>
+             
             </div>
-            <div className="grid grid grid-cols-1 lg:grid-cols-2  gap-6 mt-6">
-
-              <div className={`md:col-span-1 p-2 ${theme === "light" ? "bg-white" : "bg-[#121212] text-white"}  rounded-lg`}>
-                <div style={{ height: '100%', width: '100%' }}>
-                  {loading ? (
-                    <div className="flex justify-center items-center ">
-                      <div className="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
-                        <div className="animate-pulse flex space-x-4">
-                          <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                          <div className="flex-1 space-y-6 py-1">
-                            <div className="h-[1rem] bg-slate-700 rounded"></div>
-                            <div className="space-y-3">
-                              <div className="grid grid-cols-3 gap-4">
-                                <div className="h-[1rem] bg-slate-700 rounded col-span-2"></div>
-                                <div className="h-[1rem] bg-slate-700 rounded col-span-1"></div>
-                              </div>
-                              <div className="h-[1rem] bg-slate-700 rounded"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : permissions.length === 0 ? (
-                    <div className="flex justify-center items-center h-96">
-                      <span>No Scan Permission found</span>
-                    </div>
-                  ) : (
-                    <>
-                      <h2 className="text-lg font-semibold mb-1 pt-1 px-3 pb-1">Scan Permission</h2>
-
-                      <DataGrid
-                        rows={PermissionsWithIndex}
-                        columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        checkboxSelection={false}
-                        disableSelectionOnClick
-                        sx={{
-                          '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: theme === 'dark' ? 'black' : '#f5f5f5',
-                          },
-                          '& .MuiDataGrid-cell': {
-                            color: theme === 'dark' ? 'white' : 'black',
-                          },
-                          '& .MuiDataGrid-footerContainer': {
-                            backgroundColor: 'white',
-                          },
-                        }}
-                      />
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className={`md:col-span-1 mt-[2rem] md:mt-0 p-2 ${theme === "light" ? "bg-white" : "bg-[#121212] text-white"}  rounded-lg`}>
-                <div style={{ height: '100%', width: '100%' }}>
-                  {loading ? (
-                    <div className="flex justify-center items-center ">
-                      <div className="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
-                        <div className="animate-pulse flex space-x-4">
-                          <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                          <div className="flex-1 space-y-6 py-1">
-                            <div className="h-[1rem] bg-slate-700 rounded"></div>
-                            <div className="space-y-3">
-                              <div className="grid grid-cols-3 gap-4">
-                                <div className="h-[1rem] bg-slate-700 rounded col-span-2"></div>
-                                <div className="h-[1rem] bg-slate-700 rounded col-span-1"></div>
-                              </div>
-                              <div className="h-[1rem] bg-slate-700 rounded"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : permissions.length === 0 ? (
-                    <div className="flex justify-center items-center h-96">
-                      <span>No Scan Permission found</span>
-                    </div>
-                  ) : (
-                    <>
-                      <h2 className="text-lg font-semibold mb-1 pt-1 px-3 pb-1">Recent Scans</h2>
-
-                      <DataGrid
-                        rows={scannedrecordsWithIndex}
-                        columns={scancolumns}
-                        pageSize={25}
-                        rowsPerPageOptions={[5]}
-                        checkboxSelection={false}
-                        disableSelectionOnClick
-                        sx={{
-                          '& .MuiDataGrid-columnHeaders': {
-                            backgroundColor: theme === 'dark' ? 'black' : '#f5f5f5',
-                          },
-                          '& .MuiDataGrid-cell': {
-                            color: theme === 'dark' ? 'white' : 'black',
-                          },
-                          '& .MuiDataGrid-footerContainer': {
-                            backgroundColor: 'white',
-                          },
-                        }}
-                      />
-                    </>
-                  )}
-                </div>
-              </div>
+            <div className="grid grid grid-cols-1 gap-6 mt-6">
+ 
             </div>
           </div>
 
           {isAddPermissionModalOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className={`p-6  rounded-lg w-1/3 ${theme === 'dark' ? 'bg-[#121212]' : 'bg-white'}`}>
+              <div className={`p-6 bg-white rounded-lg w-1/3 ${theme === 'dark' ? 'bg-[#333]' : 'bg-white'}`}>
                 <h2 className="text-lg font-semibold mb-4">Add Scan Permission</h2>
                 <label className="block mb-2">Email</label>
                 <input
@@ -664,4 +557,4 @@ const Calendar = ({ theme, Stats }) => {
 };
 
 
-export default ModifyScanner;
+export default CreateBannerPage;

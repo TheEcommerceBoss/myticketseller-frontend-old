@@ -103,23 +103,24 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
             active={location.pathname === '/dashboard/event/manage'}
           />
            <NavItem
-            icon={<LucideScanFace size={24} />}
-            link="/dashboard/event/scan"
-            text="Scan Manager"
-            active={location.pathname.startsWith('/dashboard/event/scan')}
-          />
-          <NavItem
             icon={<ScanQrCodeIcon size={24} />}
             link="/dashboard/ticket/scanner"
             text="Ticket Scanner"
             active={location.pathname === '/dashboard/ticket/scanner'}
           />
-          {/* <NavItem
+           <NavItem
+            icon={<LucideScanFace size={24} />}
+            link="/dashboard/event/scan"
+            text="Scan Manager"
+            active={location.pathname.startsWith('/dashboard/event/scan')}
+          />
+         
+          <NavItem
             icon={<Megaphone size={24} />}
-            link="/dashboard/event/promotion"
-            text="Event Promotion Tools"
-            active={location.pathname === '/dashboard/event/promotion'}
-          /> */}
+            link="/dashboard/event/poster"
+            text="Generate Poster"
+            active={location.pathname.startsWith('/dashboard/event/poster')}
+          />
           <NavItem
             icon={<Settings size={24} />}
             link="/dashboard/settings"
