@@ -5,9 +5,15 @@ import WhyUs from "../../components/(others)/WhyUs";
 import EventCalendar from "../../components/(others)/HowItWorks";
 import Footer from "../../components/(footers)/Footer";
 import { useTheme } from "../../context/ThemeContext";
+import { useNavigate, useParams } from "react-router-dom";
 
 function LandingPage() {
     const { theme } = useTheme();
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    
+
 
     return (
         <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
@@ -15,7 +21,7 @@ function LandingPage() {
             
             <main>
                 <HeroSection />
-                <FeaturedEvents  variation={2} />
+                <FeaturedEvents sortcategory={id} variation={2} />
              </main>
 
             <Footer />

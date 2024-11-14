@@ -63,11 +63,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 
-function FeaturedEvents({ variation }) {
+function FeaturedEvents({ variation, sortcategory }) {
 
     const [categories, SetCategories] = useState([]);
     const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
     const navigate = useNavigate();
+    // sortcategory ? alert(sortcategory) : alert('none')
 
     const formattedCategories = categories
         .filter(category => category.status === 1) // Only show active categories (status: 1)
@@ -112,11 +113,11 @@ function FeaturedEvents({ variation }) {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await api.get("/events", {
-                    headers: {
-
+                const response = await api.post(sortcategory ? "/category_events" : "/events",
+                    {
+                        category: sortcategory
                     },
-                });
+                );
                 setcards(response.data.events_list);
                 // console.log(response.data.events_list);
             } catch (error) {
@@ -334,7 +335,7 @@ function FeaturedEvents({ variation }) {
                             <a
                                 key={eventType.id}
                                 href={`/category/${eventType.id}`}
-                                className={`text-sm hover:text-[#040171] ${theme === "light" ? "text-gray-700" : "text-white"}`}
+                                className={`${eventType.id == sortcategory ? 'bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center px-2 text-sm font-medium' : `text-sm hover:text-[#040171]  ${theme === "light" ? "text-gray-700" : "text-white`"}`}`}
                             >
                                 {eventType.category}
                             </a>
