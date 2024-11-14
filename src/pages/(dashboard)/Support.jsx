@@ -4,10 +4,11 @@ import {
   X,
   Moon,
   Sun,
+  PlusCircle,
 } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DashboardHeader from '../../components/(events)/DashboardHeader';
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
@@ -21,6 +22,7 @@ const SupportPage = () => {
     description: '',
     attachment: null, // For file attachment
   });
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
@@ -51,11 +53,19 @@ const SupportPage = () => {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      attachment: e.target.files[0], // Storing the selected file
-    }));
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prevState) => ({
+          ...prevState,
+          attachment: reader.result, // Save Base64 string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,6 +89,8 @@ const SupportPage = () => {
     }
 
     try {
+      setIsLoading(true)
+      // console.log(formData.attachment)
       const token = Cookies.get("auth_token");
       await api.post('/submit-support', formDataToSend, {
         headers: {
@@ -98,11 +110,14 @@ const SupportPage = () => {
         attachment: null,
       });
     } catch (error) {
+      console.log(error.response.data)
       Swal.fire({
         icon: 'error',
         title: 'Error',
         text: 'Failed to submit support request. Please try again later.',
       });
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -123,6 +138,12 @@ const SupportPage = () => {
           </div>
 
           <div className="flex items-center space-x-4">
+            <Link to={'/dashboard/event/create'}
+              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              aria-label="Toggle theme"
+            >
+              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+            </Link>
             <button
               onClick={toggleTheme}
               className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
@@ -169,6 +190,8 @@ const SupportPage = () => {
             <input
               type="file"
               onChange={handleFileChange}
+              // value={formData.attachment}
+
               className={`w-full p-3 border border-gray-300 ${theme === 'dark' ? 'text-white' : 'text-[#000]'} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
             />
           </div>
@@ -177,9 +200,10 @@ const SupportPage = () => {
           <div className="flex flex-col items-end text-center">
             <button
               onClick={handleSubmit}
-              className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
+              disabled={isLoading}
+              className={`w-[12rem] bg-[#040171]  ${isLoading ? ' bg-opacity-50 ' : '' } ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
             >
-              Submit Request
+              {isLoading ? 'Loading...' : 'Submit Request' }
             </button>
           </div>
         </div>

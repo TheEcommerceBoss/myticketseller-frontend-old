@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Pencil, Trash2, Eye, ToggleLeftIcon } from 'lucide-react';
+import { Pencil, Trash2, Eye, ToggleLeftIcon, PlusCircle } from 'lucide-react';
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from '../../components/(headers)/DashboardSidebar';
 import { Search, Menu, Bell, X, Moon, Sun } from 'lucide-react';
@@ -187,9 +187,12 @@ const ManageEvent = () => {
                 className={`pl-10 pr-4 py-2 rounded-full border ${theme === 'dark' ? 'bg-[#222] border-[#444]' : 'bg-transparent border-gray-400'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
             </div>
-            <button className={`rounded-full p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
-              <Bell fill={theme === "light" ? "#040171" : "white"} size={20} />
-            </button>
+            <Link to={'/dashboard/event/create'}
+              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              aria-label="Toggle theme"
+            >
+              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+            </Link>
             <button onClick={toggleTheme} className={`rounded-full p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}>
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
