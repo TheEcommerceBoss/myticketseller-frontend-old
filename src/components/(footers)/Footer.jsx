@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 import logoDark from '../../assets/(site_assets)/logo-dark.png';  // Adjust path as necessary
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     const [email, setEmail] = useState('');
@@ -50,7 +51,7 @@ const Footer = () => {
                         </h3>
 
                     </div>
-                    <div className="w-full md:w-1/4 mb-6 md:mb-0">
+                    <div className="w-full md:w-1/4 mb-6 md:mb-0 px-5">
                         <p className="text-sm">
                             Whether you are looking for the hottest nightlife events, exclusive parties, or unique gatherings, My TicketSeller has got you covered!
                         </p>
@@ -59,7 +60,7 @@ const Footer = () => {
                         <h4 className="font-bold mb-2">Our Services</h4>
                         <ul className="text-sm space-y-1">
                             <li>Ticketing Solutions</li>
-                            <li>Blog</li>
+                            <li><Link to={'/about'}>About</Link></li>
                             <li>Pricing Plans</li>
                         </ul>
                     </div>

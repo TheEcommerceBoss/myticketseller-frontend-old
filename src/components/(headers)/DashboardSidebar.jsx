@@ -115,12 +115,12 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
             active={location.pathname.startsWith('/dashboard/event/scan')}
           />
          
-          <NavItem
+          {/* <NavItem
             icon={<Megaphone size={24} />}
             link="/dashboard/event/poster"
             text="Generate Poster"
             active={location.pathname.startsWith('/dashboard/event/poster')}
-          />
+          /> */}
           <NavItem
             icon={<Settings size={24} />}
             link="/dashboard/settings"

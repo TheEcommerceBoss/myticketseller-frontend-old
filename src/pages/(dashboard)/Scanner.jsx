@@ -129,6 +129,12 @@ const ScannerPage = () => {
           </div>
 
           <div className="flex items-center space-x-4">
+            <Link to={'/dashboard/event/create'}
+              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              aria-label="Toggle theme"
+            >
+              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+            </Link>
             <button
               onClick={toggleTheme}
               className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
@@ -157,7 +163,7 @@ const ScannerPage = () => {
                     <div className="mb-4">
 
                       <h2 className="text-2xl font-bold text-center mt-2">Invalid Ticket</h2>
-                    </div> 
+                    </div>
                   </div>
                 ) : (
                   <div className="w-full mt-5 h-auto bg-black text-white p-4 rounded-lg">

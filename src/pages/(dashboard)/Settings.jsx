@@ -139,6 +139,12 @@ const SettingsPage = () => {
           </div>
 
           <div className="flex  space-x-4">
+            <Link to={'/dashboard/event/create'}
+              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              aria-label="Toggle theme"
+            >
+              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+            </Link>
             <button
               onClick={toggleTheme}
               className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
@@ -225,7 +231,7 @@ const SettingsPage = () => {
             disabled={loading}
             className={`w-[12rem] 	 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} ${loading ? 'bg-opacity-50 cursor-wait ' : ''} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
           >
-            {!loading ? 'Save Settings' : 'loading...' }
+            {!loading ? 'Save Settings' : 'loading...'}
           </button>
         </div>
       </div>

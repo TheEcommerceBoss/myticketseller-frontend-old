@@ -44,9 +44,9 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                                 <> <Link to="#" className="text-orange-500 text-lg font-medium">Home</Link>
 
                                     <Link to="/event/find" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Events</Link>
-                                    <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>About Us</Link>
-                                    <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Contact Us</Link>
-                                    <Link to="#" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Pricing</Link>
+                                    <Link to="/about" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>About Us</Link>
+                                    <Link to="/contact" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Contact Us</Link>
+                                    <Link to="/pricing" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Pricing</Link>
                                      <Link to="/login" className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"}`}>Login</Link>
                                 </>
                                 :
@@ -160,9 +160,9 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                     <nav className="text-white text-2xl space-y-4">
                         <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Home</Link>
                         <Link to="/event/find" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Events</Link>
-                        <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">About Us</Link>
-                        <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Contact Us</Link>
-                        <Link to="#" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Pricing</Link>
+                        <Link to="/about" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">About Us</Link>
+                        <Link to="/contact" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Contact Us</Link>
+                        <Link to="/pricing" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Pricing</Link>
                         <Link to="/login" onClick={toggleMenu} className="block hover:text-orange-300 font-gluten transition-colors">Login</Link>
 
                     </nav>
