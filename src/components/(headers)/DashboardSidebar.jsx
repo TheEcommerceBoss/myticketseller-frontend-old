@@ -129,12 +129,12 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
             text="Scan Manager"
             active={location.pathname.startsWith("/dashboard/event/scan")}
           />
-          
+
           <NavItem
             icon={<Wallet size={24} />}
-            link="/dashboard/event/poster"
+            link="/dashboard/wallet"
             text="Wallet"
-            active={location.pathname.startsWith("/dashboard/event/poster")}
+            active={location.pathname.startsWith("/dashboard/wallet")}
           />
           <NavItem
             icon={<Settings size={24} />}

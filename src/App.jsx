@@ -30,6 +30,7 @@ import AboutUs from './pages/(landing)/About';
 import ContactPage from './pages/(landing)/Contact';
 import PricingPage from './pages/(landing)/Pricing';
 import SearchEvent from './pages/(events)/SearchEvent';
+import WalletPage from './pages/(dashboard)/wallet';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
             <Route path="/category/:id" element={<FindEvent />} />
 
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/dashboard/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
             <Route path="/dashboard/event/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
             <Route path="/dashboard/event/manage" element={<ProtectedRoute><ManageEvent /></ProtectedRoute>} />
             <Route path="/dashboard/event/create/:id" element={<ProtectedRoute><CreateEvent manage={true} /></ProtectedRoute>} />
