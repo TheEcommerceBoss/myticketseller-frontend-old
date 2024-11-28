@@ -16,6 +16,7 @@ import {
   ScanTextIcon,
   ScanQrCodeIcon,
   LucideScanFace,
+  Wallet,
 } from "lucide-react";
 
 const SideBar = ({ isOpen, toggleSidebar }) => {
@@ -128,13 +129,13 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
             text="Scan Manager"
             active={location.pathname.startsWith("/dashboard/event/scan")}
           />
-
-          {/* <NavItem
-            icon={<Megaphone size={24} />}
+          
+          <NavItem
+            icon={<Wallet size={24} />}
             link="/dashboard/event/poster"
-            text="Generate Poster"
-            active={location.pathname.startsWith('/dashboard/event/poster')}
-          /> */}
+            text="Wallet"
+            active={location.pathname.startsWith("/dashboard/event/poster")}
+          />
           <NavItem
             icon={<Settings size={24} />}
             link="/dashboard/settings"
