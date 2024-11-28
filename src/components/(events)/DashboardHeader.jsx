@@ -79,7 +79,7 @@ function DashboardHeader() {
 
       {isDropdownOpen && (
         <div
-          className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
+          className={`absolute z-30 right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
             theme === "light" ? "bg-white" : "bg-[#121212]"
           } ring-1 ring-black ring-opacity-5`}
         >

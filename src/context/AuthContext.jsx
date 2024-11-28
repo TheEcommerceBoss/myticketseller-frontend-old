@@ -10,28 +10,63 @@ export const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     const fetchUser = async () => {
+  //       try {
+  //         const token = Cookies.get("auth_token");
+  //         console.log(token)
+  //         const response = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         });
+  //         // console.log(token)
+  //         setUserData(response.data);
+  //         console.log(response.data);
+  //       } catch (error) {
+  //         console.error("Failed to fetch user:", error);
+
+  //         setIsAuthenticated(false);
+  //         Cookies.remove("auth_token");
+  //         navigate('/login');
+  //       }
+  //     };
+  //     fetchUser();
+  //   }
+  // }, [isAuthenticated, navigate]);
+
   useEffect(() => {
     if (isAuthenticated) {
       const fetchUser = async () => {
-        try {
-          const token = Cookies.get("auth_token");
-          console.log(token)
-          const response = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          // console.log(token)
-          setUserData(response.data);
-          console.log(response.data);
-        } catch (error) {
-          console.error("Failed to fetch user:", error);
-
-          setIsAuthenticated(false);
-          Cookies.remove("auth_token");
-          navigate('/login');
+        const maxRetries = 5; 
+        let attempt = 0; 
+        const token = Cookies.get("auth_token");
+        
+        while (attempt < maxRetries) {
+          try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            setUserData(response.data);
+            console.log(response.data);
+            return; // Exit the loop on successful request
+          } catch (error) {
+            attempt++;
+            if (attempt >= maxRetries) {
+              console.error("Failed to fetch user after retries:", error);
+              setIsAuthenticated(false);
+              Cookies.remove("auth_token");
+              navigate('/login');
+              return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+          }
         }
       };
+  
       fetchUser();
     }
   }, [isAuthenticated, navigate]);

@@ -289,7 +289,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                 <div className={`${variation == 2 ? 'text-start' : 'text-center '} mb-8`}>
 
                     <div className={`${variation == 2 ? 'flex flex-col md:flex-row justify-between' : ''} `}>
-                        <h2 className={`${variation == 2 ? ' text-lg  md:text-2xl  ' : ' text-xl  md:text-3xl  '}font-bold pb-1 mb-3 relative inline-block font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                        <h2 className={`${variation == 2 ? 'hidden text-lg  md:text-2xl  ' : ' text-xl  md:text-3xl  '}  pb-1 mb-3 relative inline-block font-bold uppercase ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
                             {variation == 2 ? 'Browse Events' : 'Featured Events Around You'}
 
                             <span className={` absolute bottom-0 ${variation == 2 ? ' left-0 ' : ' right-0 '} w-[5rem] h-[.1rem] bg-orange-500 `}></span>
