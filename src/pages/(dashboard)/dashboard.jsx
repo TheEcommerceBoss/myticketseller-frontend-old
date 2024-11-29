@@ -80,40 +80,33 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true); // Track loading state
   const [Stats, setStats] = useState([]);
   const [totalTickets, setTotalTickets] = useState(0); // State to store total tickets
-
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const token = Cookies.get("auth_token");
-        const response = await api.get("/get_user_events", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setEvents(response.data.events);
-      } catch (error) {
-        console.error("Failed to fetch events:", error);
-      } finally {
-        setLoading(false); // Stop loading after fetch
-      }
-    };
-    fetchEvents();
-  }, []);
-  useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
         const token = Cookies.get("auth_token");
 
-        const response = await api.post("/get-dashboard-stats", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // Trigger both API requests concurrently
+        const [eventsResponse, statsResponse] = await Promise.all([
+          api.get("/get_user_events", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          api.post("/get-dashboard-stats", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
 
-        console.log(response.data);
-        setStats(response.data.event_days);
+        // Process events data
+        setEvents(eventsResponse.data.events);
 
-        // Month names for formatting
+        // Process stats data
+        const statsData = statsResponse.data;
+        setStats(statsData.event_days);
+
+        // Process your chart data logic
         const monthNames = [
           "Jan",
           "Feb",
@@ -129,35 +122,29 @@ const Dashboard = () => {
           "Dec",
         ];
 
-        // Formatter function
         const formatMonthYear = (month, year) =>
           `${monthNames[month - 1]} '${year.toString().slice(-2)}`;
 
-        // Transform original data for events
-        const transformedEventData =
-          response.data.event_creation_rate &&
-          response.data.event_creation_rate.map((entry) => ({
+        const transformedEventData = statsData.event_creation_rate.map(
+          (entry) => ({
             month: entry.month,
             year: entry.year,
             total_events: entry.total_events,
-          }));
+          })
+        );
 
-        // Transform original data for successful transactions
         const transformedSuccessfulTransactions =
-          response.data &&
-          response.data.successful_transactions.map((entry) => ({
+          statsData.successful_transactions.map((entry) => ({
             month: entry.month,
             year: entry.year,
             total_scans: entry.total_scans,
             total_tickets: entry.total_tickets,
           }));
 
-        // Get the latest month and year from transformedEventData
         const latestEntry =
           transformedEventData[transformedEventData.length - 1];
-        const latestDate = new Date(latestEntry.year, latestEntry.month - 1); // Month is zero-indexed
+        const latestDate = new Date(latestEntry.year, latestEntry.month - 1);
 
-        // Generate the last five months and one future month
         const requiredMonths = [];
         for (let i = -5; i <= 1; i++) {
           const date = new Date(
@@ -168,60 +155,54 @@ const Dashboard = () => {
             month: date.getMonth() + 1,
             year: date.getFullYear(),
             total_events: 0,
-            total_scans: 0, // Default successful transactions value
-            total_tickets: 0, // Default successful transactions value
-            label: formatMonthYear(date.getMonth() + 1, date.getFullYear()), // Add formatted label
+            total_scans: 0,
+            total_tickets: 0,
+            label: formatMonthYear(date.getMonth() + 1, date.getFullYear()),
           });
         }
 
-        // Update requiredMonths with actual data from both transformed data arrays
-        const paddedData =
-          requiredMonths &&
-          requiredMonths.map((required) => {
-            const eventData = transformedEventData.find(
+        const paddedData = requiredMonths.map((required) => {
+          const eventData = transformedEventData.find(
+            (entry) =>
+              entry.month === required.month && entry.year === required.year
+          );
+          const successfulTransactionData =
+            transformedSuccessfulTransactions.find(
               (entry) =>
                 entry.month === required.month && entry.year === required.year
             );
-            const successfulTransactionData =
-              transformedSuccessfulTransactions.find(
-                (entry) =>
-                  entry.month === required.month && entry.year === required.year
-              );
 
-            // Update total_events, total_scans, and total_tickets
-            return {
-              ...required,
-              total_events: eventData
-                ? eventData.total_events
-                : required.total_events,
-              total_scans: successfulTransactionData
-                ? successfulTransactionData.total_scans
-                : required.total_scans,
-              total_tickets: successfulTransactionData
-                ? successfulTransactionData.total_tickets
-                : required.total_tickets,
-            };
-          });
+          return {
+            ...required,
+            total_events: eventData
+              ? eventData.total_events
+              : required.total_events,
+            total_scans: successfulTransactionData
+              ? successfulTransactionData.total_scans
+              : required.total_scans,
+            total_tickets: successfulTransactionData
+              ? successfulTransactionData.total_tickets
+              : required.total_tickets,
+          };
+        });
 
-        // Update chartData state
         setChartData(paddedData);
 
-        // Calculate the total tickets (sum of total_tickets for all months)
         const totalTickets = paddedData.reduce(
           (acc, entry) => acc + entry.total_tickets,
           0
         );
-        setTotalTickets(totalTickets); // Update the total tickets state
+        setTotalTickets(totalTickets);
 
         console.table(paddedData);
       } catch (error) {
-        console.error("Failed to fetch Stats:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStats();
+    fetchData();
   }, []);
   return (
     <div
@@ -352,6 +333,7 @@ const Dashboard = () => {
               <div className="w-4 h-0.5 bg-[#f97316] mr-2" />
               <span className="text-sm text-gray-600">Created Events</span>
             </div>
+
             <div className="flex items-center">
               <div className="w-4 h-0.5 bg-green-500 mr-2" />
               <span className="text-sm text-gray-600">Sold Tickets</span>
@@ -359,49 +341,69 @@ const Dashboard = () => {
           </div>
 
           <div style={{ width: "100%", height: 300 }}>
-            <ResponsiveContainer>
-              <LineChart data={chartData}>
-                {" "}
-                {/* Use paddedData with labels */}
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="label" /> {/* Set X-axis to use the label */}
-                <YAxis />
-                <Tooltip
-                  content={({ payload }) => {
-                    // Check if there's data to display
-                    if (payload && payload.length > 0) {
-                      const { total_events, total_scans, total_tickets } =
-                        payload[0].payload; // Accessing payload of the first line
-
-                      return (
-                        <div className="custom-tooltip">
-                          <p>
-                            <strong>Created Events:</strong> {total_events}
-                          </p>
-                          <p>
-                            <strong>Sold Tickets:</strong> {total_tickets}
-                          </p>
+            {loading ? (
+              <div className="flex justify-center items-center ">
+                <div className="rounded-md p-4 m-1 w-full mx-auto">
+                  <div className="animate-pulse flex space-x-4">
+                    <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
+                    <div className="flex-1 space-y-6 py-1">
+                      <div className="h-[1rem] bg-slate-700 rounded"></div>
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="h-[1rem] bg-slate-700 rounded col-span-2"></div>
+                          <div className="h-[1rem] bg-slate-700 rounded col-span-1"></div>
                         </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="total_tickets"
-                  stroke="#4caf50"
-                  strokeWidth={2}
-                />{" "}
-                {/* Line for successful transactions */}
-                <Line
-                  type="monotone"
-                  dataKey="total_events"
-                  stroke="#f97316"
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+                        <div className="h-[1rem] bg-slate-700 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <ResponsiveContainer>
+                <LineChart data={chartData}>
+                  {" "}
+                  {/* Use paddedData with labels */}
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="label" /> {/* Set X-axis to use the label */}
+                  <YAxis />
+                  <Tooltip
+                    content={({ payload }) => {
+                      // Check if there's data to display
+                      if (payload && payload.length > 0) {
+                        const { total_events, total_scans, total_tickets } =
+                          payload[0].payload; // Accessing payload of the first line
+
+                        return (
+                          <div className="custom-tooltip">
+                            <p>
+                              <strong>Created Events:</strong> {total_events}
+                            </p>
+                            <p>
+                              <strong>Sold Tickets:</strong> {total_tickets}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="total_tickets"
+                    stroke="#4caf50"
+                    strokeWidth={2}
+                  />{" "}
+                  {/* Line for successful transactions */}
+                  <Line
+                    type="monotone"
+                    dataKey="total_events"
+                    stroke="#f97316"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -416,10 +418,14 @@ const Dashboard = () => {
             <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">
               Recent Events
             </h2>
-            <div className="grid md:grid-cols-2 md:flex-row gap-3 ">
+            <div
+              className={`${
+                loading ? " md:grid-cols-1" : " md:grid-cols-2"
+              } grid md:flex-row gap-3 `}
+            >
               {loading ? (
                 <div className="flex justify-center items-center ">
-                  <div className="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
+                  <div className="  rounded-md p-4 m-1 w-full mx-auto">
                     <div className="animate-pulse flex space-x-4">
                       <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
                       <div className="flex-1 space-y-6 py-1">
