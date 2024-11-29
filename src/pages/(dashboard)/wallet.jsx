@@ -11,7 +11,7 @@ import {
 import {
   ArrowDown,
   Banknote,
-  Link,
+  CirclePlus,
   Menu,
   Moon,
   PlusCircle,
@@ -24,7 +24,7 @@ import DashboardHeader from "../../components/(events)/DashboardHeader";
 import logo from "../../assets/(site_assets)/logo-dark.png";
 import WithdrawalModal from "./WithdrawalModal";
 import AccountSetupModal from "./AccountSetupModal";
-
+import { Link } from "react-router-dom";
 const chartData = [
   { name: "JAN", value: 1000 },
   { name: "FEB", value: 2000 },
@@ -139,7 +139,11 @@ const WalletDashboard = () => {
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}
+              className={`rounded-lg outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200 hover:bg-gray-100"
+                  : "bg-[#121212]"
+              }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -148,15 +152,27 @@ const WalletDashboard = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link to={'/dashboard/event/create'}
-              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+            <Link
+              to={"/dashboard/event/create"}
+              className={`rounded-full outline-none  p-3 ${
+                theme === "light"
+                  ? "bg-gray-200  hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
-              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+              <CirclePlus
+                color={theme === "light" ? "#040171" : "white"}
+                size={20}
+              />
             </Link>
             <button
               onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              className={`rounded-full outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200 hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
@@ -222,14 +238,18 @@ const WalletDashboard = () => {
             </div>
 
             {/* Chart Section - Full Width on Mobile, 2 Columns on Desktop */}
-            <div className="bg-white md:col-span-2 rounded-3xl p-4 md:p-8 mb-4 md:mb-8 shadow-sm">
+            <div
+              className={`${
+                theme === "light" ? "bg-white" : "bg-[#121212]"
+              } md:col-span-2 rounded-3xl p-4 md:p-8 mb-4 md:mb-8 shadow-sm`}
+            >
               <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-8">
                 <div className="flex space-x-2 mb-2 md:mb-0">
                   <button
                     className={`px-3 py-1 md:px-4 md:py-2 rounded-full ${
                       activeTab === "expenses"
                         ? "bg-[#040171] text-white"
-                        : "text-gray-600"
+                        : "text-gray-400"
                     }`}
                     onClick={() => setActiveTab("expenses")}
                   >
@@ -239,7 +259,7 @@ const WalletDashboard = () => {
                     className={`px-3 py-1 md:px-4 md:py-2 rounded-full ${
                       activeTab === "income"
                         ? "bg-[#040171] text-white"
-                        : "text-gray-600"
+                        : "text-gray-400"
                     }`}
                     onClick={() => setActiveTab("income")}
                   >
@@ -252,8 +272,8 @@ const WalletDashboard = () => {
                       key={timeframe}
                       className={`px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm ${
                         activeTimeframe === timeframe
-                          ? "bg-gray-200"
-                          : "text-gray-600"
+                          ? (theme === 'light' ? 'bg-gray-200' : 'bg-white text-black')
+                          : "text-gray-400"
                       }`}
                       onClick={() => setActiveTimeframe(timeframe)}
                     >
@@ -296,12 +316,16 @@ const WalletDashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:gap-8">
-            <div className="bg-white rounded-3xl p-4 md:p-8 shadow-sm">
+            <div
+              className={`${
+                theme === "light" ? "bg-white" : "bg-[#121212]"
+              } rounded-3xl p-4 md:p-8 shadow-sm`}
+            >
               <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 md:mb-0">
+                <h2 className={`${theme === "light" ? 'text-gray-800' : 'text-white'} text-xl md:text-2xl font-bold  mb-2 md:mb-0`}>
                   Transactions
                 </h2>
-                <select className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">
+                <select className="bg-gray-100 text-gray-400 px-3 py-1 rounded-full text-sm">
                   <option>Month</option>
                   <option>Week</option>
                   <option>Year</option>

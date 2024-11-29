@@ -128,44 +128,29 @@ const SettingsPage = () => {
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex-1 py-8 px-5 lg:px-8">
-        <div className="flex justify-between  mb-8">
-          <div className="flex  space-x-4">
+      
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center space-x-4">
             <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`rounded-lg outline-none p-3 ${
-                theme === "light"
-                  ? "bg-gray-200 hover:bg-gray-100"
-                  : "bg-[#121212]"
-              }`}
+              onClick={toggleSidebar}
+              className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            <h1 className="hidden lg:flex text-2xl font-bold">Settings</h1>
+            <h1 className="hidden lg:flex text-2xl font-bold">Support</h1>
           </div>
 
-          <div className="flex  space-x-4">
-            <Link
-              to={"/dashboard/event/create"}
-              className={`rounded-full outline-none  p-3 ${
-                theme === "light"
-                  ? "bg-gray-200  hover:bg-gray-100"
-                  : "hover:bg-[#111] bg-[#121212]"
-              }`}
+          <div className="flex items-center space-x-4">
+            <Link to={'/dashboard/event/create'}
+              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
               aria-label="Toggle theme"
             >
-              <PlusCircle
-                color={theme === "light" ? "#040171" : "white"}
-                size={20}
-              />
+              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
             </Link>
             <button
               onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${
-                theme === "light"
-                  ? "bg-gray-200 hover:bg-gray-100"
-                  : "hover:bg-[#111] bg-[#121212]"
-              }`}
+              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
