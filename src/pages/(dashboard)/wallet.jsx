@@ -26,72 +26,9 @@ import WithdrawalModal from "./WithdrawalModal";
 import AccountSetupModal from "./AccountSetupModal";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-const chartData = [
-  { name: "JAN", value: 1000 },
-  { name: "FEB", value: 2000 },
-  { name: "MAR", value: 3000 },
-  { name: "APR", value: 2500 },
-  { name: "MAY", value: 4000 },
-  { name: "JUN", value: 3500 },
-  { name: "JUL", value: 5000 },
-  { name: "AUG", value: 6000 },
-  { name: "SEP", value: 6482 },
-];
+import Cookies from "js-cookie";
+import axios from "axios";
 
-const transactions = [
-  {
-    id: 1,
-    name: "Withdrawal to Opay",
-    date: "Apr 02, 2024",
-    amount: 1000,
-    icon: <ArrowDown className="h-6 w-6 text-white" />,
-  },
-  {
-    id: 2,
-    name: "Withdrawal to Opay",
-    date: "Apr 02, 2024",
-    amount: 1000,
-    icon: <ArrowDown className="h-6 w-6 text-white" />,
-  },
-  {
-    id: 3,
-    name: "Withdrawal to Opay",
-    date: "Apr 02, 2024",
-    amount: 1000,
-    icon: <ArrowDown className="h-6 w-6 text-white" />,
-  },
-];
-
-const history = [
-  {
-    id: 1,
-    name: "Linkedin Pro",
-    date: "10 Mar 2021",
-    amount: -260.8,
-    icon: "in",
-  },
-  {
-    id: 2,
-    name: "Figma plan",
-    date: "09 Mar 2021",
-    amount: -126.5,
-    icon: "figma",
-  },
-  {
-    id: 3,
-    name: "Instagram ads",
-    date: "08 Mar 2021",
-    amount: -108.4,
-    icon: "instagram",
-  },
-  {
-    id: 4,
-    name: "Dribble Pro",
-    date: "08 Mar 2021",
-    amount: -108.4,
-    icon: "dribble",
-  },
-];
 
 const WalletDashboard = () => {
   const [activeTab, setActiveTab] = useState("expenses");
@@ -102,6 +39,65 @@ const WalletDashboard = () => {
   const [showAccountSetupModal, setShowAccountSetupModal] = useState(false);
   const { userData } = useAuth();
   console.log(userData&&userData.user.balance)
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [withdrawals, setWithdrawals] = useState([]);
+  const token = Cookies.get("auth_token");
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    const fetchWithdrawals = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/fetchUserWithdrawals`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (response.data.code === 200) {
+          setWithdrawals(response.data.data);
+          const withdrawals = response.data.data;
+  
+          // Reduce withdrawals to accumulate monthly totals
+          const monthlyData = withdrawals.reduce((acc, withdrawal) => {
+            const date = new Date(withdrawal.request_time);
+            const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
+            const amount = Number(withdrawal.amount);
+            acc[month] = (acc[month] || 0) + amount;
+            return acc;
+          }, {});
+  
+          // Include all months in order
+          const monthOrder = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+          const sortedData = monthOrder.map((month) => ({
+            name: month,
+            value: monthlyData[month] || 0, // Default to 0 if no data for the month
+          }));
+  
+          setChartData(sortedData);
+        } else {
+          setError(response.data.message || 'Failed to fetch withdrawal records');
+        }
+      } catch (err) {
+        setError(err.response?.data?.message || 'An error occurred');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchWithdrawals();
+  }, [token]);
+
+   if (isLoading) {
+     return <div>Loading...</div>;
+   }
+ 
+   if (error) {
+     return <div className="text-red-500">{error}</div>;
+   }
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -249,7 +245,7 @@ const WalletDashboard = () => {
                 theme === "light" ? "bg-white" : "bg-[#121212]"
               } md:col-span-2 rounded-3xl p-4 md:p-8 mb-4 md:mb-8 shadow-sm`}
             >
-              <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-8">
+              {/* <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-8">
                 <div className="flex space-x-2 mb-2 md:mb-0">
                   <button
                     className={`px-3 py-1 md:px-4 md:py-2 rounded-full ${
@@ -289,7 +285,7 @@ const WalletDashboard = () => {
                     </button>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               <div className="h-48 md:h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -302,7 +298,7 @@ const WalletDashboard = () => {
                         if (active && payload && payload.length) {
                           return (
                             <div className="bg-black text-white p-2 rounded">
-                              <p className="font-bold">${payload[0].value}</p>
+                              <p className="font-bold">₦{payload[0].value}</p>
                             </div>
                           );
                         }
@@ -337,33 +333,29 @@ const WalletDashboard = () => {
                 >
                   Transactions
                 </h2>
-                <select className="bg-gray-100 text-gray-400 px-3 py-1 rounded-full text-sm">
-                  <option>Month</option>
-                  <option>Week</option>
-                  <option>Year</option>
-                </select>
+                
               </div>
               <div className="space-y-4 md:space-y-6">
-                {transactions.map((transaction) => (
+                {withdrawals && withdrawals.map((transaction) => (
                   <div
                     key={transaction.id}
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center space-x-2 md:space-x-4">
                       <div className="bg-[#030171] rounded-full p-2">
-                        {transaction.icon}
+                        <ArrowDown className="h-6 w-6 text-white" />
                       </div>
                       <div>
                         <div className="text-sm md:text-base font-medium">
-                          {transaction.name}
+                          ₦ {transaction.amount}
                         </div>
                         <div className="text-xs md:text-sm text-gray-500">
-                          {transaction.date}
+                          {transaction.request_time}
                         </div>
                       </div>
                     </div>
                     <div className="text-sm md:text-base font-medium">
-                      ${transaction.amount}
+                      {transaction.status}
                     </div>
                   </div>
                 ))}
