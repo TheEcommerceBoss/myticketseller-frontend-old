@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
+import Cookies from "js-cookie";
 
 const WithdrawalModal = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const { theme } = useTheme();
+  const token = Cookies.get("auth_token");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,11 +17,11 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
     setError('');
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}requestWithdrawal`,
+        `${import.meta.env.VITE_API_URL}/requestWithdrawal`,
         { amount },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -26,9 +30,11 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
         // You might want to add a success message or update the user's balance here
       } else {
         setError(response.data.message || 'An error occurred');
+        console.log(response.message)
       }
     } catch (error) {
-      setError('An error occurred while processing your request');
+      console.error(error.response.data.message)
+      setError(error.response.data.message);
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +52,8 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
       
       {/* Modal Container */}
       <div className="relative w-full max-w-md mx-auto my-6 px-4">
-        <div className="relative flex flex-col w-full bg-white rounded-xl shadow-2xl border border-gray-200">
+        <div className={` ${theme === "dark" ? "bg-[#121212]" : "bg-white"
+          } relative flex flex-col w-full  rounded-xl shadow-2xl border border-gray-200`}>
           {/* Close Button */}
           <button
             onClick={onClose}
@@ -88,7 +95,7 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
                       text-sm"
                     placeholder="0.00"
                     min="0"
-                    step="1000"
+                    step="100"
                     required
                   />
                 </div>

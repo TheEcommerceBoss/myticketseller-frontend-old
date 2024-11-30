@@ -25,6 +25,7 @@ import logo from "../../assets/(site_assets)/logo-dark.png";
 import WithdrawalModal from "./WithdrawalModal";
 import AccountSetupModal from "./AccountSetupModal";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 const chartData = [
   { name: "JAN", value: 1000 },
   { name: "FEB", value: 2000 },
@@ -99,6 +100,8 @@ const WalletDashboard = () => {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
   const [showAccountSetupModal, setShowAccountSetupModal] = useState(false);
+  const { userData } = useAuth();
+  console.log(userData&&userData.user.balance)
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -185,7 +188,7 @@ const WalletDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
             {/* Card Section - Full Width on Mobile, Responsive on Desktop */}
             <div className="flex flex-col md:px-4  gap-4">
-              <div className="bg-[#040171] text-white rounded-2xl w-full h-48 p-6 relative overflow-hidden">
+              <div className="bg-[#040171] text-white rounded-2xl w-full h-[13rem] p-6 relative overflow-hidden">
                 <div className="absolute top-4 right-4">
                   <svg
                     className="w-8 h-8"
@@ -202,18 +205,21 @@ const WalletDashboard = () => {
                     />
                   </svg>
                 </div>
-                <div className="flex flex-col justify-between h-full">
-                  <div className="flex flex-col justify-between">
-                    <div className="">
-                      <img src={logo} alt="Visa" className="w-12 md:w-16" />
-                    </div>
+                <div className="flex flex-col justify-between">
+                  <div className="absolute right-3 z-10">
+                    <img src={logo} alt="Visa" className="w-12 md:w-12" />
                   </div>
-                  <div className="text-2xl tracking-wider mb-2">$ 5000.00</div>
-                  <div className="text--sm">Robinson Honour</div>
+                </div>
+                <div className="flex flex-col justify-between h-full">
+                  <div className="text-sm ">{userData && userData.user.account_name ? userData.user.account_name : 'Add Account to continue'}</div>
+
+                  <div className="text-2xl tracking-wider mb-2">₦{userData ? userData.user.balance : 0.0}</div>
+                  <div className="flex flex-col z-10">
+                    <div className="text-sm ">{userData && userData.user.account_number ? userData.user.account_number : ' '}</div>
+                    <div className="text-sm ">{userData && userData.user.bank_name ? userData.user.bank_name : ' '}</div></div>
                 </div>
                 <div className="absolute bottom-0 right-0 bg-[#ff6600] w-24 h-full -skew-x-12 transform origin-bottom-right"></div>
-                <div className="absolute bottom-4 right-4 text-white text-xs md:text-sm font-medium">
-                  Opay
+                <div className="absolute bottom-2 right-4 text-white text-xs md:text-sm font-medium">
                 </div>
               </div>
 
@@ -221,16 +227,16 @@ const WalletDashboard = () => {
                 <div className="flex flex-col justify-between h-full">
                   <div className="my-2 md:my-4 gap-2 flex flex-col justify-center">
                     <button
-                      onClick={() => setShowWithdrawalModal(true)}
-                      className="bg-[#040171] text-white px-4 py-2 md:px-6 md:py-2 rounded-full hover:bg-[#030171] transition-colors text-sm md:text-base"
-                    >
-                      Request Withdrawal
-                    </button>
-                    <button
                       onClick={() => setShowAccountSetupModal(true)}
                       className="bg-white text-black px-4 py-2 md:px-6 md:py-2 rounded-full hover:bg-gray-100 transition-colors text-sm md:text-base"
                     >
                       Setup Account
+                    </button>
+                    <button
+                      onClick={() => setShowWithdrawalModal(true)}
+                      className="bg-[#040171] text-white px-4 py-2 md:px-6 md:py-2 rounded-full hover:bg-[#030171] transition-colors text-sm md:text-base"
+                    >
+                      Request Withdrawal
                     </button>
                   </div>
                 </div>
@@ -272,7 +278,9 @@ const WalletDashboard = () => {
                       key={timeframe}
                       className={`px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm ${
                         activeTimeframe === timeframe
-                          ? (theme === 'light' ? 'bg-gray-200' : 'bg-white text-black')
+                          ? theme === "light"
+                            ? "bg-gray-200"
+                            : "bg-white text-black"
                           : "text-gray-400"
                       }`}
                       onClick={() => setActiveTimeframe(timeframe)}
@@ -322,7 +330,11 @@ const WalletDashboard = () => {
               } rounded-3xl p-4 md:p-8 shadow-sm`}
             >
               <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6">
-                <h2 className={`${theme === "light" ? 'text-gray-800' : 'text-white'} text-xl md:text-2xl font-bold  mb-2 md:mb-0`}>
+                <h2
+                  className={`${
+                    theme === "light" ? "text-gray-800" : "text-white"
+                  } text-xl md:text-2xl font-bold  mb-2 md:mb-0`}
+                >
                   Transactions
                 </h2>
                 <select className="bg-gray-100 text-gray-400 px-3 py-1 rounded-full text-sm">
