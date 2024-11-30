@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Cookies from "js-cookie";
+import Swal from 'sweetalert2';
 
 const WithdrawalModal = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState('');
@@ -10,7 +11,7 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState('');
   const { theme } = useTheme();
   const token = Cookies.get("auth_token");
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -26,7 +27,11 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
         }
       );
       if (response.data.code === 200) {
+        Swal.fire('Account Update Successful', response.data.message, 'success').then(() => {
+          window.location.reload(); // Reloads the page
         onClose();
+        });
+        console.log(response.data.message)
         // You might want to add a success message or update the user's balance here
       } else {
         setError(response.data.message || 'An error occurred');
@@ -94,8 +99,7 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
                       focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
                       text-sm"
                     placeholder="0.00"
-                    min="0"
-                    step="100"
+                    
                     required
                   />
                 </div>
