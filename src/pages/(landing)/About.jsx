@@ -46,6 +46,7 @@ function AboutUs() {
           </p>
         </div>
       </main>
+      
 
       <Footer />
     </div>
