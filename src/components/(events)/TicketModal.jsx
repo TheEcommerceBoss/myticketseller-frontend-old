@@ -7,16 +7,146 @@ import Swal from 'sweetalert2';
 import Cookies from "js-cookie";
 import { useTheme } from '../../context/ThemeContext';
 
-import LocationData from '../../(meta)/LocationData';
 
 
 const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails, eventDetails, eventId }) => {
-    const [ticketCounts, setTicketCounts] = useState({}); // Initialize as an object
+    const [ticketCounts, setTicketCounts] = useState({});
+    const { theme, toggleTheme } = useTheme();
+
     const [tickets, settickets] = useState([]);
-    // console.log(eventDetails.event_id)
     const [showPaystack, setshowPaystack] = useState(false);
     const [showPaystackLink, setshowPaystackLink] = useState('');
-    const { theme } = useTheme();
+
+    const [location, setLocation] = useState(null);
+    const [conversionRate, setConversionRate] = useState(1);
+    const supportedCurrencies = {
+        GBP: { name: "British Pound Sterling", countryCode: "GB" },
+        CAD: { name: "Canadian Dollar", countryCode: "CA" },
+        NGN: { name: "Nigerian Naira", countryCode: "NG" },
+        USD: { name: "United States Dollar", countryCode: "US" },
+        ZAR: { name: "South African Rand", countryCode: "ZA" },
+        XAF: { name: "Central African CFA Franc", countryCode: "CF" },
+        CLP: { name: "Chilean Peso", countryCode: "CL" },
+        COP: { name: "Colombian Peso", countryCode: "CO" },
+        EGP: { name: "Egyptian Pound", countryCode: "EG" },
+        EUR: { name: "SEPA", countryCode: "EU" },
+        GHS: { name: "Ghanaian Cedi", countryCode: "GH" },
+        GNF: { name: "Guinean Franc", countryCode: "GN" },
+        KES: { name: "Kenyan Shilling", countryCode: "KE" },
+        MWK: { name: "Malawian Kwacha", countryCode: "MW" },
+        MAD: { name: "Moroccan Dirham", countryCode: "MA" },
+        RWF: { name: "Rwandan Franc", countryCode: "RW" },
+        SLL: { name: "Sierra Leonean Leone", countryCode: "SL" },
+        TZS: { name: "Tanzanian Shilling", countryCode: "TZ" },
+        UGX: { name: "Ugandan Shilling", countryCode: "UG" },
+        XOF: { name: "West African CFA Franc BCEAO", countryCode: "WA" },
+        ZMW: { name: "Zambian Kwacha", countryCode: "ZM" },
+    };
+
+    useEffect(() => {
+        const fetchLocationData = async () => {
+            try {
+                const currentTime = Date.now();
+                const locationData = Cookies.get("locationData");
+                const lastSavedTime = Cookies.get("locationDataTime");
+
+                if (locationData && lastSavedTime && currentTime - lastSavedTime > 5 * 60 * 1000) {
+                    console.log('cookie')
+                    const parsedLocation = JSON.parse(locationData);
+                    setLocation(parsedLocation);
+                    fetchConversionRate(parsedLocation.currencyCode);  // Fetch conversion rate for the current location
+                } else {
+                    console.log('api')
+
+                    const ipResponse = await fetch("https://api.ipify.org?format=json");
+                    const ipData = await ipResponse.json();
+                    const ipAddress = ipData.ip;
+                    const response = await fetch(`https://ipwhois.app/json/${ipAddress}`);
+                    const data = await response.json();
+                    const flagUrl = `https://flagcdn.com/w320/${data.country_code.toLowerCase()}.png`;
+                    
+                    const locationInfo = {
+                        country: data.country,
+                        countryCode: data.country_code,
+                        cityName: data.city,
+                        currency: data.currency,
+                        regionName: data.region,
+                        timeZone: data.timezone,
+                        flag: flagUrl,
+                        currencyCode: data.currency_code
+                    };
+                    console.log(data)
+                    
+
+                    Cookies.set("locationData", JSON.stringify(locationInfo), { expires: 1 / 24 });
+                    Cookies.set("locationDataTime", currentTime, { expires: 1 / 24 });
+                    setLocation(locationInfo);
+                    fetchConversionRate(data.currency_code);  // Fetch conversion rate for the detected currency
+                }
+            } catch (error) {
+                console.error("Error fetching location data", error);
+            }
+        };
+
+        fetchLocationData();
+    }, []);
+
+    const fetchConversionRate = async (currencyCode) => {
+        try {
+            const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${currencyCode}`);
+            const data = await response.json();
+            setConversionRate(data.rates.NGN);  // Store conversion rate to NGN
+        } catch (error) {
+            console.error("Error fetching conversion rate", error);
+        }
+    };
+
+    const getSupportedCurrenciesWithLocationFirst = () => {
+        if (!location) return supportedCurrencies;
+
+        const prioritized = {
+            [location.currencyCode]: {
+                name: location.currency,
+                countryCode: location.countryCode,
+            },
+        };
+
+        return {
+            ...prioritized,
+            ...Object.fromEntries(
+                Object.entries(supportedCurrencies).filter(
+                    ([key]) => key !== location.currencyCode
+                )
+            ),
+        };
+    };
+
+    const handleCountryChange = (event) => {
+        const selectedCurrency = event.target.value;
+
+        if (!supportedCurrencies[selectedCurrency]) {
+            setLocation({
+                country: "United States",
+                currency: "United States Dollar",
+                currencyCode: "USD",
+                countryCode: "US",
+                flag: `https://flagcdn.com/w320/us.png`,
+            });
+            fetchConversionRate("USD");  // Fetch conversion rate for USD
+        } else {
+            const selectedCountry = supportedCurrencies[selectedCurrency];
+            const flagUrl = `https://flagcdn.com/w320/${selectedCountry.countryCode.toLowerCase()}.png`;
+
+            setLocation({
+                country: selectedCountry.name,
+                currency: selectedCountry.name,
+                currencyCode: selectedCurrency,
+                countryCode: selectedCountry.countryCode,
+                flag: flagUrl,
+            });
+            fetchConversionRate(selectedCurrency);  // Fetch conversion rate for the selected currency
+        }
+    };
 
     useEffect(() => {
         // Initialize ticket counts with 0 for each ticket type
@@ -118,11 +248,12 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
             totalTickets += ticketCount; // Count total number of tickets
         });
 
-        const transactionFee = 300; // Flat transaction fee
+        const transactionFee = (300 / conversionRate); // Flat transaction fee
+        console.log(conversionRate)
         return {
-            subtotal,
+            subtotal: ((subtotal) / conversionRate),
             transactionFee,
-            total: subtotal + transactionFee,
+            total: ((subtotal + transactionFee) / conversionRate),
             totalTickets // Return total ticket count
         };
     };
@@ -143,7 +274,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
         // console.log(ticketCounts)
         try {
             // Replace with your actual API endpoint
-            const response = await api.post('/requestTicket', {
+            var data = {
                 ticketdata: ticketCounts,
                 email: formData.email,
                 phone_number: formData.phone,
@@ -151,22 +282,29 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                 event_id: eventDetails.event_id,
                 paymentMethod,
                 marketingConsent,
-                total: calculateTotal().total
-            });
-            // setIsConfirmed(true);
+                total: calculateTotal().total,
+                currencyCode: location.currencyCode,
+                conversionRate: conversionRate
+            };
+            console.log(data)
+            const response = await api.post('/requestTicket', data);
+            setIsConfirmed(true);
             console.log(response.data)
-            console.log(response.data.paystack.data.authorization_url)
-            if (response.data.paystack.data.authorization_url) {
-                setshowPaystack(true);
-                setshowPaystackLink(response.data.paystack.data.authorization_url);
-            } else {
-                Swal.fire('Error', 'Unable to Initiate Paystack', 'error');
 
+
+
+
+            // Check if the link exists in the response
+            if (response.data.paystack.data.link) {
+                setshowPaystack(true);
+                setshowPaystackLink(response.data.paystack.data.link);
+            } else {
+                Swal.fire('Error', 'Unable to initiate payment', 'error');
             }
-            console.log(response.data)
+            // console.log(response.data)
         } catch (error) {
             // if (error.status == 400) {
-            console.error(error.response.data);
+            console.error(error.response);
             Swal.fire('Error', error.response.data.error ? error.response.data.error : 'Error', 'error');
 
 
@@ -177,7 +315,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
 
     const PaymentOptions = () => (
         <div className="grid grid-cols-2 gap-4">
-            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-50">
+            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-500/10">
                 <input
                     type="radio"
                     name="payment"
@@ -190,10 +328,10 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                     <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                         <span className="text-blue-600">💳</span>
                     </div>
-                    <span className="font-medium">Card Payment</span>
+                    <span className={`font-medium  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'} `}>Card Payment</span>
                 </div>
             </label>
-            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-50">
+            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-500/10">
                 <input
                     type="radio"
                     name="payment"
@@ -206,10 +344,10 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                     <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                         <span className="text-green-600">🏦</span>
                     </div>
-                    <span className="font-medium">Bank Transfer</span>
+                    <span className={`font-medium  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'} `}>Bank Transfer</span>
                 </div>
             </label>
-            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-50">
+            <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-500/10">
                 <input
                     type="radio"
                     name="payment"
@@ -222,7 +360,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                     <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                         <span className="text-purple-600">📱</span>
                     </div>
-                    <span className="font-medium">USSD</span>
+                    <span className={`font-medium  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'} `}>USSD</span>
                 </div>
             </label>
         </div>
@@ -300,15 +438,15 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                 <div className="space-y-4">
                     <div className="flex justify-between">
                         <span>Ticket (x{calculateTotal().totalTickets})</span>
-                        <span>NGN {calculateTotal().subtotal.toLocaleString()}.00</span>
+                        <span>{location && location.currencyCode}  {calculateTotal().subtotal.toFixed(2).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
                         <span>Transaction Fee</span>
-                        <span>NGN {calculateTotal().transactionFee.toLocaleString()}.00</span>
+                        <span>{location && location.currencyCode}  {calculateTotal().transactionFee.toFixed(2).toLocaleString()}</span>
                     </div>
                     <div className="border-t pt-4 flex justify-between font-normal">
                         <span>Total</span>
-                        <span>NGN {calculateTotal().total.toLocaleString()}.00</span>
+                        <span>{location && location.currencyCode}  {calculateTotal().total.toFixed(2).toLocaleString()}</span>
                     </div>
                 </div>
             </div>
@@ -391,8 +529,21 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                     <X className="w-6 h-6 text-white font-bold" />
                                                 </button>
                                             </div>
-                                            <LocationData theme={theme} />
 
+                                            <div className={`${theme == 'dark' ? 'bg-black' : 'bg-white'} flex flex-row justify-between my-3 items-center p-4 gap-5`}>
+                                                {location && (
+                                                    <img src={location.flag} alt="Country Flag" className="object-contain w-[2rem] h-[2rem]" />
+                                                )}
+
+                                                <select onChange={handleCountryChange} className="bg-transparent border w-full border-[#ccc] px-2">
+                                                    {Object.entries(getSupportedCurrenciesWithLocationFirst()).map(([code, { name, countryCode }]) => (
+                                                        <option key={code} selected={location && (code == location.countryCode)} value={code}>
+                                                            {name} ({code})
+                                                        </option>
+                                                    ))}
+                                                    <option value="OTHER">Other</option>
+                                                </select>
+                                            </div>
                                         </>
                                 }
                                 {!showCheckout ? (
@@ -406,8 +557,11 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                 <div key={index} className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4">
                                                     <div className="flex justify-between items-center">
                                                         <div>
-                                                            <p className="text-lg font-bold text-[#040171]">{ticket.currency} {ticket.price}</p>
-                                                            <p className="text-gray-600">{ticket.ticket_name} ({ticket.ticket_type})</p>
+                                                            <p className="text-lg font-bold text-[#040171]">
+                                                                {location && location.currencyCode} {
+                                                                    (ticket.price / conversionRate).toLocaleString()
+                                                                }
+                                                            </p>                                                            <p className="text-gray-600">{ticket.ticket_name} ({ticket.ticket_type})</p>
                                                         </div>
                                                         <div className="flex items-center gap-4">
                                                             <button
@@ -444,7 +598,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                         value={formData.name}
                                                         onChange={handleInputChange}
                                                         placeholder="Enter Full Name"
-                                                        className="w-full p-3 border bg-transparent rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full p-3 border bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         required
                                                     />
                                                 </div>
@@ -457,7 +611,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                         value={formData.email}
                                                         onChange={handleInputChange}
                                                         placeholder="Enter Email Address"
-                                                        className="w-full p-3 border  bg-transparent  rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full p-3 border  bg-transparent  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         required
                                                     />
                                                 </div>
@@ -470,7 +624,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                         value={formData.phone}
                                                         onChange={handleInputChange}
                                                         placeholder="Enter Phone Number"
-                                                        className="w-full p-3 border  bg-transparent  rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full p-3 border  bg-transparent  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         required
                                                     />
                                                 </div>
@@ -493,7 +647,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
 
                                             <div className="space-y-4">
                                                 <div>
-                                                    <label className="block text-black  mb-2">Full Name</label>
+                                                    <label className={`block  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'}  mb-2 `}>Full Name</label>
                                                     <input
                                                         type="text"
                                                         name="name"
@@ -501,13 +655,13 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                         value={formData.name}
                                                         onChange={handleInputChange}
                                                         placeholder="Enter Full Name"
-                                                        className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full p-3 border bg-gray-100/30 opacity-50  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         required
                                                     />
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-black  mb-2">Email Address</label>
+                                                    <label className={`block  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'}  mb-2 `}>Email Address</label>
                                                     <input
                                                         type="email"
                                                         name="email"
@@ -515,13 +669,13 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                         value={formData.email}
                                                         onChange={handleInputChange}
                                                         placeholder="Enter Email Address"
-                                                        className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full p-3 border bg-gray-100/30 opacity-50  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         required
                                                     />
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-black  mb-2">Phone Number</label>
+                                                    <label className={`block  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'}  mb-2 `}>Phone Number</label>
                                                     <input
                                                         type="tel"
                                                         name="phone"
@@ -529,7 +683,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                         value={formData.phone}
                                                         onChange={handleInputChange}
                                                         placeholder="Enter Phone Number"
-                                                        className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        className="w-full p-3 border bg-gray-100/30 opacity-50  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         required
                                                     />
                                                 </div>
@@ -546,7 +700,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                             {/* Marketing consent checkboxes remain the same */}
                                         </div>
 
-                                        <p className="text-gray-600 text-sm">
+                                        <p className="text-gray-400 text-sm">
                                             By selecting Connect, I agree to the My TicketSeller Terms of Service
                                         </p>
 

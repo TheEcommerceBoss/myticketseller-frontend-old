@@ -16,9 +16,8 @@ function useQuery() {
 
 function ValidatePayment() {
     const query = useQuery();
-    const reference = query.get("reference");
-    const trxref = query.get("trxref");
-
+    const reference = query.get("tx_ref");
+    const trxref = query.get("tx_ref");
     const { theme } = useTheme();
     const [fetchingDataLoading, setFetchingDataLoading] = useState(false);
     const [completed, setcompleted] = useState(false);
