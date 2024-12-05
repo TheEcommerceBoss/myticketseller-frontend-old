@@ -18,7 +18,7 @@ function LandingPage() {
         theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"
       }`}
     >
-      <HeaderMain variation={2} />
+      <HeaderMain variation={4} />
 
       <main>
         <HeroSection />

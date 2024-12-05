@@ -5,6 +5,85 @@ import logo from "../../assets/(site_assets)/logo.png";
 import logoDark from "../../assets/(site_assets)/logo-dark.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
+import Cookies from "js-cookie";
+const LocationData = () => {
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    const getLocationData = async () => {
+      try {
+        const currentTime = Date.now();
+        const locationData = Cookies.get("locationData");
+        const lastSavedTime = Cookies.get("locationDataTime");
+
+        if (locationData && lastSavedTime && currentTime - lastSavedTime < 5 * 60 * 1000) {
+          // Use the cached data from cookies
+          console.log('fetching from cookie')
+          setLocation(JSON.parse(locationData));
+        } else {
+          console.log('fetching from api')
+
+          // Fetch the user's IP address
+          const ipResponse = await fetch('https://api.ipify.org?format=json');
+          const ipData = await ipResponse.json();
+          const ipAddress = ipData.ip;
+
+          // Fetch country, currency, and flag from ip-api
+          const response = await fetch(`https://freeipapi.com/api/json/${ipAddress}`);
+          const data = await response.json();
+          const flagUrl = `https://flagcdn.com/w320/${data.countryCode.toLowerCase()}.png`;
+
+          // Extract relevant data from the response
+          const locationInfo = {
+            country: data.countryName,
+            countryCode: data.countryCode,
+            currency: data.currency.name,
+            currencyCode: data.currency.code,
+            flag: flagUrl,
+            cityName: data.cityName,
+            continent: data.continent,
+            continentCode: data.continentCode,
+            regionName: data.regionName,
+            zipCode: data.zipCode,
+            timeZone: data.timeZone
+          };
+
+          // Save the data to the cookie
+          Cookies.set("locationData", JSON.stringify(locationInfo), { expires: 1 / 24 }); // Expires in 1 hour
+          Cookies.set("locationDataTime", currentTime, { expires: 1 / 24 });
+
+          // Set the location state
+          setLocation(locationInfo);
+          console.log(data);
+        }
+      } catch (error) {
+        console.error("Error fetching location data", error);
+      }
+    };
+
+    getLocationData();
+  }, []);
+
+
+  return (
+    <div>
+      {location ? (
+        <button
+          className={`rounded-full w-[1rem] h-[1rem] overflow-hidden`}
+          aria-label="Toggle theme"
+        >
+          <img src={location.flag} className="object-contain w-full h-full" alt="Country Flag" />
+        </button>
+      ) : (
+        <button
+          className={`rounded-full w-[1rem] h-[1rem] overflow-hidden`}
+          aria-label="Toggle theme"
+        >
+        </button>)}
+    </div>
+  );
+};
+
 const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
   const { theme, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,32 +119,31 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
 
   return (
     <header
-      className={` flex items-center justify-center ${
-        variation === 1 ? "absolute w-full" : ""
-      }`}
+      className={` flex items-center justify-center ${variation === 1 ? "absolute w-full" : ""
+        }`}
     >
       <nav
-        className={`flex items-center  ${
-          variation === 1 ? "lg:mt-[2rem] lg:w-[80%] lg:rounded-full " : ""
-        }  w-full  z-50 justify-between  p-3  ${
-          nobg
+        className={`flex items-center  ${variation === 1 ? "lg:mt-[2rem] lg:w-[80%] lg:rounded-full " : ""
+          }  w-full  z-50 justify-between  p-3  ${nobg
             ? "bg-transparent"
             : theme === "light"
-            ? "bg-white"
-            : "bg-[#121212]"
-        }  ${!hidemenu && "shadow-lg"}`}
+              ? "bg-white"
+              : "bg-[#121212]"
+          }  ${!hidemenu && "shadow-lg"}`}
       >
-        <div className="flex items-center">
+        <div className="flex items-end relative">
           <Link
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             to={"/"}
           >
             <img
               src={theme === "light" ? logo : logoDark}
-              className="px-5 py-2 w-[6.5rem]"
+              className="px-5 pr-0 py-2 w-[5.5rem]"
               alt=""
             />
+
           </Link>
+          <LocationData />
         </div>
         {!hidemenu && (
           <>
@@ -75,69 +153,67 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                   {" "}
                   <Link
                     to="/"
-                    className={`hover:text-orange-500 text-lg ${
-                      locations.pathname == "/"
-                        ? "text-orange-600"
-                        : theme === "light"
+                    className={`hover:text-orange-500 text-lg ${locations.pathname == "/"
+                      ? "text-orange-600"
+                      : theme === "light"
                         ? "text-gray-700"
                         : "text-white"
-                    }`}
+                      }`}
                   >
                     Home
                   </Link>
                   <Link
                     to="/event/find"
-                    className={`hover:text-orange-500 text-lg ${
-                      theme === "light" ? "text-gray-700" : "text-white"
-                    }`}
+                    className={`hover:text-orange-500 text-lg ${locations.pathname.startsWith('/event')
+                      ? "text-orange-600"
+                      : theme === "light"
+                        ? "text-gray-700"
+                        : "text-white"
+                      }`}
                   >
                     Events
                   </Link>
                   <Link
                     to="/about"
-                    className={`hover:text-orange-500 text-lg ${
-                      locations.pathname == "/about"
-                        ? "text-orange-600"
-                        : theme === "light"
+                    className={`hover:text-orange-500 text-lg ${locations.pathname == "/about"
+                      ? "text-orange-600"
+                      : theme === "light"
                         ? "text-gray-700"
                         : "text-white"
-                    }`}
+                      }`}
                   >
                     About Us
                   </Link>
                   <Link
                     to="/contact"
-                    className={`hover:text-orange-500 text-lg ${
-                      locations.pathname == "/contact"
-                        ? "text-orange-600"
-                        : theme === "light"
+                    className={`hover:text-orange-500 text-lg ${locations.pathname == "/contact"
+                      ? "text-orange-600"
+                      : theme === "light"
                         ? "text-gray-700"
                         : "text-white"
-                    }`}
+                      }`}
                   >
                     Contact Us
                   </Link>
                   <Link
                     to="/pricing"
-                    className={`hover:text-orange-500 text-lg ${
-                      locations.pathname == "/pricing"
-                        ? "text-orange-600"
-                        : theme === "light"
+                    className={`hover:text-orange-500 text-lg ${locations.pathname == "/pricing"
+                      ? "text-orange-600"
+                      : theme === "light"
                         ? "text-gray-700"
                         : "text-white"
-                    }`}
+                      }`}
                   >
                     Pricing
                   </Link>
                   <Link
                     to="/login"
-                    className={`hover:text-orange-500 text-lg $${
-                      locations.pathname == "/login"
-                        ? "text-orange-600"
-                        : theme === "light"
+                    className={`hover:text-orange-500 text-lg $${locations.pathname == "/login"
+                      ? "text-orange-600"
+                      : theme === "light"
                         ? "text-gray-700"
                         : "text-white"
-                    }`}
+                      }`}
                   >
                     Login
                   </Link>
@@ -200,9 +276,8 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
                     window.scrollTo({ top: 0, behavior: "smooth" })
                   }
                   to={"/"}
-                  className={`text-gray-700 hover:text-orange-500 text-lg ${
-                    theme === "light" ? "text-gray-700" : "text-white"
-                  }`}
+                  className={`text-gray-700 hover:text-orange-500 text-lg ${theme === "light" ? "text-gray-700" : "text-white"
+                    }`}
                 >
                   Home
                 </Link>
@@ -211,17 +286,17 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
               )}
               <button
                 onClick={toggleTheme}
-                className={`rounded-full  p-3 ${
-                  theme === "light"
-                    ? "bg-gray-200  hover:bg-gray-100"
-                    : "hover:bg-orange-400 bg-orange-500"
-                }`}
+                className={`rounded-full p-3 ${theme === "light"
+                  ? "bg-gray-200  hover:bg-gray-100"
+                  : "hover:bg-orange-400 bg-orange-500"
+                  }`}
                 aria-label="Toggle theme"
               >
                 {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
               </button>
+
               <Link
-                to={variation == 1 ? "/event/find" : "/login"}
+                to={variation != 2 ? "/event/find" : "/login"}
                 className="hidden lg:flex align-center items-center gap-2 bg-orange-500 text-white px-5 py-3 rounded-full hover:bg-orange-600 transition duration-300"
               >
                 {variation === 2 ? (
@@ -266,9 +341,8 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
         )}
       </nav>
       <div
-        className={`fixed top-0 right-0 w-full h-0 bg-orange-600 rounded-full transition-all z-30 duration-300 ease-in-out flex flex-col items-center justify-center ${
-          isMenuOpen ? "h-screen rounded-none" : ""
-        }`}
+        className={`fixed top-0 right-0 w-full h-0 bg-orange-600 rounded-full transition-all z-30 duration-300 ease-in-out flex flex-col items-center justify-center ${isMenuOpen ? "h-screen rounded-none" : ""
+          }`}
         style={{
           clipPath: isMenuOpen
             ? "circle(150% at 95% 3.5rem)"

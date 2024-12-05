@@ -327,7 +327,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                     </p>
 
                     <div className="hidden lg:flex justify-center space-x-10 items-center my-8">
-                        <a href="#" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
+                        <a href="/event/find" className="bg-[#040171] rounded-lg text-white h-[2rem] items-center flex justify-center w-[3rem] text-sm font-medium">All</a>
                         {categories.map((eventType, index) => (
                             <a
                                 key={eventType.id}
@@ -386,34 +386,34 @@ function FeaturedEvents({ variation, sortcategory }) {
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4">
+                                                    <div className={`${theme === 'dark' ? 'bg-[#000]' : 'bg-white'} overflow-hidden lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4`}>
                                                         <img
                                                             src={card.event_img}
                                                             alt={card.event_title}
                                                             className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
                                                         />
-                                                        <div className="rounded-xl lg:shadow-md bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
+                                                        <div className={`${theme === 'dark' ? 'bg-[#000]' : 'bg-white'} rounded-xl lg:shadow-md   p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4`}>
                                                             <div className="flex justify-between items-start">
                                                                 <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
                                                                     <div className="">
                                                                         <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
                                                                             <div className="flex font-semibold items-center gap-1">
-                                                                                <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                                <Calendar color={`${theme === 'dark' ? '#fff' : '#040171'} `} className="w-4 h-4 md:w-3 md:h-3 mr-1" />
                                                                                 <span>{card.event_days[0].start_day}</span>
                                                                             </div>
                                                                             <div className="flex font-bold items-center gap-1">
-                                                                                <Clock color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                                <Clock color={`${theme === 'dark' ? '#fff' : '#040171'} `} className="w-4 h-4 md:w-3 md:h-3 mr-1" />
                                                                                 <span>{card.event_days[0].open_door_time}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
 
-                                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="text-lg my-3 md:my-0 font-semibold text-[#040171]">
+                                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className={`text-lg my-3 md:my-0 font-semibold ${theme === 'dark' ? 'text-[#fff]' : 'text-[#040171]'} `}>
                                                                         {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
                                                                     </Link>
 
                                                                     <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
-                                                                        <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                        <MapPin color={`${theme === 'dark' ? '#fff' : '#040171'} `} className="w-4 h-4 md:w-3 md:h-3 mr-1" />
                                                                         <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address}</span>
                                                                     </div>
                                                                     <div className="h-full md:hidden mt-4 flex ">
