@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HeaderMain from "../../components/(headers)/HeaderMain";
 import FeaturedEvents from "../../components/(events)/FeaturedEvents";
 import WhyUs from "../../components/(others)/WhyUs";
@@ -7,10 +7,29 @@ import Footer from "../../components/(footers)/Footer";
 import contactdesign from "../../assets/(landing)/contactdesign.png"
 import { useTheme } from "../../context/ThemeContext";
 import { Phone, Mail, MapPin, Twitter, Instagram, Twitch } from 'lucide-react'
+import api from "../../api";
 
 function ContactPage() {
     const { theme } = useTheme();
+    const [siteinfo,setSiteInfo] = useState([])
+    useEffect(() => {
+        const fetchMeta = async () => {
+            try {
+                const response = await api.get("/get_sitedetails", {
+                    headers: {
 
+                    },
+                });
+                setSiteInfo(response.data);
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+            }
+        };
+
+        fetchMeta();
+
+    }, []);
+    console.log(siteinfo.siteinfo )
     return (
         <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#111] text-white' : 'bg-white text-[#121212]'}`}>
             <HeaderMain variation={4} />
@@ -27,15 +46,15 @@ function ContactPage() {
                             <div className="mt-[5rem] space-y-[2rem]">
                                 <div className="flex items-center">
                                     <Phone className="mr-4" />
-                                    <span>+1012 3456 789</span>
+                                    <span>{siteinfo.siteinfo && siteinfo.siteinfo.phone}</span>
                                 </div>
                                 <div className="flex items-center">
                                     <Mail className="mr-4" />
-                                    <span>demo@gmail.com</span>
+                                    <span>{siteinfo.siteinfo && siteinfo.siteinfo.email}</span>
                                 </div>
                                 <div className="flex items-start">
                                     <MapPin className="mr-4 mt-1" />
-                                    <span>132 Dartmouth Street Boston,<br />Massachusetts 02156 United States</span>
+                                    <span>{siteinfo.siteinfo && siteinfo.siteinfo.address}</span>
                                 </div>
                             </div>
 
