@@ -4,6 +4,11 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import api from '../../api';
 import Swal from 'sweetalert2';
+import Cookies from "js-cookie";
+import { useTheme } from '../../context/ThemeContext';
+
+import LocationData from '../../(meta)/LocationData';
+
 
 const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails, eventDetails, eventId }) => {
     const [ticketCounts, setTicketCounts] = useState({}); // Initialize as an object
@@ -11,6 +16,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
     // console.log(eventDetails.event_id)
     const [showPaystack, setshowPaystack] = useState(false);
     const [showPaystackLink, setshowPaystackLink] = useState('');
+    const { theme } = useTheme();
 
     useEffect(() => {
         // Initialize ticket counts with 0 for each ticket type
@@ -335,236 +341,238 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
             </div>
         </>
     );
-    
+
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+            <div className={` rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto  ${theme === 'dark' ? 'bg-[#121212]' : 'bg-[#fff]'} `}>
                 <div className="p-6">
 
                     {showPaystack ? (
                         <div className="w-full">
                             <PaystackModal paystack={showPaystackLink} />
                         </div>
-                    ) : 
-                    <div className="flex flex-col md:flex-row gap-6">
-                        <div className="flex-1">
-                            {
-                                isConfirmed ? (
-                                    ''
-                                ) :
-                                    <>
-                                        <div className="flex justify-between items-start ">
-                                            {showCheckout ? (
-                                                <div className="flex items-center gap-4">
-                                                    <button
-                                                        onClick={() => setShowCheckout(false)}
-                                                        className="p-2 bg-[#000080] bg-opacity-20 rounded-full"
-                                                    >
-                                                        <ArrowLeft className="w-6 h-6 text-white" />
-                                                    </button>
-
-                                                </div>
-                                            ) : (
-                                                <div>
-                                                    <h2 className="text-2xl font-bold text-[#040171]">{eventTitle}</h2>
-                                                    <p className="text-gray-600">{eventDateTime}</p>
-                                                </div>
-                                            )}
-
-                                        </div>
-
-                                        <div className='flex flex-col w-full justify-center items-center relative mb-6 pb-6 border-b '>
-                                            <h2 className="text-2xl font-bold text-[#040171]">Checkout</h2>
-                                            <p className="text-gray-600">Login for Faster Experience</p>
-                                            <button
-                                                onClick={onClose}
-                                                className="p-2 bg-black bg-opacity-50 absolute right-[.2rem] rounded-full"
-                                            >
-                                                <X className="w-6 h-6 text-white font-bold" />
-                                            </button>
-                                        </div>
-
-                                    </>
-                            }
-                            {!showCheckout ? (
-                                <>
-                                    {/* Ticket Selection */}
-                                    <div className="mb-8">
-                                        <h3 className="text-xl font-semibold mb-4">Select Ticket</h3>
-
-                                        {/* Regular Ticket */}
-                                        {tickets.map((ticket, index) => (
-                                            <div key={index} className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4">
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <p className="text-lg font-bold text-[#040171]">{ticket.currency} {ticket.price}</p>
-                                                        <p className="text-gray-600">{ticket.ticket_name} ({ticket.ticket_type})</p>
-                                                    </div>
+                    ) :
+                        <div className="flex flex-col md:flex-row gap-6 ">
+                            <div className="flex-1">
+                                {
+                                    isConfirmed ? (
+                                        ''
+                                    ) :
+                                        <>
+                                            <div className="flex justify-betweenitems-start ">
+                                                {showCheckout ? (
                                                     <div className="flex items-center gap-4">
                                                         <button
-                                                            onClick={() => handleTicketChange(ticket.ticket_id, 'subtract')}
-                                                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                            onClick={() => setShowCheckout(false)}
+                                                            className="p-2 bg-[#000080] bg-opacity-20 rounded-full"
                                                         >
-                                                            -
+                                                            <ArrowLeft className="w-6 h-6 text-white" />
                                                         </button>
-                                                        <span className="w-8 text-center">{ticketCounts[ticket.ticket_id] || 0}</span>
-                                                        <button
-                                                            onClick={() => handleTicketChange(ticket.ticket_id, 'add')}
-                                                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
-                                                        >
-                                                            +
-                                                        </button>
+
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        <h2 className="text-2xl font-bold text-[#040171]">{eventTitle}</h2>
+                                                        <p className="text-gray-600">{eventDateTime}</p>
+                                                    </div>
+                                                )}
+
+                                            </div>
+
+                                            <div className='flex flex-col w-full justify-center items-center relative mb-6 pb-6 border-b '>
+                                                <h2 className={`text-2xl font-bold  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#040171]'} `}>Checkout</h2>
+                                                <p className="text-gray-600">Login for Faster Experience</p>
+
+                                                <button
+                                                    onClick={onClose}
+                                                    className="p-2 bg-black bg-opacity-50 absolute right-[.2rem] rounded-full"
+                                                >
+                                                    <X className="w-6 h-6 text-white font-bold" />
+                                                </button>
+                                            </div>
+                                            <LocationData theme={theme} />
+
+                                        </>
+                                }
+                                {!showCheckout ? (
+                                    <>
+                                        {/* Ticket Selection */}
+                                        <div className="mb-8">
+                                            <h3 className="text-xl font-semibold mb-4">Select Ticket</h3>
+
+                                            {/* Regular Ticket */}
+                                            {tickets.map((ticket, index) => (
+                                                <div key={index} className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4">
+                                                    <div className="flex justify-between items-center">
+                                                        <div>
+                                                            <p className="text-lg font-bold text-[#040171]">{ticket.currency} {ticket.price}</p>
+                                                            <p className="text-gray-600">{ticket.ticket_name} ({ticket.ticket_type})</p>
+                                                        </div>
+                                                        <div className="flex items-center gap-4">
+                                                            <button
+                                                                onClick={() => handleTicketChange(ticket.ticket_id, 'subtract')}
+                                                                className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                            >
+                                                                -
+                                                            </button>
+                                                            <span className="w-8 text-center">{ticketCounts[ticket.ticket_id] || 0}</span>
+                                                            <button
+                                                                onClick={() => handleTicketChange(ticket.ticket_id, 'add')}
+                                                                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            ))}
+
+
+                                        </div >
+
+                                        {/* Attendee Information Form */}
+                                        < form onSubmit={handleContinue} >
+                                            <h3 className="text-xl font-semibold mb-4">Attendee Information</h3>
+
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className={`block  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'}  mb-2 `}>Full Name</label>
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        value={formData.name}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter Full Name"
+                                                        className="w-full p-3 border bg-transparent rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className={`block  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'}  mb-2 `}>Email Address</label>
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        value={formData.email}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter Email Address"
+                                                        className="w-full p-3 border  bg-transparent  rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className={`block  ${theme === 'dark' ? 'text-[#fff]' : 'text-[#000]'}  mb-2 `}>Phone Number</label>
+                                                    <input
+                                                        type="tel"
+                                                        name="phone"
+                                                        value={formData.phone}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter Phone Number"
+                                                        className="w-full p-3 border  bg-transparent  rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required
+                                                    />
+                                                </div>
                                             </div>
-                                        ))}
 
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg mt-6 hover:bg-orange-600 transition-colors"
+                                            >
+                                                Continue
+                                            </button>
+                                        </form>
+                                    </>
+                                ) : isConfirmed ? (
+                                    <OrderConfirmation />
+                                ) : (
+                                    <div className="space-y-6">
+                                        <div className="space-y-4">
+                                            <h3 className="text-xl font-semibold">Contact Information</h3>
 
-                                    </div >
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label className="block text-black  mb-2">Full Name</label>
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        disabled={true}
+                                                        value={formData.name}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter Full Name"
+                                                        className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required
+                                                    />
+                                                </div>
 
-                                    {/* Attendee Information Form */}
-                                    < form onSubmit={handleContinue} >
-                                        <h3 className="text-xl font-semibold mb-4">Attendee Information</h3>
+                                                <div>
+                                                    <label className="block text-black  mb-2">Email Address</label>
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        disabled={true}
+                                                        value={formData.email}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter Email Address"
+                                                        className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-black  mb-2">Phone Number</label>
+                                                    <input
+                                                        type="tel"
+                                                        name="phone"
+                                                        disabled={true}
+                                                        value={formData.phone}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter Phone Number"
+                                                        className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                        </div>
 
                                         <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-black  mb-2">Full Name</label>
-                                                <input
-                                                    type="text"
-                                                    name="name"
-                                                    value={formData.name}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Full Name"
-                                                    className="w-full p-3 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-black  mb-2">Email Address</label>
-                                                <input
-                                                    type="email"
-                                                    name="email"
-                                                    value={formData.email}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Email Address"
-                                                    className="w-full p-3 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-black  mb-2">Phone Number</label>
-                                                <input
-                                                    type="tel"
-                                                    name="phone"
-                                                    value={formData.phone}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Phone Number"
-                                                    className="w-full p-3 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    required
-                                                />
-                                            </div>
+                                            <h3 className="text-xl font-semibold">PAYMENT GATEWAYS</h3>
+                                            <PaymentOptions />
                                         </div>
+
+                                        <div className="space-y-4">
+                                            {/* Marketing consent checkboxes remain the same */}
+                                        </div>
+
+                                        <p className="text-gray-600 text-sm">
+                                            By selecting Connect, I agree to the My TicketSeller Terms of Service
+                                        </p>
 
                                         <button
-                                            type="submit"
-                                            className="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg mt-6 hover:bg-orange-600 transition-colors"
+                                            onClick={handleCheckout}
+                                            disabled={isLoading || !paymentMethod}
+                                            className="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg hover:bg-orange-600 transition-colors disabled:bg-gray-300"
                                         >
-                                            Continue
+                                            {isLoading ? 'Processing...' : 'Checkout'}
                                         </button>
-                                    </form>
-                                </>
-                            ) : isConfirmed ? (
-                                <OrderConfirmation />
-                            ) : (
-                                <div className="space-y-6">
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-semibold">Contact Information</h3>
-
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-black  mb-2">Full Name</label>
-                                                <input
-                                                    type="text"
-                                                    name="name"
-                                                    disabled={true}
-                                                    value={formData.name}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Full Name"
-                                                    className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-black  mb-2">Email Address</label>
-                                                <input
-                                                    type="email"
-                                                    name="email"
-                                                    disabled={true}
-                                                    value={formData.email}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Email Address"
-                                                    className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-black  mb-2">Phone Number</label>
-                                                <input
-                                                    type="tel"
-                                                    name="phone"
-                                                    disabled={true}
-                                                    value={formData.phone}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Phone Number"
-                                                    className="w-full p-3 border bg-gray-100 opacity-50 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
                                     </div>
+                                )}
+                            </div>
 
-                                    <div className="space-y-4">
-                                        <h3 className="text-xl font-semibold">PAYMENT GATEWAYS</h3>
-                                        <PaymentOptions />
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        {/* Marketing consent checkboxes remain the same */}
-                                    </div>
-
-                                    <p className="text-gray-600 text-sm">
-                                        By selecting Connect, I agree to the My TicketSeller Terms of Service
-                                    </p>
-
-                                    <button
-                                        onClick={handleCheckout}
-                                        disabled={isLoading || !paymentMethod}
-                                        className="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg hover:bg-orange-600 transition-colors disabled:bg-gray-300"
-                                    >
-                                        {isLoading ? 'Processing...' : 'Checkout'}
-                                    </button>
+                            {showSummary && !isConfirmed && (
+                                <div className="md:w-1/3">
+                                    <OrderSummary />
                                 </div>
                             )}
+
+
+
+
                         </div>
 
-                        {showSummary && !isConfirmed && (
-                            <div className="md:w-1/3">
-                                <OrderSummary />
-                            </div>
-                        )}
-
-
-
-
-                    </div>
-
-                }
+                    }
                 </div>
             </div>
         </div>
