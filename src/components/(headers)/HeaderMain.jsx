@@ -17,36 +17,47 @@ const LocationData = () => {
         const lastSavedTime = Cookies.get("locationDataTime");
 
         if (locationData && lastSavedTime && currentTime - lastSavedTime < 5 * 60 * 1000) {
-          // Use the cached data from cookies
           console.log('fetching from cookie')
           setLocation(JSON.parse(locationData));
         } else {
           console.log('fetching from api')
 
-          // Fetch the user's IP address
           const ipResponse = await fetch('https://api.ipify.org?format=json');
           const ipData = await ipResponse.json();
           const ipAddress = ipData.ip;
+          // const ipAddress = '100.43.96.0';
+          console.log(`https://freeipapi.com/api/json/${ipAddress}`)
 
-          // Fetch country, currency, and flag from ip-api
-          const response = await fetch(`https://freeipapi.com/api/json/${ipAddress}`);
+          const response = await fetch(`https://get.geojs.io/v1/ip/geo/${ipAddress}.json`);
           const data = await response.json();
-          const flagUrl = `https://flagcdn.com/w320/${data.countryCode.toLowerCase()}.png`;
+          const flagUrl = `https://flagcdn.com/w320/${data.country_code.toLowerCase()}.png`;
 
-          // Extract relevant data from the response
           const locationInfo = {
-            country: data.countryName,
-            countryCode: data.countryCode,
-            currency: data.currency.name,
-            currencyCode: data.currency.code,
+            country: data.country,
+            countryCode: data.country_code,
+            cityName: data.city,
+            regionName: data.region,
+            timeZone: data.timezone,
             flag: flagUrl,
-            cityName: data.cityName,
-            continent: data.continent,
-            continentCode: data.continentCode,
-            regionName: data.regionName,
-            zipCode: data.zipCode,
-            timeZone: data.timeZone
           };
+
+          // const response = await fetch(`https://freeipapi.com/api/json/${ipAddress}`);
+          // const data = await response.json();
+          // const flagUrl = `https://flagcdn.com/w320/${data.countryCode.toLowerCase()}.png`;
+
+          //  const locationInfo = {
+          //   country: data.countryName,
+          //   countryCode: data.countryCode,
+          //   currency: data.currency.name,
+          //   currencyCode: data.currency.code,
+          //   flag: flagUrl,
+          //   cityName: data.cityName,
+          //   continent: data.continent,
+          //   continentCode: data.continentCode,
+          //   regionName: data.regionName,
+          //   zipCode: data.zipCode,
+          //   timeZone: data.timeZone
+          // };
 
           // Save the data to the cookie
           Cookies.set("locationData", JSON.stringify(locationInfo), { expires: 1 / 24 }); // Expires in 1 hour
