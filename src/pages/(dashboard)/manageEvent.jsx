@@ -106,44 +106,7 @@ const ManageEvent = () => {
   }));
 
   const columns = [
-    { field: 'id', headerName: '#', width: 50, sortable: false, hideSortIcons: true },
-    {
-      field: 'event_img',
-      headerName: 'Image',
-      width: 50,
-      renderCell: (params) => (
-        <div className='flex flex-col items-center w-full'>
-           <img src={params.value} className='w-[2rem] mt-2 h-[2rem]' alt="" />
-        </div>
-      ),
-    },
-    { field: 'event_title', headerName: 'Event Title', width: 250 },
-    { field: 'category_name', headerName: 'Category', width: 150 },
-    { field: 'event_description', headerName: 'Description', width: 300 },
-    {
-      field: 'event_specific_type',
-      headerName: 'Visibility',
-      width: 150,
-      renderCell: (params) => (
-        <div>
-          {params.value === 0 ? 'Private' : 'Public'}
-        </div>
-      ),
-    },
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 150,
-      renderCell: (params) => (
-        <div className="flex items-center gap-2">
-          <span>
-            {params.value === 0 ? 'Draft' : 'Live'}
-          </span>
-          
-        </div>
-      ),
-    },
-    {
+     {
       field: 'event_id',
       headerName: 'Actions',
       width: 150,
@@ -165,6 +128,44 @@ const ManageEvent = () => {
         </div>
       ),
     },
+    { field: 'event_title', headerName: 'Event Title', width: 250 },
+    {
+      field: 'event_specific_type',
+      headerName: 'Visibility',
+      width: 150,
+      renderCell: (params) => (
+        <div>
+          {params.value === 0 ? 'Private' : 'Public'}
+        </div>
+      ),
+    },
+
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 150,
+      renderCell: (params) => (
+        <div className="flex items-center gap-2">
+          <span>
+            {params.value === 0 ? 'Draft' : 'Live'}
+          </span>
+          
+        </div>
+      ),
+    },
+    { field: 'category_name', headerName: 'Category', width: 150 },
+    { field: 'event_description', headerName: 'Description', width: 300 },
+    {
+      field: 'event_img',
+      headerName: 'Image',
+      width: 50,
+      renderCell: (params) => (
+        <div className='flex flex-col items-center w-full'>
+           <img src={params.value} className='w-[2rem] mt-2 h-[2rem]' alt="" />
+        </div>
+      ),
+    },
+  
   ];
 
   return (

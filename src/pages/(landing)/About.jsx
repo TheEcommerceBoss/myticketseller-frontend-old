@@ -1,38 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HeaderMain from "../../components/(headers)/HeaderMain";
 import FeaturedEvents from "../../components/(events)/FeaturedEvents";
 import WhyUs from "../../components/(others)/WhyUs";
 import EventCalendar from "../../components/(others)/HowItWorks";
 import Footer from "../../components/(footers)/Footer";
 import { useTheme } from "../../context/ThemeContext";
+import api from "../../api";
 
 function AboutUs() {
   const { theme } = useTheme();
+  const [siteinfo, setSiteInfo] = useState([])
+  useEffect(() => {
+    const fetchMeta = async () => {
+      try {
+        const response = await api.get("/get_sitedetails", {
+          headers: {
 
+          },
+        });
+        setSiteInfo(response.data);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+
+    fetchMeta();
+
+  }, []);
   return (
     <div
-      className={`min-h-screen ${
-        theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"
-      }`}
+      className={`min-h-screen ${theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"
+        }`}
     >
       <HeaderMain variation={4} />
 
       <main>
         <HeroSection />
         <div className="px-8 my-[5rem]">
-          <p className="text-l">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis
-            cumque dolores aliquid minima temporibus quis velit ea unde
-            explicabo minus beatae quasi mollitia officiis enim nostrum
-            assumenda, modi fuga facere dignissimos a iste repudiandae quia
-            necessitatibus molestias. Officia ipsam voluptatibus tempore ratione
-            voluptas pariatur nostrum architecto saepe, odio veniam laborum odit
-            quam consectetur. Nulla amet adipisci impedit alias deleniti.
-            Laboriosam placeat suscipit ullam esse dolor id sapiente doloribus
-            earum provident nisi ipsum, dolores, nemo non. Nobis sapiente
-            facilis itaque ullam. Vero repellendus deserunt quasi sequi error
-            facilis tenetur cum dignissimos ex ratione! Voluptatum dolorum
-            excepturi molestiae saepe. Non, magnam explicabo!
+          <p className="text-xl">
+            {
+              siteinfo.siteinfo && siteinfo.siteinfo.about_company && (
+                <div dangerouslySetInnerHTML={{ __html: siteinfo.siteinfo.about_company }} />
+              )
+            }
           </p>
         </div>
       </main>
