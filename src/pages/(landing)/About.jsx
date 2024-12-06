@@ -62,6 +62,7 @@ function HeroSection() {
             <span className="inline-block bg-white text-blue-900 text-sm md:text-base font-semibold px-4 py-1 rounded-full">
               About Us
             </span>
+            
           </div>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
             About Section
