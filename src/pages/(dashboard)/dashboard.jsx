@@ -285,7 +285,7 @@ const Dashboard = () => {
         <div className=" grid lg:grid-cols-3 gap-6 mb-8">
           <StatCard
             title="Balance"
-            value={"₦" + (userData ? userData.user.balance : 0.0)}
+            value={'₦' + (userData ? new Intl.NumberFormat('en-US').format(userData.user.balance) : '0.00')}
             color={theme === "dark" ? "bg-[#121212]" : "bg-white"}
             textColor={theme != "dark" ? "text-[#121212]" : "text-white"}
             cardColor="bg-green-300"
