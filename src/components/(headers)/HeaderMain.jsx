@@ -363,7 +363,7 @@ const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
         {isMenuOpen && (
           <nav className="text-white text-2xl space-y-4">
             <Link
-              to="#"
+              to="/"
               onClick={toggleMenu}
               className="block hover:text-orange-300 font-gluten transition-colors"
             >

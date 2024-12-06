@@ -117,59 +117,61 @@ function PricingPage() {
   const [mode, SetMode] = useState("monthly");
   return (
     <div
-      className={`min-h-screen ${
-        theme === "dark" ? "bg-[#111] text-white" : "bg-white text-gray-900"
-      }`}
+      className={`min-h-screen ${theme === "dark" ? "bg-[#111] text-white" : "bg-white text-gray-900"
+        }`}
     >
       <HeaderMain variation={4} />
 
       <main>
-        <div className="px-8 my-[5rem]">
-          <div className="grid md:grid-cols-3">
-            {pricing.map((data, index) => (
-              <div key={index} className="px-5 ">
-                <div className="bg-[#222] py-5 text-center text-white rounded-t-md w-full">
-                  <p className="text-lg ">{data.title}</p>
-                </div>
-                <div
-                  className={`${
-                    theme == "dark" ? "bg-black" : "bg-white"
-                  }  shadow-inner px-10 py-5`}
-                >
-                  <p className="text-gray-500">{data.description}</p>
+        <div className="px-8 md:my-[5rem]">
+          <div className="relative">
+            <div className="grid md:grid-cols-3 sm:grid-cols-1">
+              {pricing.map((data, index) => (
+                <div key={index} className={`${index != 0 && 'hidden md:flex'} px-5 blur-lg`}>
+                  <div className="bg-[#222] py-5 text-center text-white rounded-t-md w-full">
+                    <p className="text-lg ">{data.title}</p>
+                  </div>
+                  <div
+                    className={`${theme == "dark" ? "bg-black" : "bg-white"
+                      } shadow-inner px-10 py-5`}
+                  >
+                    <p className="text-gray-500">{data.description}</p>
 
-                  <div className="py-5">
-                    {data.features.map((data, index) => (
-                      <div
-                        key={index}
-                        className={`border-gray-500  ${
-                          index > 0 && "border-t-2"
-                        } py-3`}
-                      >
-                        <div className="grid grid-cols-2">
-                          <p className="text-start">{data.name}</p>
-                          <p className="text-end">{data.value}</p>
+                    <div className="py-5">
+                      {data.features.map((data, index) => (
+                        <div
+                          key={index}
+                          className={`border-gray-500 ${index > 0 && "border-t-2"
+                            } py-3`}
+                        >
+                          <div className="grid grid-cols-2">
+                            <p className="text-start">{data.name}</p>
+                            <p className="text-end">{data.value}</p>
+                          </div>
                         </div>
+                      ))}
+                      <div className="py-5">
+                        <button
+                          className={`${theme != "dark"
+                              ? "bg-[#121212] text-white"
+                              : "bg-white text-[#121212]"
+                            } w-full py-2 rounded-sm`}
+                        >
+                          {data.pricing.monthly.currency}{" "}
+                          {mode == "monthly"
+                            ? data.pricing.monthly.amount
+                            : data.pricing.yearly.amount}
+                        </button>
                       </div>
-                    ))}
-                    <div className=" py-5">
-                      <button
-                        className={`${
-                          theme != "dark"
-                            ? "bg-[#121212] text-white"
-                            : "bg-white text-[#121212]"
-                        } w-full py-2 rounded-sm`}
-                      >
-                        {data.pricing.monthly.currency}{" "}
-                        {mode == "monthly"
-                          ? data.pricing.monthly.amount
-                          : data.pricing.yearly.amount}
-                      </button>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+             <div className="absolute inset-0 flex items-center justify-center  bg-opacity-70  text-2xl font-bold">
+              <h5>Coming Soon</h5>
+            </div>
           </div>
         </div>
       </main>
