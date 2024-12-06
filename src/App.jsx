@@ -31,6 +31,8 @@ import ContactPage from './pages/(landing)/Contact';
 import PricingPage from './pages/(landing)/Pricing';
 import SearchEvent from './pages/(events)/SearchEvent';
 import WalletPage from './pages/(dashboard)/wallet';
+import Terms from './pages/(landing)/Terms';
+import Privacy from './pages/(landing)/Privacy';
 
 function App() {
   return (
@@ -69,7 +71,8 @@ function App() {
             <Route path='/about' element={<AboutUs />} />
             <Route path='/contact' element={<ContactPage />} />
             <Route path='/pricing' element={<PricingPage />} />
-            <Route path='/terms' element={<AboutUs />} />
+            <Route path='/terms' element={<Terms />} />
+            <Route path='/privacy' element={<Privacy />} />
             <Route path="/register" element={<UnProtectedRoute><SignupPage /></UnProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
