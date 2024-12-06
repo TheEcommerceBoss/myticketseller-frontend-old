@@ -28,6 +28,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Cookies from "js-cookie";
 import axios from "axios";
+import api from "../../api";
 
 
 const WalletDashboard = () => {
@@ -66,115 +67,6 @@ const WalletDashboard = () => {
   // Withdrawals Paginated Data
   const paginatedWithdrawals = paginate(withdrawals, withdrawalsPage);
   const totalWithdrawalsPages = Math.ceil(withdrawals.length / itemsPerPage);
-
-  useEffect(() => {
-    const fetchWithdrawals = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/fetchUserWithdrawals`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.data.code === 200) {
-          setWithdrawals(response.data.data);
-          const withdrawals = response.data.data;
-
-          // Filter withdrawals to only include those with status "success"
-          const successfulWithdrawals = withdrawals.filter(withdrawal => withdrawal.status.toLowerCase() === 'success');
-
-          // Reduce successful withdrawals to accumulate monthly totals
-          const monthlyData = successfulWithdrawals.reduce((acc, withdrawal) => {
-            const date = new Date(withdrawal.request_time);
-            const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
-            const amount = Number(withdrawal.amount);
-            acc[month] = (acc[month] || 0) + amount;
-            return acc;
-          }, {});
-
-          // Include all months in order
-          const monthOrder = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-          const sortedWithdrawalsData = monthOrder.map((month) => ({
-            name: month,
-            value: monthlyData[month] || 0, // Default to 0 if no data for the month
-          }));
-
-          setWithdrawalschart(sortedWithdrawalsData);
-        } else {
-          setError(response.data.message || 'Failed to fetch withdrawal records');
-        }
-
-      } catch (err) {
-        setError(err.response?.data?.message || 'An error occurred');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchWithdrawals();
-  }, [token]);
-
-  useEffect(() => {
-    const fetchEarnings = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/fetchUserEarnings`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.data.code === 200) {
-          setEarnings(response.data.data);
-          const earnings = response.data.data;
-
-          // Reduce earnings to accumulate monthly totals
-          const monthlyData = earnings.reduce((acc, earning) => {
-            const date = new Date(earning.request_time);
-            const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
-            const amount = Number(earning.amount);
-            acc[month] = (acc[month] || 0) + amount;
-            return acc;
-          }, {});
-
-          // Include all months in order
-          const monthOrder = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-          const sortedEarningsData = monthOrder.map((month) => ({
-            name: month,
-            value: monthlyData[month] || 0, // Default to 0 if no data for the month
-          }));
-
-          setEarningschart(sortedEarningsData);
-        } else {
-          setError(response.data.message || 'Failed to fetch earnings records');
-        }
-      } catch (err) {
-        setError(err.response?.data?.message || 'An error occurred');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchEarnings();
-  }, [token]);
-
-  useEffect(() => {
-    if (earningschart.length && withdrawalschart.length) {
-      const combinedData = earningschart.map((earning, index) => ({
-        name: earning.name,
-        earnings: earning.value,
-        withdrawals: withdrawalschart[index]?.value || 0,
-      }));
-      setChartData(combinedData);
-    }
-  }, [earningschart, withdrawalschart]);
-
-
 
   console.log(chartData)
 
@@ -215,6 +107,108 @@ const WalletDashboard = () => {
   const StatementRequest = () =>{
     alert('requesting statement');
   }
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = Cookies.get("auth_token");
+
+        // Trigger both API requests concurrently
+        const [statsResponse,eventsResponse] = await Promise.all([
+          api.get("/fetchUserWithdrawals", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          api.post("/fetchUserEarnings", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+
+        if(eventsResponse && eventsResponse.data){
+          if (eventsResponse.data.code === 200) {
+            setEarnings(eventsResponse.data.data);
+            const earnings = eventsResponse.data.data;
+  
+            // Reduce earnings to accumulate monthly totals
+            const monthlyData = earnings.reduce((acc, earning) => {
+              const date = new Date(earning.request_time);
+              const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
+              const amount = Number(earning.amount);
+              acc[month] = (acc[month] || 0) + amount;
+              return acc;
+            }, {});
+  
+            // Include all months in order
+            const monthOrder = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            const sortedEarningsData = monthOrder.map((month) => ({
+              name: month,
+              value: monthlyData[month] || 0, // Default to 0 if no data for the month
+            }));
+  
+            setEarningschart(sortedEarningsData);
+          } else {
+            setError(eventsResponse.data.message || 'Failed to fetch earnings records');
+          }
+        }
+
+        if(statsResponse && statsResponse.data){
+          if (statsResponse.data.code === 200) {
+            setWithdrawals(statsResponse.data.data);
+            const withdrawals = statsResponse.data.data;
+  
+            // Filter withdrawals to only include those with status "success"
+            const successfulWithdrawals = withdrawals.filter(withdrawal => withdrawal.status.toLowerCase() === 'success');
+  
+            // Reduce successful withdrawals to accumulate monthly totals
+            const monthlyData = successfulWithdrawals.reduce((acc, withdrawal) => {
+              const date = new Date(withdrawal.request_time);
+              const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
+              const amount = Number(withdrawal.amount);
+              acc[month] = (acc[month] || 0) + amount;
+              return acc;
+            }, {});
+  
+            // Include all months in order
+            const monthOrder = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            const sortedWithdrawalsData = monthOrder.map((month) => ({
+              name: month,
+              value: monthlyData[month] || 0, // Default to 0 if no data for the month
+            }));
+  
+            setWithdrawalschart(sortedWithdrawalsData);
+          } else {
+            setError(statsResponse.data.message || 'Failed to fetch withdrawal records');
+          }
+  
+
+        }
+      
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        console.log('done');
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (earningschart.length && withdrawalschart.length) {
+      const combinedData = earningschart.map((earning, index) => ({
+        name: earning.name,
+        earnings: earning.value,
+        withdrawals: withdrawalschart[index]?.value || 0,
+      }));
+      setChartData(combinedData);
+    }
+  }, [earningschart, withdrawalschart]);
+
+
 
   return (
     <div
@@ -390,7 +384,8 @@ const WalletDashboard = () => {
                 </h2>
               </div>
               <div className="space-y-4 md:space-y-6">
-                {paginatedEarnings.map((transaction) => (
+                {paginatedEarnings.length > 0 ?
+                paginatedEarnings.map((transaction) => (
                   <div key={transaction.id} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2 md:space-x-4">
                       <div className="bg-[#030171] rounded-full p-2">
@@ -409,7 +404,8 @@ const WalletDashboard = () => {
                       {transaction.status}
                     </div>
                   </div>
-                ))}
+                ))
+                : 'No Transaction Found!!'}
               </div>
 
               {/* Pagination Controls for Earnings */}
@@ -446,7 +442,9 @@ const WalletDashboard = () => {
                 </h2>
               </div>
               <div className="space-y-4 md:space-y-6">
-                {paginatedWithdrawals.map((transaction) => (
+                
+              {paginatedWithdrawals.length > 0 ?             
+                paginatedWithdrawals.map((transaction) => (
                   <div key={transaction.id} className="flex items-center justify-between">
                     <div className="flex items-center space-x-2 md:space-x-4">
                       <div className="bg-[#030171] rounded-full p-2">
@@ -465,7 +463,9 @@ const WalletDashboard = () => {
                       {transaction.status}
                     </div>
                   </div>
-                ))}
+                ))
+                : 'No Transaction Found!!'}
+
               </div>
 
               {/* Pagination Controls for Withdrawals */}
