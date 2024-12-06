@@ -290,7 +290,7 @@ const WalletDashboard = () => {
                 <div className="flex flex-col justify-between h-full">
                   <div className="text-sm ">{userData && userData.user.account_name ? userData.user.account_name : 'Add Account to continue'}</div>
 
-                  <div className="text-2xl tracking-wider mb-2">₦{userData ? userData.user.balance : 0.0}</div>
+                  <div className="text-2xl tracking-wider mb-2">₦{userData ? new Intl.NumberFormat('en-US').format(userData.user.balance) : '0.00'}</div>
                   <div className="flex flex-col z-10">
                     <div className="text-sm ">{userData && userData.user.account_number ? userData.user.account_number : ' '}</div>
                     <div className="text-sm ">{userData && userData.user.bank_name ? userData.user.bank_name : ' '}</div></div>

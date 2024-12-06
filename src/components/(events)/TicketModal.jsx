@@ -64,7 +64,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                     const response = await fetch(`https://ipwhois.app/json/${ipAddress}`);
                     const data = await response.json();
                     const flagUrl = `https://flagcdn.com/w320/${data.country_code.toLowerCase()}.png`;
-                    
+
                     const locationInfo = {
                         country: data.country,
                         countryCode: data.country_code,
@@ -76,7 +76,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                         currencyCode: data.currency_code
                     };
                     console.log(data)
-                    
+
 
                     Cookies.set("locationData", JSON.stringify(locationInfo), { expires: 1 / 24 });
                     Cookies.set("locationDataTime", currentTime, { expires: 1 / 24 });
@@ -455,16 +455,18 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
 
     const PaystackModal = ({ paystack }) => (
         <>
-            <div className="bg-[#000080] h-full text-white rounded-lg p-6">
-                <div className="flex flex-col items-end">
-                    <button
-                        onClick={onClose}
-                        className="p-2 bg-white bg-opacity-50 rounded-full"
-                    >
-                        <X className="w-6 h-6 text-white font-bold" />
-                    </button>
+            <div className="bg-[#000080] h-full text-white rounded-lg ">
+                <div className="flex justify-between p-6">
+                    <h3 className="text-xl font-normal mb-4">Checkout</h3>
+                    <div className="flex flex-col items-end">
+                        <button
+                            onClick={onClose}
+                            className="p-2 bg-white bg-opacity-50 rounded-full"
+                        >
+                            <X className="w-6 h-6 text-white font-bold" />
+                        </button>
+                    </div>
                 </div>
-                <h3 className="text-xl font-normal mb-4">Checkout</h3>
                 <div className="space-y-4">
                     <iframe
                         src={paystack}
@@ -482,9 +484,9 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
 
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-1 md:p-4">
             <div className={` rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto  ${theme === 'dark' ? 'bg-[#121212]' : 'bg-[#fff]'} `}>
-                <div className="p-6">
+                <div className={`${showPaystack ? 'p-1' : 'p-6'}`}>
 
                     {showPaystack ? (
                         <div className="w-full">
