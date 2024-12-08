@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
-import { ChevronDown, Search, Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Heart, Upload } from "lucide-react";
+import { ChevronDown, Search, Calendar, MapPin, Clock, ChevronLeft, ChevronRight, Heart, Upload, X, Lock, LockOpen } from "lucide-react";
 import Select from "react-select";
 import DatePicker from "react-datepicker"; // Import the date picker
 import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
@@ -16,6 +16,7 @@ import TicketModal from "./TicketModal";
 import { useParams } from "react-router-dom";
 import { GoogleMapsProvider } from '../GoogleMapsContext';
 import SimpleMap from '../props/Map';
+import Swal from 'sweetalert2';
 
 import axios from 'axios';
 
@@ -294,6 +295,11 @@ function ViewEventComponent({ variation }) {
 
     const { theme } = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [locked, setIsLocked] = useState(false);
+    const [pin, setPin] = useState('');
+    const [Lockicon, setLock] = useState('lock');
+    const [trialPassword, SetTrialPassword] = useState('');
+
     const { id } = useParams();
     const [fetchingdataloading, setfetchingdataLoading] = useState(true);
 
@@ -337,7 +343,7 @@ function ViewEventComponent({ variation }) {
                 });
 
                 if (response.data) {
-                    // console.log(response.data)
+                    console.log(response.data)
                     const { event_category, event_specific_type, event_title, event_description, event_img, user_details, total_events_by_this_user_with_status_1, additional_info } = response.data.event_info;
                     setEventDetails({
                         event_category,
@@ -350,10 +356,13 @@ function ViewEventComponent({ variation }) {
                         total_events_by_this_user_with_status_1,
                         additional_info
                     });
+                    additional_info && additional_info.password_protected ? (setIsLocked(true),
+                        setPin(additional_info.password_protected)) : setIsLocked(false);
                     setTicketDetails({
                         days: response.data.event_info.event_days,
                         tickets: response.data.event_info.tickets,
                     });
+                    // console.log(pin)
                 }
             } catch (error) {
                 console.error('Failed to fetch event details:', error);
@@ -377,6 +386,18 @@ function ViewEventComponent({ variation }) {
 
     ];
 
+    const unlockevent = () =>{
+        if(pin == trialPassword){
+            setLock('unlocked')
+            setTimeout(() => setIsLocked(false), 500);
+            setTimeout(() => setLock('lock'), 500);
+        }else{
+            setLock('lock')
+            Swal.fire('Error', 'Wrong Event Password', 'error');
+
+        }
+    }
+
 
     return (
         <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#111]' : 'bg-gray-100'}`}>
@@ -389,80 +410,103 @@ function ViewEventComponent({ variation }) {
                         </div>
                     </div>
                 </div>
-            ) : <>
-                <div className="flex flex-col  items-center p-5">
-                    {eventDetails.event_image && <img src={eventDetails.event_image} className="w-full h-[30rem] object-cover lg:w-4/5 mb-5 rounded-[2rem]" alt="" />}
-                </div>
-                <div className="max-w-7xl mx-auto p-6">
-                    <Header theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} id={1} />
-                    <HostInfo theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} />
+            ) :
+                locked ? (
 
-                    <div className="mb-5">
-                        <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
-                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                            {eventDetails.event_description}
-                        </p>
-                    </div>
-                    <div className="mb-5">
-                        <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Restrictions</h2>
-                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info && eventDetails.additional_info.restrictions}</p>
-                    </div>
+                    <>
+                        <div className={`flex flex-col items-center justify-center  px-5`}>
+                            <div className={`${theme === 'dark' ? 'bg-orange-500 text-gray-600' : 'bg-orange-500 text-white'} max-w-lg flex flex-col items-center justify-center p-[3rem] py-[5rem] rounded-2xl`}>
+                                <div className="p-2 mb-[2rem] bg-white rounded-[50%]">
+                                    {Lockicon == 'lock' ? <Lock size={50} className="text-orange-500 animate-bounce" /> : <LockOpen size={50} className="text-orange-500 animate-ping" /> }
+                                </div>
+                                <h5 className="text-center text-2xl mb-5 text-white">This Event is Protected by a Password</h5>
+                                <h5 className="text-center text-sm text-white mb-5">Enter the shared Password for this event or contact the event organizers via {eventDetails.user.email}</h5>
+                                <input
+                                    type="text"
+                                    value={trialPassword}
+                                    onChange={(e) => SetTrialPassword(e.target.value)}
+                                    className={`w-full p-3 bg-white border placeholder:text-black border-gray-300 ${theme === 'dark' ? 'text-black' : 'text-black'} font-normal rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                                    placeholder="Enter Event Password"
+                                />
+                                <button onClick={unlockevent} className="bg-black text-white px-4 py-2 mt-4 rounded-lg">{Lockicon == 'lock' ? 'Unlock' : 'Unlocking...'} </button>
+                            </div>
+                        </div>
+                    </>
+                ) :
+                    <>
+                        <div className="flex flex-col  items-center p-5">
+                            {eventDetails.event_image && <img src={eventDetails.event_image} className="w-full h-[30rem] object-cover lg:w-4/5 mb-5 rounded-[2rem]" alt="" />}
+                        </div>
+                        <div className="max-w-7xl mx-auto p-6">
+                            <Header theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} id={1} />
+                            <HostInfo theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} />
 
-
-
-                    <div className="mb-8">
-                        {eventDetails.additional_info && eventDetails.additional_info.special_guests && eventDetails.additional_info.special_guests.trim() !== '' && (
-                            <>
-                                <h2 className={`text-l font-bold ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                                    Special Guests
-                                </h2>
-                                <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                                    {eventDetails.additional_info.special_guests.split(',').map((guest, index) => (
-                                        <span key={index} className={`${theme === 'dark' ? 'bg-gray-100 text-gray-600' : 'bg-orange-500 text-white'}  px-4 py-2 mr-2 rounded-full text-sm`}>
-                                            {guest.trim()}
-                                            {index < eventDetails.additional_info.special_guests.split(',').length - 1 && ' '}
-                                        </span>
-                                    ))}
+                            <div className="mb-5">
+                                <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
+                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                    {eventDetails.event_description}
                                 </p>
-                            </>
-                        )}
-                    </div>
-
-
-
-
-                    {ticketDetails.days.map((day, index) => (
-                        <div key={index} className="mb-5 px-5 rounded-l border">
-
-                            <div className={`flex items-center my-6 pb-2 `}>
-
-                                <span className={`text-l mx-4 font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Day {index + 1}</span>
-                                <div className="flex-1 border-t border-gray-300"></div>
+                            </div>
+                            <div className="mb-5">
+                                <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Restrictions</h2>
+                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info && eventDetails.additional_info.restrictions}</p>
                             </div>
 
-                            <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
-                            <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
-                        </div>
-                    ))
-                    }
-                    <div className="mb-8">
-                        <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
-                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>No Refund</p>
-                    </div>
+
+
+                            <div className="mb-8">
+                                {eventDetails.additional_info && eventDetails.additional_info.special_guests && eventDetails.additional_info.special_guests.trim() !== '' && (
+                                    <>
+                                        <h2 className={`text-l font-bold ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                                            Special Guests
+                                        </h2>
+                                        <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                            {eventDetails.additional_info.special_guests.split(',').map((guest, index) => (
+                                                <span key={index} className={`${theme === 'dark' ? 'bg-gray-100 text-gray-600' : 'bg-orange-500 text-white'}  px-4 py-2 mr-2 rounded-full text-sm`}>
+                                                    {guest.trim()}
+                                                    {index < eventDetails.additional_info.special_guests.split(',').length - 1 && ' '}
+                                                </span>
+                                            ))}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+
+
+
+
+                            {ticketDetails.days.map((day, index) => (
+                                <div key={index} className="mb-5 px-5 rounded-l border">
+
+                                    <div className={`flex items-center my-6 pb-2 `}>
+
+                                        <span className={`text-l mx-4 font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Day {index + 1}</span>
+                                        <div className="flex-1 border-t border-gray-300"></div>
+                                    </div>
+
+                                    <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                                    <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                                </div>
+                            ))
+                            }
+                            <div className="mb-8">
+                                <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
+                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>No Refund</p>
+                            </div>
 
 
 
 
 
-                    <div className="mb-8">
-                        {eventDetails.additional_info && eventDetails.additional_info.authority_notification && (
-                            <>
-                                <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Notified Authorities</h2>
-                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.authority_notification}</p></>
-                        )}
-                    </div>
+                            <div className="mb-8">
+                                {eventDetails.additional_info && eventDetails.additional_info.authority_notification && (
+                                    <>
+                                        <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Notified Authorities</h2>
+                                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.authority_notification}</p></>
+                                )}
+                            </div>
 
-                    {/* <div className={`flex flex-col items-center my-[3rem]`}>
+                            {/* <div className={`flex flex-col items-center my-[3rem]`}>
                         <div className="flex flex-col w-full px-2 my-5 items-start text-start">
                             <h2 className={`text-xl font-bold text-start  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>More Events From this Organizer</h2>
 
@@ -530,11 +574,11 @@ function ViewEventComponent({ variation }) {
                             ))}
                         </div>
                     </div> */}
-                    <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventDetails={eventDetails}
-                        ticketDetails={ticketDetails} />
+                            <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventDetails={eventDetails}
+                                ticketDetails={ticketDetails} />
 
-                </div>
-            </>
+                        </div>
+                    </>
             }
         </section>
     );
