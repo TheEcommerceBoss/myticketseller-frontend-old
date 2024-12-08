@@ -385,13 +385,13 @@ function ViewEventComponent({ variation }) {
                     </div>
                     <div className="mb-5">
                         <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Restrictions</h2>
-                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.restrictions}</p>
+                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info && eventDetails.additional_info.restrictions}</p>
                     </div>
 
 
 
                     <div className="mb-8">
-                        {eventDetails.additional_info.special_guests && eventDetails.additional_info.special_guests.trim() !== '' && (
+                        {eventDetails.additional_info && eventDetails.additional_info.special_guests && eventDetails.additional_info.special_guests.trim() !== '' && (
                             <>
                                 <h2 className={`text-l font-bold ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
                                     Special Guests
@@ -435,7 +435,7 @@ function ViewEventComponent({ variation }) {
 
 
                     <div className="mb-8">
-                        {eventDetails.additional_info.authority_notification && (
+                        {eventDetails.additional_info && eventDetails.additional_info.authority_notification && (
                             <>
                                 <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Notified Authorities</h2>
                                 <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.authority_notification}</p></>
