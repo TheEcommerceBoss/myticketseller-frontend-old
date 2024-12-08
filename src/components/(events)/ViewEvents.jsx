@@ -413,112 +413,115 @@ function ViewEventComponent({ variation }) {
                         </div>
                     </div>
                 </div>
-            ) :
-                locked ? (
+            ) : (
+                <Helmet>
+                    <title>{eventDetails.event_title}</title>
+                    <meta property="og:title" content={eventDetails.event_title} />
+                    <meta property="og:image" content={eventDetails.event_image} />
+                    <meta property="og:description" content={eventDetails.event_description} />
+                    <meta property="og:type" content="website" />
+                </Helmet>
+            )
+            }
+            {locked ? (
 
-                    <>
-                        <div className={`flex flex-col items-center justify-center  px-5`}>
-                            <div className={`${theme === 'dark' ? 'bg-orange-500 text-gray-600' : 'bg-orange-500 text-white'} max-w-lg flex flex-col items-center justify-center p-[3rem] py-[5rem] rounded-2xl`}>
-                                <div className="p-2 mb-[2rem] bg-white rounded-[50%]">
-                                    {Lockicon == 'lock' ? <Lock size={50} className="text-orange-500 animate-bounce" /> : <LockOpen size={50} className="text-orange-500 animate-ping" />}
-                                </div>
-                                <h5 className="text-center text-2xl mb-5 text-white">This Event is Protected by a Password</h5>
-                                <h5 className="text-center text-sm text-white mb-5">Enter the shared Password for this event or contact the event organizers via {eventDetails.user.email}</h5>
-                                <input
-                                    type="text"
-                                    value={trialPassword}
-                                    onChange={(e) => SetTrialPassword(e.target.value)}
-                                    className={`w-full p-3 bg-white border placeholder:text-black border-gray-300 ${theme === 'dark' ? 'text-black' : 'text-black'} font-normal rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-                                    placeholder="Enter Event Password"
-                                />
-                                <button onClick={unlockevent} className="bg-black text-white px-4 py-2 mt-4 rounded-lg">{Lockicon == 'lock' ? 'Unlock' : 'Unlocking...'} </button>
+                <>
+                    <div className={`flex flex-col items-center justify-center  px-5`}>
+                        <div className={`${theme === 'dark' ? 'bg-orange-500 text-gray-600' : 'bg-orange-500 text-white'} max-w-lg flex flex-col items-center justify-center p-[3rem] py-[5rem] rounded-2xl`}>
+                            <div className="p-2 mb-[2rem] bg-white rounded-[50%]">
+                                {Lockicon == 'lock' ? <Lock size={50} className="text-orange-500 animate-bounce" /> : <LockOpen size={50} className="text-orange-500 animate-ping" />}
                             </div>
+                            <h5 className="text-center text-2xl mb-5 text-white">This Event is Protected by a Password</h5>
+                            <h5 className="text-center text-sm text-white mb-5">Enter the shared Password for this event or contact the event organizers via {eventDetails.user.email}</h5>
+                            <input
+                                type="text"
+                                value={trialPassword}
+                                onChange={(e) => SetTrialPassword(e.target.value)}
+                                className={`w-full p-3 bg-white border placeholder:text-black border-gray-300 ${theme === 'dark' ? 'text-black' : 'text-black'} font-normal rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                                placeholder="Enter Event Password"
+                            />
+                            <button onClick={unlockevent} className="bg-black text-white px-4 py-2 mt-4 rounded-lg">{Lockicon == 'lock' ? 'Unlock' : 'Unlocking...'} </button>
                         </div>
-                    </>
-                ) :
-                    <div className="px-3 md:px-0">
-                        <Helmet>
-                            <title>{eventDetails.event_title}</title>
-                            <meta property="og:title" content={eventDetails.event_title} />
-                            <meta property="og:image" content={eventDetails.event_image} />
-                            <meta property="og:description" content="Check out this event!" />
-                            <meta property="og:type" content="website" />
-                        </Helmet>
-                        <div className="flex flex-col  items-center p-1 md:p-5">
-                            {eventDetails.event_image && <img src={eventDetails.event_image} className="w-full h-[30rem] object-cover  max-w-7xl mb-5 rounded-xl" alt="" />}
-                        </div>
-                        <div className="
+                    </div>
+                </>
+            ) :
+                <div className="px-3 md:px-0">
+
+                    <div className="flex flex-col  items-center p-1 md:p-5">
+                        {eventDetails.event_image && <img src={eventDetails.event_image} className="w-full h-[30rem] object-cover  max-w-7xl mb-5 rounded-xl" alt="" />}
+                    </div>
+                    <div className="
                         ">
-                            <div className={` ${theme === 'dark' ? 'bg-[#000]' : 'bg-white'} mb-5 px-5  rounded-xl max-w-7xl mx-auto p-6 `} >
-                                <Header theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} id={1} />
-                                <HostInfo theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} />
+                        <div className={` ${theme === 'dark' ? 'bg-[#000]' : 'bg-white'} mb-5 px-5  rounded-xl max-w-7xl mx-auto p-6 `} >
+                            <Header theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} id={1} />
+                            <HostInfo theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} />
 
-                                <div className="mb-5">
-                                    <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
-                                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                                        {eventDetails.event_description}
-                                    </p>
-                                </div>
-                                <div className="mb-5">
-                                    <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Restrictions</h2>
-                                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info && eventDetails.additional_info.restrictions}</p>
-                                </div>
-
-
-
-                                <div className="mb-8">
-                                    {eventDetails.additional_info && eventDetails.additional_info.special_guests && eventDetails.additional_info.special_guests.trim() !== '' && (
-                                        <>
-                                            <h2 className={`text-l font-bold ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                                                Special Guests
-                                            </h2>
-                                            <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                                                {eventDetails.additional_info.special_guests.split(',').map((guest, index) => (
-                                                    <span key={index} className={`${theme === 'dark' ? 'bg-gray-100 text-gray-600' : 'bg-orange-500 text-white'}  px-4 py-2 mr-2 rounded-full text-sm`}>
-                                                        {guest.trim()}
-                                                        {index < eventDetails.additional_info.special_guests.split(',').length - 1 && ' '}
-                                                    </span>
-                                                ))}
-                                            </p>
-                                        </>
-                                    )}
-                                </div>
+                            <div className="mb-5">
+                                <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>About Event</h2>
+                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                    {eventDetails.event_description}
+                                </p>
+                            </div>
+                            <div className="mb-5">
+                                <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Restrictions</h2>
+                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info && eventDetails.additional_info.restrictions}</p>
+                            </div>
 
 
 
+                            <div className="mb-8">
+                                {eventDetails.additional_info && eventDetails.additional_info.special_guests && eventDetails.additional_info.special_guests.trim() !== '' && (
+                                    <>
+                                        <h2 className={`text-l font-bold ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                                            Special Guests
+                                        </h2>
+                                        <p className={`mt-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                            {eventDetails.additional_info.special_guests.split(',').map((guest, index) => (
+                                                <span key={index} className={`${theme === 'dark' ? 'bg-gray-100 text-gray-600' : 'bg-orange-500 text-white'}  px-4 py-2 mr-2 rounded-full text-sm`}>
+                                                    {guest.trim()}
+                                                    {index < eventDetails.additional_info.special_guests.split(',').length - 1 && ' '}
+                                                </span>
+                                            ))}
+                                        </p>
+                                    </>
+                                )}
+                            </div>
 
-                                {ticketDetails.days.map((day, index) => (
-                                    <div key={index} className={` ${theme === 'dark' ? 'bg-black' : 'bg-white'} mb-5 px-5  rounded-l border`}>
 
-                                        <div className={`flex items-center my-6 pb-2 `}>
 
-                                            <span className={`text-l mx-4 font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Day {index + 1}</span>
-                                            <div className="flex-1 border-t border-gray-300"></div>
-                                        </div>
 
-                                        <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
-                                        <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                            {ticketDetails.days.map((day, index) => (
+                                <div key={index} className={` ${theme === 'dark' ? 'bg-black' : 'bg-white'} mb-5 px-5  rounded-l border`}>
+
+                                    <div className={`flex items-center my-6 pb-2 `}>
+
+                                        <span className={`text-l mx-4 font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Day {index + 1}</span>
+                                        <div className="flex-1 border-t border-gray-300"></div>
                                     </div>
-                                ))
-                                }
-                                <div className="mb-8">
-                                    <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
-                                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>No Refund</p>
+
+                                    <DateTime theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
+                                    <Location theme={theme} eventDetails={eventDetails} ticketDetails={ticketDetails} index={index} day={day} />
                                 </div>
+                            ))
+                            }
+                            <div className="mb-8">
+                                <h2 className={`text-xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Refund Policy</h2>
+                                <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>No Refund</p>
+                            </div>
 
 
 
 
 
-                                <div className="mb-8">
-                                    {eventDetails.additional_info && eventDetails.additional_info.authority_notification && (
-                                        <>
-                                            <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Notified Authorities</h2>
-                                            <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.authority_notification}</p></>
-                                    )}
-                                </div>
+                            <div className="mb-8">
+                                {eventDetails.additional_info && eventDetails.additional_info.authority_notification && (
+                                    <>
+                                        <h2 className={`text-l font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>Notified Authorities</h2>
+                                        <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{eventDetails.additional_info.authority_notification}</p></>
+                                )}
+                            </div>
 
-                                {/* <div className={`flex flex-col items-center my-[3rem]`}>
+                            {/* <div className={`flex flex-col items-center my-[3rem]`}>
                         <div className="flex flex-col w-full px-2 my-5 items-start text-start">
                             <h2 className={`text-xl font-bold text-start  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>More Events From this Organizer</h2>
 
@@ -586,12 +589,13 @@ function ViewEventComponent({ variation }) {
                             ))}
                         </div>
                     </div> */}
-                                <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventDetails={eventDetails}
-                                    ticketDetails={ticketDetails} />
+                            <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} eventId={id} eventDetails={eventDetails}
+                                ticketDetails={ticketDetails} />
 
-                            </div>
                         </div>
                     </div>
+                </div>
+
             }
         </section>
     );
