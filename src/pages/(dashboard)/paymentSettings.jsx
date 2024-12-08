@@ -79,7 +79,7 @@ const PaymentSettings = () => {
             id: ticket.ticket_id,
             name: ticket.ticket_name,
             type: ticket.ticket_type,
-            fee: ticket.ticket_type == "Free Ticket" ? 230 : ticket.price,
+            fee: ticket.ticket_type == "Free Ticket" ? 0 : ticket.price,
             currency: ticket.currency,
             quantity: ticket.quantity,
           }));
@@ -220,10 +220,10 @@ const PaymentSettings = () => {
       // Check if the date is in the past
       const currentDate = new Date();
       const selectedDate = new Date(day.startDate);
-      if (selectedDate < currentDate) {
-        Swal.fire('Error', 'The start date cannot be in the past for the event day ' + (day.index) + '.', 'error');
-        return;
-      }
+      // if (selectedDate < currentDate) {
+      //   Swal.fire('Error', 'The start date cannot be in the past for the event day ' + (day.index) + '.', 'error');
+      //   return;
+      // }
 
       // Check if start time is before end time
       const [startHours, startMinutes] = day.startTime.split(':').map(Number);
@@ -246,7 +246,7 @@ const PaymentSettings = () => {
         event_id: id,
         name: ticket.name,
         type: ticket.type,
-        price: ticket.type == "Free Ticket" ? 230 : ticket.fee,
+        price: ticket.type == "Free Ticket" ? 0 : ticket.fee,
         currency: "NGN",
         quantity: ticket.quantity
       })),
