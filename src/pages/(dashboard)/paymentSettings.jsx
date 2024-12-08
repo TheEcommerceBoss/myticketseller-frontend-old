@@ -63,9 +63,9 @@ const PaymentSettings = () => {
             startDate: day.start_day,
             startTime: day.open_door_time,
             endTime: day.close_door_time,
-            location: day.event_type === "onsite" ? day.event_address : "",
-            virtualLink: day.event_type === "virtual" ? day.event_link : "",
-            password: day.event_type === "virtual" ? day.event_password : "",
+            location: day.event_type == "onsite" ? day.event_address : "",
+            virtualLink: day.event_type == "virtual" ? day.event_link : "",
+            password: day.event_type == "virtual" ? day.event_password : "",
           }));
 
 
@@ -73,11 +73,13 @@ const PaymentSettings = () => {
           setDayCount(response.data.event_days.length);
 
           // Format tickets
+          console.log(response.data.tickets)
           const formattedTickets = response.data.tickets.map(ticket => ({
             event_id: ticket.event_id,
+            id: ticket.ticket_id,
             name: ticket.ticket_name,
             type: ticket.ticket_type,
-            fee: ticket.ticket_type === "Free Ticket" ? 0 : ticket.price,
+            fee: ticket.ticket_type == "Free Ticket" ? 230 : ticket.price,
             currency: ticket.currency,
             quantity: ticket.quantity,
           }));
@@ -244,7 +246,7 @@ const PaymentSettings = () => {
         event_id: id,
         name: ticket.name,
         type: ticket.type,
-        price: ticket.type === "Free Ticket" ? 0 : ticket.fee,
+        price: ticket.type == "Free Ticket" ? 230 : ticket.fee,
         currency: "NGN",
         quantity: ticket.quantity
       })),
@@ -255,7 +257,7 @@ const PaymentSettings = () => {
         event_day: day.startDate,
         open_door: day.startTime,
         close_door: day.endTime,
-        ...(day.eventType === 'virtual' ? {
+        ...(day.eventType == 'virtual' ? {
           event_link: day.virtualLink,
           event_password: day.password
         } : {
@@ -290,7 +292,7 @@ const PaymentSettings = () => {
 
 
   const addTicket = (type) => {
-    if (type === 'Guest List' && tickets.some(ticket => ticket.type === 'Guest List')) {
+    if (type == 'Guest List' && tickets.some(ticket => ticket.type == 'Guest List')) {
       Swal.fire('Error', 'You can only create one Guest List ticket!', 'error');
       return;
     }
@@ -302,10 +304,10 @@ const PaymentSettings = () => {
       quantity: "",
       price: "",
       fetched: 0,
-      inputtype: type === 'Free Ticket' ? "text" : "number",
-      fee: type === 'Free Ticket' ? 0 : "",
+      inputtype: type == 'Free Ticket' ? "number" : "number",
+      fee: type == 'Free Ticket' ? 0 : "",
       timeSlots: [],
-      isFeeDisabled: type === 'Free Ticket',
+      isFeeDisabled: type == 'Free Ticket',
     };
 
     setTickets([...tickets, newTicket]);
@@ -313,7 +315,7 @@ const PaymentSettings = () => {
 
   const updateTicket = (id, key, value) => {
     const updatedTickets = tickets.map(ticket =>
-      ticket.id === id ? { ...ticket, [key]: value } : ticket
+      ticket.id == id ? { ...ticket, [key]: value } : ticket
     );
     setTickets(updatedTickets);
   };
@@ -370,7 +372,7 @@ const PaymentSettings = () => {
   };
 
   return (
-    <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
+    <div className={`flex min-h-screen  ${theme == 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex-1 py-8 px-5 lg:px-8">
@@ -378,7 +380,7 @@ const PaymentSettings = () => {
           <div className="flex items-center  space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "bg-[#121212]"}`}
+              className={`rounded-lg outline-none p-3 ${theme == "light" ? "bg-gray-200  hover:bg-gray-100" : "bg-[#121212]"}`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -392,21 +394,21 @@ const PaymentSettings = () => {
               <input
                 type="text"
                 placeholder="Search"
-                className={`pl-10 pr-4 py-2 rounded-[4rem] border ${theme === 'dark' ? 'bg-[#222]  border-[#444]' : 'bg-transparent  border-gray-400'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`pl-10 pr-4 py-2 rounded-[4rem] border ${theme == 'dark' ? 'bg-[#222]  border-[#444]' : 'bg-transparent  border-gray-400'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
             </div>
             <Link to={'/dashboard/event/create'}
-              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              className={`rounded-full outline-none  p-3 ${theme == "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
               aria-label="Toggle theme"
             >
-              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+              <PlusCircle color={theme == "light" ? "#040171" : "white"} size={20} />
             </Link>
             <button
               onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              className={`rounded-full outline-none p-3 ${theme == "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
               aria-label="Toggle theme"
             >
-              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+              {theme == "light" ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
             <DashboardHeader />
@@ -446,7 +448,7 @@ const PaymentSettings = () => {
 
 
 
-        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+        <div className={`${theme == "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
               <span>6</span>
@@ -467,14 +469,14 @@ const PaymentSettings = () => {
               ))}
             </div>
             {tickets.map((ticket, index) => {
-              // console.log(ticZket.fetched);
+              console.log(ticket);
               return (
                 <div key={ticket.id} className="mb-8 border border-gray-500 p-4 rounded">
                   <h3 className='my-2'>{'Ticket ' + (index + 1) + '( ' + ticket.type + ')'} </h3>
 
                   <div className="mb-4">
                     <input
-                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"}  w-full p-3 border outline-none rounded-lg   text-l`}
                       id={'ticket_name' + ticket.id}
                       required="1"
                       placeholder="Ticket Name"
@@ -483,11 +485,11 @@ const PaymentSettings = () => {
                       type="text"
 
                     />
-                  </div>
+                   </div>
 
                   <div className="mb-4">
                     <input
-                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"}  w-full p-3 border outline-none rounded-lg   text-l`}
                       id={"ticket_quantity" + ticket.id}
 
                       required="1"
@@ -500,7 +502,7 @@ const PaymentSettings = () => {
 
                   <div className="mb-4">
                     <input
-                      className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
+                      className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg   text-l`}
                       id={"fee" + ticket.id}
                       required="1"
                       placeholder={"Fee (" + "$" + ") - Set as 0 for a free ticket"}
@@ -537,7 +539,7 @@ const PaymentSettings = () => {
 
           </div>
         </div>
-        <div className={`${theme === "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+        <div className={`${theme == "dark" ? "bg-[#121212] border border-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
           <div className="flex items-center gap-2 mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
               <span>7</span>
@@ -555,7 +557,7 @@ const PaymentSettings = () => {
                 >
                   -
                 </button>
-                <span className={`w-[5rem] h-12   text-center text-l  flex items-center justify-center text-l   ${theme === "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{dayCount}</span>
+                <span className={`w-[5rem] h-12   text-center text-l  flex items-center justify-center text-l   ${theme == "dark" ? "bg-[#222]" : "border border-[#040171]"} `}>{dayCount}</span>
                 <button
                   onClick={() => handleDayCountChange(1)}
                   className="w-[5rem] h-12 bg-[#040171] text-white rounded-r-full flex items-center justify-center text-l"
@@ -568,7 +570,7 @@ const PaymentSettings = () => {
             {/* Pricing Table */}
             <div className="space-y-4">
               {eventDays.map((eventDay, index) => (
-                <div key={index} className={`${theme === "dark" ? "bg-[#121212] border border-[#ccc]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
+                <div key={index} className={`${theme == "dark" ? "bg-[#121212] border border-[#ccc]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
                   <div className="space-y-6">
                     <h4 className='font-bold'>Event Day {eventDay.index}</h4>
                     <div className="grid grid-cols-1 gap-4">
@@ -581,7 +583,7 @@ const PaymentSettings = () => {
                             updatedEventDays[index].eventType = e.target.value;
                             setEventDays(updatedEventDays);
                           }}
-                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}
+                          className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] p-1 w-full p-2 border border-[#A2A2A2] rounded-lg py-4 text-l`}
                         >
                           <option value="onsite">On Site</option>
                           <option value="virtual">Virtual</option>
@@ -600,7 +602,7 @@ const PaymentSettings = () => {
                             updatedEventDays[index].startDate = e.target.value;
                             setEventDays(updatedEventDays);
                           }}
-                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                          className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
                     </div>
@@ -616,7 +618,7 @@ const PaymentSettings = () => {
                             updatedEventDays[index].startTime = e.target.value;
                             setEventDays(updatedEventDays);
                           }}
-                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                          className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
                       <div>
@@ -629,12 +631,12 @@ const PaymentSettings = () => {
                             updatedEventDays[index].endTime = e.target.value;
                             setEventDays(updatedEventDays);
                           }}
-                          className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                          className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                         />
                       </div>
                     </div>
 
-                    {eventDay.eventType === "onsite" ? (
+                    {eventDay.eventType == "onsite" ? (
                       <div>
                         <label className="block mb-2 text-l">Enter the address of the event here</label>
                         <MapAutocomplete
@@ -659,7 +661,7 @@ const PaymentSettings = () => {
                               updatedEventDays[index].virtualLink = e.target.value;
                               setEventDays(updatedEventDays);
                             }}
-                            className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                            className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                           />
                         </div>
                         <div>
@@ -673,7 +675,7 @@ const PaymentSettings = () => {
                               updatedEventDays[index].password = e.target.value;
                               setEventDays(updatedEventDays);
                             }}
-                            className={`flex ${theme === "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
+                            className={`flex ${theme == "dark" ? "bg-transparent" : "border border-[#A2A2A2]"} rounded-[5rem] w-full p-3 border outline-none rounded-lg text-l`}
                           />
                         </div>
                       </>
@@ -685,13 +687,13 @@ const PaymentSettings = () => {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row items-center justify-between text-center">
-          <Link to={'/dashboard/event/create/' + id} className={`w-[12rem] bg-opacity-50 bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Previous</Link>
+          <Link to={'/dashboard/event/create/' + id} className={`w-[12rem] bg-opacity-50 bg-[#040171] ${theme == 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full hover:bg-blue-800 transition duration-200`}>Previous</Link>
 
           <div className="flex items-center gap-3 mt-2 lg:mt-0">
             <button
               onClick={() => submitPayment()}
               disabled={loading}
-              className={`w-[12rem] bg-[#040171] ${theme === 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-800'}`}
+              className={`w-[12rem] bg-[#040171] ${theme == 'dark' ? 'border-[#DBDAFF20]' : 'border-[#DBDAFF50]'} border-4 text-white py-3 px-4 rounded-full transition duration-200 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-800'}`}
             >
               {loading ? 'Loading...' : 'Next'}
             </button>

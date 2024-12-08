@@ -222,15 +222,20 @@ const CreateEvent = ({ manage }) => {
   const handleDragOver = (e) => {
     e.preventDefault();
   };
-
   const handleFileInput = (e) => {
     const selectedFile = e.target.files[0];
+  
     if (selectedFile) {
+      // Check if the file size exceeds 5MB (5MB = 5 * 1024 * 1024 bytes)
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        alert('File size exceeds 5MB. Please select a smaller file.');
+        return; // Prevent further processing
+      }
+  
       setFile(selectedFile);
       convertToBase64(selectedFile);
     }
   };
-
   const convertToBase64 = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -292,7 +297,7 @@ const CreateEvent = ({ manage }) => {
 
         <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
           {steps.map((s, index) => (
-            <>
+            <div className='flex flex-col md:flex-row justify-center items-center' key={index}>
 
               {index !== 0 && (
 
@@ -312,7 +317,7 @@ const CreateEvent = ({ manage }) => {
                   {s.number}. {s.title}
                 </div>
               </div>
-            </>
+            </div>
           ))}
         </div>
 
