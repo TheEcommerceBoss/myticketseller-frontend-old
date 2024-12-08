@@ -46,6 +46,24 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
 
         return `${daySuffix(day)} ${month}, ${year}`;
     };
+    const handleShare = async () => {
+        const pageUrl = window.location.href;
+        const shareData = {
+            title: 'Check out This Event!!',
+            text: `Check out This Event!!: ${pageUrl}`,
+        };
+
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                alert('Sharing is not supported in your browser.');
+            }
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
 
     return (
 
@@ -55,12 +73,14 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
                     <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{ticketDetails.days[0] && formatDate(ticketDetails.days[0].start_day)}</p>
                 </div>
                 <div className="">
-                    <button className="p-2 hover:bg-gray-100 rounded-full">
+                    {/* <button className="p-2 hover:bg-gray-100 rounded-full">
                         <Heart className="w-4 h-4" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded-full">
+                    </button> */}
+                    <button className="p-2 hover:bg-gray-100 rounded-full" onClick={handleShare}>
                         <Share2 className="w-4 h-4" />
-                    </button> </div>
+                    </button>
+
+                </div>
             </div>
             <div className="flex flex-col md:flex-row mt-4 justify-between items-start">
                 <h1 className={`text-2xl md:text-3xl font-bold  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>

@@ -53,7 +53,7 @@ const PaymentSettings = () => {
           }
         );
 
-        console.log(response.data.event_days);
+        // console.log(response.data.event_days);
         if (response.data.event_days && response.data.event_days.length > 0) {
 
           // Format event days with the specified structure
@@ -73,7 +73,7 @@ const PaymentSettings = () => {
           setDayCount(response.data.event_days.length);
 
           // Format tickets
-          console.log(response.data.tickets)
+          // console.log(response.data.tickets)
           const formattedTickets = response.data.tickets.map(ticket => ({
             event_id: ticket.event_id,
             id: ticket.ticket_id,
@@ -82,6 +82,8 @@ const PaymentSettings = () => {
             fee: ticket.ticket_type == "Free Ticket" ? 0 : ticket.price,
             currency: ticket.currency,
             quantity: ticket.quantity,
+            isFeeDisabled: ticket.ticket_type == 'Free Ticket',
+
           }));
 
           setTickets(formattedTickets);
@@ -125,7 +127,7 @@ const PaymentSettings = () => {
   ];
   const [tickets, setTickets] = useState([]);
   const [eventDays, setEventDays] = useState([]);
-  console.log(eventDays)
+  // console.log(eventDays)
   // console.log(tickets)
 
   useEffect(() => {
@@ -245,6 +247,7 @@ const PaymentSettings = () => {
       tickets: tickets.map(ticket => ({
         event_id: id,
         name: ticket.name,
+        ticket_id: ticket.id,
         type: ticket.type,
         price: ticket.type == "Free Ticket" ? 0 : ticket.fee,
         currency: "NGN",
@@ -271,9 +274,10 @@ const PaymentSettings = () => {
     setLoading(true);
 
     try {
+      // console.log(jsonBody)
       const token = Cookies.get("auth_token"); // Ensure the token is fetched from cookies
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/ticket_event_details`, jsonBody, {
-        headers: {
+        headers: { 
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
@@ -469,7 +473,7 @@ const PaymentSettings = () => {
               ))}
             </div>
             {tickets.map((ticket, index) => {
-              console.log(ticket);
+              // console.log(ticket);
               return (
                 <div key={ticket.id} className="mb-8 border border-gray-500 p-4 rounded">
                   <h3 className='my-2'>{'Ticket ' + (index + 1) + '( ' + ticket.type + ')'} </h3>
