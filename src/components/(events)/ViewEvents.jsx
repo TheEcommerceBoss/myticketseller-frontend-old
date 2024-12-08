@@ -420,6 +420,11 @@ function ViewEventComponent({ variation }) {
                     <meta property="og:image" content={eventDetails.event_image} />
                     <meta property="og:description" content={eventDetails.event_description} />
                     <meta property="og:type" content="website" />
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:title" content={eventDetails.event_title} />
+                    <meta name="twitter:description" content={eventDetails.event_description} />
+                    <meta name="twitter:image" content={eventDetails.event_image} />
+                    <meta name="twitter:url" content={eventDetails.event_url} />
                 </Helmet>
             )
             }
