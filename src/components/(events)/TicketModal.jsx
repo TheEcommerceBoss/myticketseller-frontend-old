@@ -20,27 +20,27 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
     const [location, setLocation] = useState(null);
     const [conversionRate, setConversionRate] = useState(1);
     const supportedCurrencies = {
-        GBP: { name: "British Pound Sterling", countryCode: "GB" },
-        CAD: { name: "Canadian Dollar", countryCode: "CA" },
+        // GBP: { name: "British Pound Sterling", countryCode: "GB" },
+        // CAD: { name: "Canadian Dollar", countryCode: "CA" },
         NGN: { name: "Nigerian Naira", countryCode: "NG" },
-        USD: { name: "United States Dollar", countryCode: "US" },
-        ZAR: { name: "South African Rand", countryCode: "ZA" },
-        XAF: { name: "Central African CFA Franc", countryCode: "CF" },
-        CLP: { name: "Chilean Peso", countryCode: "CL" },
-        COP: { name: "Colombian Peso", countryCode: "CO" },
-        EGP: { name: "Egyptian Pound", countryCode: "EG" },
-        EUR: { name: "SEPA", countryCode: "EU" },
-        GHS: { name: "Ghanaian Cedi", countryCode: "GH" },
-        GNF: { name: "Guinean Franc", countryCode: "GN" },
-        KES: { name: "Kenyan Shilling", countryCode: "KE" },
-        MWK: { name: "Malawian Kwacha", countryCode: "MW" },
-        MAD: { name: "Moroccan Dirham", countryCode: "MA" },
-        RWF: { name: "Rwandan Franc", countryCode: "RW" },
-        SLL: { name: "Sierra Leonean Leone", countryCode: "SL" },
-        TZS: { name: "Tanzanian Shilling", countryCode: "TZ" },
-        UGX: { name: "Ugandan Shilling", countryCode: "UG" },
-        XOF: { name: "West African CFA Franc BCEAO", countryCode: "WA" },
-        ZMW: { name: "Zambian Kwacha", countryCode: "ZM" },
+        // USD: { name: "United States Dollar", countryCode: "US" },
+        // ZAR: { name: "South African Rand", countryCode: "ZA" },
+        // XAF: { name: "Central African CFA Franc", countryCode: "CF" },
+        // CLP: { name: "Chilean Peso", countryCode: "CL" },
+        // COP: { name: "Colombian Peso", countryCode: "CO" },
+        // EGP: { name: "Egyptian Pound", countryCode: "EG" },
+        // EUR: { name: "SEPA", countryCode: "EU" },
+        // GHS: { name: "Ghanaian Cedi", countryCode: "GH" },
+        // GNF: { name: "Guinean Franc", countryCode: "GN" },
+        // KES: { name: "Kenyan Shilling", countryCode: "KE" },
+        // MWK: { name: "Malawian Kwacha", countryCode: "MW" },
+        // MAD: { name: "Moroccan Dirham", countryCode: "MA" },
+        // RWF: { name: "Rwandan Franc", countryCode: "RW" },
+        // SLL: { name: "Sierra Leonean Leone", countryCode: "SL" },
+        // TZS: { name: "Tanzanian Shilling", countryCode: "TZ" },
+        // UGX: { name: "Ugandan Shilling", countryCode: "UG" },
+        // XOF: { name: "West African CFA Franc BCEAO", countryCode: "WA" },
+        // ZMW: { name: "Zambian Kwacha", countryCode: "ZM" },
     };
 
     useEffect(() => {
@@ -295,9 +295,9 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
 
 
             // Check if the link exists in the response
-            if (response.data.paystack.data.link) {
+            if (response.data.paystack.data.authorization_url) {
                 setshowPaystack(true);
-                setshowPaystackLink(response.data.paystack.data.link);
+                setshowPaystackLink(response.data.paystack.data.authorization_url);
             } else {
                 Swal.fire('Error', 'Unable to initiate payment', 'error');
             }
@@ -436,18 +436,36 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                 </div>
                 <h3 className="text-xl font-normal  lg:pt-[5rem] mb-4">Ticket Order Summary</h3>
                 <div className="space-y-4">
-                    <div className="flex justify-between">
-                        <span>Ticket (x{calculateTotal().totalTickets})</span>
-                        <span>{location && location.currencyCode}  {calculateTotal().subtotal.toFixed(2).toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span>Transaction Fee</span>
-                        <span>{location && location.currencyCode}  {calculateTotal().transactionFee.toFixed(2).toLocaleString()}</span>
-                    </div>
-                    <div className="border-t pt-4 flex justify-between font-normal">
-                        <span>Total</span>
-                        <span>{location && location.currencyCode}  {calculateTotal().total.toFixed(2).toLocaleString()}</span>
-                    </div>
+                <div className="flex justify-between">
+    <span>Ticket (x{calculateTotal().totalTickets})</span>
+    <span>
+       {" "}
+        {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: location?.currencyCode || "USD",
+        }).format(calculateTotal().subtotal)}
+    </span>
+</div>
+<div className="flex justify-between">
+    <span>Transaction Fee</span>
+    <span>
+       {" "}
+        {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: location?.currencyCode || "USD",
+        }).format(calculateTotal().transactionFee)}
+    </span>
+</div>
+<div className="border-t pt-4 flex justify-between font-normal">
+    <span>Total</span>
+    <span>
+       {" "}
+        {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: location?.currencyCode || "USD",
+        }).format(calculateTotal().total)}
+    </span>
+</div>
                 </div>
             </div>
         </>
@@ -543,7 +561,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                                             {name} ({code})
                                                         </option>
                                                     ))}
-                                                    <option value="OTHER">Other</option>
+                                                    {/* <option value="USD">Other - (Billed in USD)</option> */}
                                                 </select>
                                             </div>
                                         </>
@@ -703,7 +721,7 @@ const TicketModal = ({ isOpen, onClose, eventTitle, eventDateTime, ticketDetails
                                         </div>
 
                                         <p className="text-gray-400 text-sm">
-                                            By selecting Connect, I agree to the My TicketSeller Terms of Service
+                                            By selecting Connect, I agree to the <Link t={'/terms'} className={`underline underline-offset-4 ${theme == 'dark' ? 'text-blue-50' : 'text-blue-800'}`}>My TicketSeller Terms of Service</Link>
                                         </p>
 
                                         <button

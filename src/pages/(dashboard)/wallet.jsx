@@ -393,7 +393,7 @@ const WalletDashboard = () => {
                       </div>
                       <div>
                         <div className="text-sm md:text-base font-medium">
-                          ₦ {transaction.amount}
+                          ₦ {userData ? new Intl.NumberFormat('en-US').format(transaction.amount) : '0.00'}
                         </div>
                         <div className="text-xs md:text-sm text-gray-500">
                           {transaction.request_time}
@@ -452,7 +452,7 @@ const WalletDashboard = () => {
                       </div>
                       <div>
                         <div className="text-sm md:text-base font-medium">
-                          ₦ {transaction.amount}
+                          ₦ {userData ? new Intl.NumberFormat('en-US').format(transaction.amount) : '0.00'}
                         </div>
                         <div className="text-xs md:text-sm text-gray-500">
                           {transaction.request_time}

@@ -33,6 +33,7 @@ import SearchEvent from './pages/(events)/SearchEvent';
 import WalletPage from './pages/(dashboard)/wallet';
 import Terms from './pages/(landing)/Terms';
 import Privacy from './pages/(landing)/Privacy';
+import CancelledPayments from './pages/(payments)/cancelledPayment';
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
             {/* <Route path="/dashboard/event/poster" element={<ProtectedRoute><BannerPage /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/event/poster/:id" element={<ProtectedRoute><CreateBannerPage /></ProtectedRoute>} /> */}
             <Route path="/validatePayment/" element={<ValidatePayment />} />
+            <Route path="/canceledPayment" element={<CancelledPayments />} />
 
 
             <Route path="/login" element={<UnProtectedRoute><LoginPage /></UnProtectedRoute>} />
