@@ -401,7 +401,24 @@ function ViewEventComponent({ variation }) {
         }
     }
 
-
+    const getMimeType = (url) => {
+        const extension = url.split('.').pop().toLowerCase();
+        switch (extension) {
+            case 'png':
+                return 'image/png';
+            case 'jpg':
+            case 'jpeg':
+                return 'image/jpeg';
+            case 'ico':
+                return 'image/x-icon';
+            case 'svg':
+                return 'image/svg+xml';
+            case 'webp':
+                return 'image/webp';
+            default:
+                return 'image/png'; // Fallback type
+        }
+    };
     return (
         <section className={`py-10 pb-16 ${theme === 'dark' ? 'bg-[#111]' : 'bg-gray-100'}`}>
 
@@ -415,6 +432,7 @@ function ViewEventComponent({ variation }) {
                 </div>
             ) : (
                 <Helmet>
+
                     <title>{eventDetails.event_title}</title>
                     <meta property="og:title" content={eventDetails.event_title} />
                     <meta property="og:image" content={eventDetails.event_image} />
@@ -424,7 +442,7 @@ function ViewEventComponent({ variation }) {
                     <meta name="twitter:title" content={eventDetails.event_title} />
                     <meta name="twitter:description" content={eventDetails.event_description} />
                     <meta name="twitter:image" content={eventDetails.event_image} />
-                    <meta name="twitter:url" content={eventDetails.event_url} />
+                     <link rel="icon" href={`${eventDetails.event_image}`} type={getMimeType(eventDetails.event_image)} />
                 </Helmet>
             )
             }
