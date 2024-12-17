@@ -395,7 +395,7 @@ const WalletDashboard = () => {
                        </div>
                        <div>
                          <div className="text-sm text-red-500 md:text-base font-medium">
-                            - ₦{userData ? new Intl.NumberFormat('en-US').format(transaction.initial_amount - transaction.amount) : '0.00'} {" - "} { "(Charge)"}
+                            - ₦{userData ? new Intl.NumberFormat('en-US').format(transaction.initial_amount - transaction.amount) : '0.00'} {" - "} { "(Charge + Tax)"}
                          </div>
                          <div className="text-xs md:text-sm text-gray-500">
                            {transaction.request_time}
