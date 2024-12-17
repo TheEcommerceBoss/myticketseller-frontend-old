@@ -28,13 +28,15 @@ const LocationData = () => {
           // const ipAddress = '100.43.96.0';
           console.log(`https://freeipapi.com/api/json/${ipAddress}`)
 
-          const response = await fetch(`https://get.geojs.io/v1/ip/geo/${ipAddress}.json`);
+          // const response = await fetch(`https://get.geojs.io/v1/ip/geo/${ipAddress}.json`);
+          const response = await fetch(`https://freeipapi.com/api/json/${ipAddress}`);
+          console.log(ipData)
           const data = await response.json();
-          const flagUrl = `https://flagcdn.com/w320/${data.country_code.toLowerCase()}.png`;
+          const flagUrl = `https://flagcdn.com/w320/${data.countryCode.toLowerCase()}.png`;
 
           const locationInfo = {
             country: data.country,
-            countryCode: data.country_code,
+            countryCode: data.countryCode,
             cityName: data.city,
             regionName: data.region,
             timeZone: data.timezone,
