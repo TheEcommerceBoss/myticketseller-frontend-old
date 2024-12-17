@@ -85,6 +85,7 @@ function ValidatePayment() {
                                     )}
 
                                 </div>
+                                <h5 className="text-center text-2xl mb-5 text-white">Please Wait...</h5>
                                 <h5 className="text-center text-2xl mb-5 text-white">Validating Payment</h5>
                                 <h5 className="text-center text-lg text-white">Transaction Reference: {trxref}</h5>
 
