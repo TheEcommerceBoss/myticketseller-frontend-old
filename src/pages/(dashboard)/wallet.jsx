@@ -13,6 +13,7 @@ import {
   Banknote,
   CirclePlus,
   Menu,
+  MinusCircle,
   Moon,
   PlusCircle,
   Sun,
@@ -380,30 +381,50 @@ const WalletDashboard = () => {
             <div className={`${theme === "light" ? "bg-white" : "bg-[#121212]"} rounded-3xl p-4 md:p-8 shadow-sm`}>
               <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6">
                 <h2 className={`${theme === "light" ? "text-gray-800" : "text-white"} text-xl md:text-2xl font-bold mb-2 md:mb-0`}>
-                  Earnings
+                  Ticket Sales
                 </h2>
               </div>
               <div className="space-y-4 md:space-y-6">
                 {paginatedEarnings.length > 0 ?
                 paginatedEarnings.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2 md:space-x-4">
-                      <div className="bg-[#030171] rounded-full p-2">
-                        <ArrowDown className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-sm md:text-base font-medium">
-                          ₦ {userData ? new Intl.NumberFormat('en-US').format(transaction.amount) : '0.00'}
-                        </div>
-                        <div className="text-xs md:text-sm text-gray-500">
-                          {transaction.request_time}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-sm md:text-base font-medium">
-                      {transaction.status}
-                    </div>
-                  </div>
+                 <div key={transaction.id} className="space-y-4 md:space-y-6">
+                   <div  className="flex items-center justify-between">
+                     <div className="flex items-center space-x-2 md:space-x-4">
+                       <div className="bg-[#030171] rounded-full p-2">
+                         <MinusCircle className="h-6 w-6 text-white" />
+                       </div>
+                       <div>
+                         <div className="text-sm text-red-500 md:text-base font-medium">
+                            - ₦{userData ? new Intl.NumberFormat('en-US').format(transaction.initial_amount - transaction.amount) : '0.00'} {" - "} { "(Charge)"}
+                         </div>
+                         <div className="text-xs md:text-sm text-gray-500">
+                           {transaction.request_time}
+                         </div>
+                       </div>
+                     </div>
+                     <div className="text-sm md:text-base font-medium">
+                       {transaction.status}
+                     </div>
+                   </div>
+                   <div className="flex items-center justify-between">
+                     <div className="flex items-center space-x-2 md:space-x-4">
+                       <div className="bg-[#030171] rounded-full p-2">
+                         <ArrowDown className="h-6 w-6 text-white" />
+                       </div>
+                       <div>
+                         <div className="text-sm text-green-500 md:text-base font-medium">
+                           ₦ {userData ? new Intl.NumberFormat('en-US').format(transaction.initial_amount) : '0.00'}
+                         </div>
+                         <div className="text-xs md:text-sm text-gray-500">
+                           {transaction.request_time}
+                         </div>
+                       </div>
+                     </div>
+                     <div className="text-sm md:text-base font-medium">
+                       {transaction.status}
+                     </div>
+                   </div>
+                 </div>
                 ))
                 : 'No Transaction Found!!'}
               </div>
