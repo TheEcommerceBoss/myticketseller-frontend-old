@@ -442,7 +442,7 @@ function ViewEventComponent({ variation }) {
                     <meta name="twitter:title" content={eventDetails.event_title} />
                     <meta name="twitter:description" content={eventDetails.event_description} />
                     <meta name="twitter:image" content={eventDetails.event_image} />
-                     <link rel="icon" href={`${eventDetails.event_image}`} type={getMimeType(eventDetails.event_image)} />
+                    <link rel="icon" href={`${eventDetails.event_image}`} type={getMimeType(eventDetails.event_image)} />
                 </Helmet>
             )
             }
