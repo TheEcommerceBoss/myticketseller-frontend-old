@@ -660,15 +660,17 @@ const TicketModal = ({
                            >
                              <div className="flex justify-between items-center">
                                <div>
+                                 <p className="text-gray-600">
+                                   {ticket.ticket_name}
+                                 </p>
+                                 {" "}
                                  <p className="text-lg font-bold text-[#040171]">
                                    {location && location.currencyCode}{" "}
                                    {(
                                      ticket.price / conversionRate
                                    ).toLocaleString()}
-                                 </p>{" "}
-                                 <p className="text-gray-600">
-                                   {ticket.ticket_name} ({ticket.ticket_type})
                                  </p>
+                                
                                </div>
                                <div className="flex items-center gap-4">
                                  <button
