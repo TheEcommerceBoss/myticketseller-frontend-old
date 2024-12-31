@@ -935,7 +935,7 @@ console.log(eventDetails)
                     </div>
 
                     <p className="text-gray-400 text-sm">
-                      By selecting Connect, I agree to the{" "}
+                      By clicking Checkout, I agree to the{" "}
                       <Link
                         t={"/terms"}
                         className={`underline underline-offset-4 ${
