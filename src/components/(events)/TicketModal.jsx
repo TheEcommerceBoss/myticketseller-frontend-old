@@ -26,7 +26,7 @@ const TicketModal = ({
 }) => {
   const [ticketCounts, setTicketCounts] = useState({});
   const { theme, toggleTheme } = useTheme();
-
+console.log(eventDetails)
   const [tickets, settickets] = useState([]);
   const [showPaystack, setshowPaystack] = useState(false);
   const [showPaystackLink, setshowPaystackLink] = useState("");
@@ -263,18 +263,23 @@ const TicketModal = ({
   const calculateTotal = () => {
     let subtotal = 0;
     let totalTickets = 0; // Initialize ticket counter
-
+  
     tickets.forEach((ticket) => {
       const ticketCount = ticketCounts[ticket.ticket_id] || 0; // Default to 0 if not set
       subtotal += ticketCount * ticket.price; // Calculate subtotal
       totalTickets += ticketCount; // Count total number of tickets
     });
-
-    const transactionFee = 300 / conversionRate; // Flat transaction fee
-    console.log(conversionRate);
+  
+    // Calculate Paystack fee dynamically
+    let transactionFee = 0;
+    if (subtotal > 0) {
+      transactionFee = (subtotal * 0.015) + 100; // 1.5% + 100 NGN
+      if (transactionFee > 2000) transactionFee = 2000; // Cap fee at 2000 NGN
+    }
+  
     return {
       subtotal: subtotal / conversionRate,
-      transactionFee,
+      transactionFee: transactionFee / conversionRate,
       total: (subtotal + transactionFee) / conversionRate,
       totalTickets, // Return total ticket count
     };
@@ -405,72 +410,72 @@ const TicketModal = ({
     </div>
   );
 
-  const OrderConfirmation = () => (
-    <div className="w-full mx-auto p-6 space-y-8">
-      <div className="flex justify-between border-b pb-6 items-center">
-        <div className="flex  flex-row items-center gap-3">
-          <div className="w-8 h-8 bg-green-500 rounded-full flex flex-col items-center justify-center">
-            <Check className="w-5 font-bold h-5 text-white" />
-          </div>
-          <div className="flex flex-col items-center justify-center ">
-            <h1 className="text-xl text-[#040171]">
-              Thank you for your order!
-            </h1>
-          </div>
-        </div>
+  // const OrderConfirmation = (theme) => (
+  //   <div className="w-full mx-auto p-6 space-y-8">
+  //     <div className="flex justify-between border-b pb-6 items-center">
+  //       <div className="flex  flex-row items-center gap-3">
+  //         <div className="w-8 h-8 bg-green-500 rounded-full flex flex-col items-center justify-center">
+  //           <Check className="w-5 font-bold h-5 text-white" />
+  //         </div>
+  //         <div className="flex flex-col items-center justify-center ">
+  //           <h1 className={`text-xl ${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+  //             Thank you for your order!   { theme}
+  //           </h1>
+  //         </div>
+  //       </div>
 
-        <div className="flex justify-end flex-wrap-reverse gap-5 items-end">
-          <Link
-            to={"/dashboard/ticket/all"}
-            className="px-5  hidden md:flex py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
-          >
-            Take me to my Tickets
-          </Link>
-          <button
-            onClick={onClose}
-            className="p-2 bg-black bg-opacity-50 rounded-full"
-          >
-            <X className="w-6 h-6 text-white font-bold" />
-          </button>
-        </div>
-      </div>
+  //       <div className="flex justify-end flex-wrap-reverse gap-5 items-end">
+  //         <Link
+  //           to={"/dashboard/ticket/all"}
+  //           className="px-5  hidden md:flex py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+  //         >
+  //           Take me to my Tickets
+  //         </Link>
+  //         <button
+  //           onClick={onClose}
+  //           className="p-2 bg-black bg-opacity-50 rounded-full"
+  //         >
+  //           <X className="w-6 h-6 text-white font-bold" />
+  //         </button>
+  //       </div>
+  //     </div>
 
-      <div className="space-y-2">
-        <p className="text-gray-600 text-xs font-medium">YOU ARE GOING TO</p>
-        {/* {console.log(ticketDetails.days[0].event_address)} */}
-        <h2 className="text-2xl font-bold text-[#040171]">
-          {eventDetails.event_title}
-        </h2>
-      </div>
+  //     <div className="space-y-2">
+  //       <p className="text-gray-600 text-xs font-medium">YOU ARE GOING TO</p>
+  //       {/* {console.log(ticketDetails.days[0].event_address)} */}
+  //       <h2 className="text-2xl font-bold text-[#040171]">
+  //         {eventDetails.event_title}
+  //       </h2>
+  //     </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div>
-          <h3 className="font-bold text-black  mb-2">
-            {calculateTotal().totalTickets} TICKET(S) SENT TO
-          </h3>
-          <p className="text-gray-600">{formData.email}</p>
-        </div>
-        <div>
-          <h3 className="font-bold text-black  mb-2">DATE</h3>
-          <p className="text-gray-600">
-            {formatDate(ticketDetails.days[0].start_day)}
-          </p>
-        </div>
-        <div>
-          <h3 className="font-bold text-black  mb-2">LOCATION</h3>
-          <p className="text-gray-600">{ticketDetails.days[0].event_address}</p>
-        </div>
-      </div>
-      <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">
-        <Link
-          to={"/dashboard/ticket/all"}
-          className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
-        >
-          Take me to my Tickets
-        </Link>
-      </div>
-    </div>
-  );
+  //     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  //       <div>
+  //         <h3 className="font-bold text-black  mb-2">
+  //           {calculateTotal().totalTickets} TICKET(S) SENT TO
+  //         </h3>
+  //         <p className="text-gray-600">{formData.email}</p>
+  //       </div>
+  //       <div>
+  //         <h3 className="font-bold text-black  mb-2">DATE</h3>
+  //         <p className="text-gray-600">
+  //           {formatDate(ticketDetails.days[0].start_day)}
+  //         </p>
+  //       </div>
+  //       <div>
+  //         <h3 className="font-bold text-black  mb-2">LOCATION</h3>
+  //         <p className="text-gray-600">{ticketDetails.days[0].event_address}</p>
+  //       </div>
+  //     </div>
+  //     <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">
+  //       <Link
+  //         to={"/dashboard/ticket/all"}
+  //         className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+  //       >
+  //         Take me to my Tickets
+  //       </Link>
+  //     </div>
+  //   </div>
+  // );
 
   const OrderSummary = () => (
     <>
@@ -784,7 +789,70 @@ const TicketModal = ({
                     </form>
                   </>
                 ) : isConfirmed ? (
-                  <OrderConfirmation />
+                  <div className="w-full mx-auto p-6 space-y-8">
+                    <div className="flex justify-between border-b pb-6 items-center">
+                      <div className="flex  flex-row items-center gap-3">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex flex-col items-center justify-center">
+                          <Check className="w-5 font-bold h-5 text-white" />
+                        </div>
+                        <div className="flex flex-col items-center justify-center ">
+                          <h1 className={`text-xl ${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                            Thank you for your order!   
+                          </h1>
+                        </div>
+                      </div>
+              
+                      <div className="flex justify-end flex-wrap-reverse gap-5 items-end">
+                        <Link
+                          to={"/dashboard/ticket/all"}
+                          className="px-5  hidden md:flex py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+                        >
+                          Take me to my Tickets
+                        </Link>
+                        <button
+                          onClick={onClose}
+                          className="p-2 bg-black bg-opacity-50 rounded-full"
+                        >
+                          <X className="w-6 h-6 text-white font-bold" />
+                        </button>
+                      </div>
+                    </div>
+              
+                    <div className="space-y-2">
+                      <p className="text-gray-600 text-xs font-medium">YOU ARE GOING TO</p>
+                      {/* {console.log(ticketDetails.days[0].event_address)} */}
+                      <h2 className={`text-2xl ${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                        {eventDetails.event_title}
+                      </h2>
+                    </div>
+              
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div>
+                        <h3 className={`${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                          {calculateTotal().totalTickets} TICKET(S) SENT TO
+                        </h3>
+                        <p className="text-gray-500">{formData.email}</p>
+                      </div>
+                      <div>
+                        <h3 className={`${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>DATE</h3>
+                        <p className="text-gray-500">
+                          {formatDate(ticketDetails.days[0].start_day)}
+                        </p>
+                      </div>
+                      <div>
+                        <h3 className={`${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>LOCATION</h3>
+                        <p className="text-gray-500">{ticketDetails.days[0].event_address}</p>
+                      </div>
+                    </div>
+                    <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">
+                      <Link
+                        to={"/dashboard/ticket/all"}
+                        className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+                      >
+                        Take me to my Tickets
+                      </Link>
+                    </div>
+                  </div>
                 ) : (
                   <div className="space-y-6">
                     <div className="space-y-4">
