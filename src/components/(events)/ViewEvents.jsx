@@ -32,37 +32,12 @@ import SimpleMap from "../props/Map";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
 
-import axios from "axios";
 import { eventsApi } from "../../api";
 import { formatDate } from "../../lib/formatDate";
 
 const Header = ({ theme, eventDetails, ticketDetails, id }) => {
-  // console.log(ticketDetails)
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const formatDate = (dateString) => {
-  //   const date = new Date(dateString);
-  //   const day = date.getDate();
-  //   const month = date.toLocaleString("default", { month: "long" });
-  //   const year = date.getFullYear();
-
-  //   // Add the correct suffix for the day
-  //   const daySuffix = (day) => {
-  //     if (day >= 11 && day <= 13) return `${day}th`;
-  //     switch (day % 10) {
-  //       case 1:
-  //         return `${day}st`;
-  //       case 2:
-  //         return `${day}nd`;
-  //       case 3:
-  //         return `${day}rd`;
-  //       default:
-  //         return `${day}th`;
-  //     }
-  //   };
-
-  //   return `${daySuffix(day)} ${month}, ${year}`;
-  // };
   const handleShare = async () => {
     const pageUrl = window.location.href;
     const shareData = {
@@ -156,7 +131,7 @@ const HostInfo = ({ theme, eventDetails }) => (
               theme === "dark" ? "text-white" : "text-[#040171]"
             }`}
           >
-            Hosted by: {eventDetails.user.fullname}
+            Hosted by: {eventDetails.user.full_name}
           </div>
           <div className="bg-orange-500 text-white text-sm px-3 py-1 rounded-full inline-block mt-1">
             {eventDetails.total_events_by_this_user_with_status_1}{" "}
@@ -231,8 +206,6 @@ const DateTime = ({ theme, eventDetails, ticketDetails, day, id }) => {
 
     return `${daySuffix(day)} ${month}, ${year}`;
   };
-
-  // console.log(day)
 
   return (
     <div className="mb-8">
@@ -425,7 +398,6 @@ function ViewEventComponent({ variation }) {
     days: [],
     tickets: [],
     user: [],
-    additional_info: [],
     total_events_by_this_user_with_status_1: 0,
   });
 
@@ -440,44 +412,24 @@ function ViewEventComponent({ variation }) {
     tickets: [],
   });
 
-  // console.log(eventDetails.days)
-
   useEffect(() => {
     const fetchSingleEventDetails = async () => {
       try {
-        // const response = await axios.post(`${import.meta.env.VITE_API_URL}/fetch-single-event`, {
-        //     event_id: id,
-        // }, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // });
         const event = await eventsApi.getEventById(id);
 
         if (event) {
-          const {
-            event_category,
-            event_specific_type,
-            event_title,
-            event_description,
-            event_img,
-            user_details,
-            total_events_by_this_user_with_status_1,
-            additional_info,
-          } = event;
+          const { total_events_by_this_user_with_status_1 } = event;
           setEventDetails({
-            event_category: event.category_id ? event.category : "General",
-            event_specific_type,
+            event_category: event.category_id ? event.category.name : "General",
+            event_specific_type: event.is_listed,
             event_title: event.title,
             event_description: event.description,
             event_image: event.image,
             event_id: event.id,
-            user: {
-              id: event.organizer_id,
-              email: "kijuchihe@gmail.com",
-            },
+            user: event.organizer,
             total_events_by_this_user_with_status_1,
-            additional_info,
+
+            ...event,
           });
           event.is_password_protected
             ? (setIsLocked(true), setPin(event.event_password))
@@ -487,7 +439,6 @@ function ViewEventComponent({ variation }) {
             days: event.days,
             tickets: event.tickets || [],
           });
-          // console.log(pin)
         }
       } catch (error) {
         console.error("Failed to fetch event details:", error);
@@ -499,9 +450,7 @@ function ViewEventComponent({ variation }) {
     fetchSingleEventDetails();
   }, [id]);
 
-  // console.log(id);
-
-  const cards = [];
+  // const cards = [];
 
   const unlockevent = () => {
     if (pin == trialPassword) {
@@ -678,15 +627,13 @@ function ViewEventComponent({ variation }) {
                     theme === "dark" ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
-                  {eventDetails.additional_info &&
-                    eventDetails.additional_info.restrictions}
+                  {eventDetails.restrictions && eventDetails.restrictions}
                 </p>
               </div>
 
               <div className="mb-8">
-                {eventDetails.additional_info &&
-                  eventDetails.additional_info.special_guests &&
-                  eventDetails.additional_info.special_guests.trim() !== "" && (
+                {eventDetails.special_guests &&
+                  eventDetails.special_guests.length > 0 && (
                     <>
                       <h2
                         className={`text-l font-bold ${
@@ -700,25 +647,20 @@ function ViewEventComponent({ variation }) {
                           theme === "dark" ? "text-gray-300" : "text-gray-600"
                         }`}
                       >
-                        {eventDetails.additional_info.special_guests
-                          .split(",")
-                          .map((guest, index) => (
-                            <span
-                              key={index}
-                              className={`${
-                                theme === "dark"
-                                  ? "bg-gray-100 text-gray-600"
-                                  : "bg-orange-500 text-white"
-                              }  px-4 py-2 mr-2 rounded-full text-sm`}
-                            >
-                              {guest.trim()}
-                              {index <
-                                eventDetails.additional_info.special_guests.split(
-                                  ","
-                                ).length -
-                                  1 && " "}
-                            </span>
-                          ))}
+                        {eventDetails.special_guests.map((guest, index) => (
+                          <span
+                            key={index}
+                            className={`${
+                              theme === "dark"
+                                ? "bg-gray-100 text-gray-600"
+                                : "bg-orange-500 text-white"
+                            }  px-4 py-2 mr-2 rounded-full text-sm`}
+                          >
+                            {guest.trim()}
+                            {index < eventDetails.special_guests.length - 1 &&
+                              " "}
+                          </span>
+                        ))}
                       </p>
                     </>
                   )}
@@ -731,7 +673,6 @@ function ViewEventComponent({ variation }) {
                     theme === "dark" ? "bg-black" : "bg-white"
                   } mb-5 px-5  rounded-l border`}
                 >
-                  {console.log("Cool", day)}
                   <div className={`flex items-center my-6 pb-2 `}>
                     <span
                       className={`text-l mx-4 font-bold  ${
@@ -777,25 +718,24 @@ function ViewEventComponent({ variation }) {
               </div>
 
               <div className="mb-8">
-                {eventDetails.additional_info &&
-                  eventDetails.additional_info.authority_notification && (
-                    <>
-                      <h2
-                        className={`text-l font-bold  ${
-                          theme === "dark" ? "text-white" : "text-[#040171]"
-                        }`}
-                      >
-                        Notified Authorities
-                      </h2>
-                      <p
-                        className={`${
-                          theme === "dark" ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        {eventDetails.additional_info.authority_notification}
-                      </p>
-                    </>
-                  )}
+                {eventDetails.authorities_to_notify && (
+                  <>
+                    <h2
+                      className={`text-l font-bold  ${
+                        theme === "dark" ? "text-white" : "text-[#040171]"
+                      }`}
+                    >
+                      Notified Authorities
+                    </h2>
+                    <p
+                      className={`${
+                        theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      }`}
+                    >
+                      {eventDetails.authorities_to_notify}
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* <div className={`flex flex-col items-center my-[3rem]`}>

@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dist/
 dist-ssr
 *.local
 
@@ -26,3 +27,7 @@ dist-ssr
 *.sw?
 
 *storybook.log
+
+.env
+.env.*
+!.env.example

@@ -26,7 +26,7 @@ const TicketModal = ({
 }) => {
   const [ticketCounts, setTicketCounts] = useState({});
   const { theme, toggleTheme } = useTheme();
-console.log(eventDetails)
+
   const [tickets, settickets] = useState([]);
   const [showPaystack, setshowPaystack] = useState(false);
   const [showPaystackLink, setshowPaystackLink] = useState("");
@@ -69,13 +69,10 @@ console.log(eventDetails)
           lastSavedTime &&
           currentTime - lastSavedTime > 5 * 60 * 1000
         ) {
-          console.log("cookie");
           const parsedLocation = JSON.parse(locationData);
           setLocation(parsedLocation);
           fetchConversionRate(parsedLocation.currencyCode); // Fetch conversion rate for the current location
         } else {
-          console.log("api");
-
           const ipResponse = await fetch("https://api.ipify.org?format=json");
           const ipData = await ipResponse.json();
           const ipAddress = ipData.ip;
@@ -263,20 +260,20 @@ console.log(eventDetails)
   const calculateTotal = () => {
     let subtotal = 0;
     let totalTickets = 0; // Initialize ticket counter
-  
+
     tickets.forEach((ticket) => {
       const ticketCount = ticketCounts[ticket.ticket_id] || 0; // Default to 0 if not set
       subtotal += ticketCount * ticket.price; // Calculate subtotal
       totalTickets += ticketCount; // Count total number of tickets
     });
-  
+
     // Calculate Paystack fee dynamically
     let transactionFee = 0;
     if (subtotal > 0) {
-      transactionFee = (subtotal * 0.015) + 100; // 1.5% + 100 NGN
+      transactionFee = subtotal * 0.015 + 100; // 1.5% + 100 NGN
       if (transactionFee > 2000) transactionFee = 2000; // Cap fee at 2000 NGN
     }
-  
+
     return {
       subtotal: subtotal / conversionRate,
       transactionFee: transactionFee / conversionRate,
@@ -306,7 +303,7 @@ console.log(eventDetails)
         email: formData.email,
         phone_number: formData.phone,
         fullname: formData.name,
-        event_id: eventDetails.event_id,
+        event_id: eventDetails.id,
         paymentMethod,
         marketingConsent,
         total: calculateTotal().total,
@@ -657,54 +654,53 @@ console.log(eventDetails)
                           <h3 className="text-xl font-semibold mb-4">
                             Select Ticket
                           </h3>
-                         {
-                           tickets.map((ticket, index) => (
-                           <div
-                             key={index}
-                             className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4"
-                           >
-                             <div className="flex justify-between items-center">
-                               <div>
-                                 <p className="text-gray-600">
-                                   {ticket.ticket_name}
-                                 </p>
-                                 {" "}
-                                 <p className="text-lg font-bold text-[#040171]">
-                                   {location && location.currencyCode}{" "}
-                                   {(
-                                     ticket.price / conversionRate
-                                   ).toLocaleString()}
-                                 </p>
-                                
-                               </div>
-                               <div className="flex items-center gap-4">
-                                 <button
-                                   onClick={() =>
-                                     handleTicketChange(
-                                       ticket.ticket_id,
-                                       "subtract"
-                                     )
-                                   }
-                                   className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                 >
-                                   -
-                                 </button>
-                                 <span className="w-8 text-center">
-                                   {ticketCounts[ticket.ticket_id] || 0}
-                                 </span>
-                                 <button
-                                   onClick={() =>
-                                     handleTicketChange(ticket.ticket_id, "add")
-                                   }
-                                   className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
-                                 >
-                                   +
-                                 </button>
-                               </div>
-                             </div>
-                           </div>
-                           ))
-                         }
+                          {tickets.map((ticket, index) => (
+                            <div
+                              key={index}
+                              className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4"
+                            >
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <p className="text-gray-600">
+                                    {ticket.ticket_name}
+                                  </p>{" "}
+                                  <p className="text-lg font-bold text-[#040171]">
+                                    {location && location.currencyCode}{" "}
+                                    {(
+                                      ticket.price / conversionRate
+                                    ).toLocaleString()}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                  <button
+                                    onClick={() =>
+                                      handleTicketChange(
+                                        ticket.ticket_id,
+                                        "subtract"
+                                      )
+                                    }
+                                    className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="w-8 text-center">
+                                    {ticketCounts[ticket.ticket_id] || 0}
+                                  </span>
+                                  <button
+                                    onClick={() =>
+                                      handleTicketChange(
+                                        ticket.ticket_id,
+                                        "add"
+                                      )
+                                    }
+                                    className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </>
                       ) : (
                         <>
@@ -796,12 +792,16 @@ console.log(eventDetails)
                           <Check className="w-5 font-bold h-5 text-white" />
                         </div>
                         <div className="flex flex-col items-center justify-center ">
-                          <h1 className={`text-xl ${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                            Thank you for your order!   
+                          <h1
+                            className={`text-xl ${
+                              theme == "dark" ? "text-white" : "text-[#040171]"
+                            }`}
+                          >
+                            Thank you for your order!
                           </h1>
                         </div>
                       </div>
-              
+
                       <div className="flex justify-end flex-wrap-reverse gap-5 items-end">
                         <Link
                           to={"/dashboard/ticket/all"}
@@ -817,31 +817,55 @@ console.log(eventDetails)
                         </button>
                       </div>
                     </div>
-              
+
                     <div className="space-y-2">
-                      <p className="text-gray-600 text-xs font-medium">YOU ARE GOING TO</p>
+                      <p className="text-gray-600 text-xs font-medium">
+                        YOU ARE GOING TO
+                      </p>
                       {/* {console.log(ticketDetails.days[0].event_address)} */}
-                      <h2 className={`text-2xl ${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-                        {eventDetails.event_title}
+                      <h2
+                        className={`text-2xl ${
+                          theme == "dark" ? "text-white" : "text-[#040171]"
+                        }`}
+                      >
+                        {eventDetails.title}
                       </h2>
                     </div>
-              
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                       <div>
-                        <h3 className={`${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
+                        <h3
+                          className={`${
+                            theme == "dark" ? "text-white" : "text-[#040171]"
+                          }`}
+                        >
                           {calculateTotal().totalTickets} TICKET(S) SENT TO
                         </h3>
                         <p className="text-gray-500">{formData.email}</p>
                       </div>
                       <div>
-                        <h3 className={`${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>DATE</h3>
+                        <h3
+                          className={`${
+                            theme == "dark" ? "text-white" : "text-[#040171]"
+                          }`}
+                        >
+                          DATE
+                        </h3>
                         <p className="text-gray-500">
                           {formatDate(ticketDetails.days[0].start_day)}
                         </p>
                       </div>
                       <div>
-                        <h3 className={`${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>LOCATION</h3>
-                        <p className="text-gray-500">{ticketDetails.days[0].event_address}</p>
+                        <h3
+                          className={`${
+                            theme == "dark" ? "text-white" : "text-[#040171]"
+                          }`}
+                        >
+                          LOCATION
+                        </h3>
+                        <p className="text-gray-500">
+                          {ticketDetails.days[0].event_address}
+                        </p>
                       </div>
                     </div>
                     <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">

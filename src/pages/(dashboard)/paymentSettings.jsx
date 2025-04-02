@@ -42,46 +42,36 @@ const PaymentSettings = () => {
     const fetchEvents = async () => {
       try {
         // const token = Cookies.get("auth_token");
-        const data = await eventsApi.getEventById(id);
-
-        // axios.post(
-        //   `${import.meta.env.VITE_API_URL}/get-event-details`,
-        //   { event_id: id },
-        //   {
-        //     headers: {
-        //       Authorization: `Bearer ${token}`,
-        //     },
-        //   }
-        // );
-
+        const event = await eventsApi.getEventById(id);
+        console.log("my event", event);
         // console.log(response.data.event_days);
-        if (data.event_days && data.event_days.length > 0) {
+        if (event.days && event.days.length > 0) {
           // Format event days with the specified structure
-          const formattedEventDays = data.event_days.map((day, index) => ({
+          const formattedEventDays = event.days.map((day, index) => ({
             index: index + 1,
             eventType: day.event_type,
-            startDate: day.start_day,
-            startTime: day.open_door_time,
-            endTime: day.close_door_time,
+            startDate: day.event_day,
+            startTime: day.open_door,
+            endTime: day.close_door,
             location: day.event_type == "onsite" ? day.event_address : "",
             virtualLink: day.event_type == "virtual" ? day.event_link : "",
             password: day.event_type == "virtual" ? day.event_password : "",
           }));
 
           setEventDays(formattedEventDays);
-          setDayCount(data.event_days.length);
+          setDayCount(event.days.length);
 
           // Format tickets
           // console.log(response.data.tickets)
-          const formattedTickets = data.data.tickets.map((ticket) => ({
+          const formattedTickets = event.tickets.map((ticket) => ({
             event_id: ticket.event_id,
-            id: ticket.ticket_id,
-            name: ticket.ticket_name,
-            type: ticket.ticket_type,
-            fee: ticket.ticket_type == "Free Ticket" ? 0 : ticket.price,
+            id: ticket.id,
+            name: ticket.name,
+            type: ticket.type,
+            fee: ticket.type == "free" ? 0 : ticket.price,
             currency: ticket.currency,
             quantity: ticket.quantity,
-            isFeeDisabled: ticket.ticket_type == "Free Ticket",
+            isFeeDisabled: ticket.type == "free",
           }));
 
           setTickets(formattedTickets);
@@ -278,7 +268,7 @@ const PaymentSettings = () => {
         name: ticket.name,
         ticket_id: ticket.id,
         type: ticket.type,
-        price: ticket.type == "Free Ticket" ? 0 : ticket.fee,
+        price: ticket.type == "free" ? 0 : ticket.fee,
         currency: "NGN",
         quantity: ticket.quantity,
       })),
@@ -313,18 +303,7 @@ const PaymentSettings = () => {
         ticketsApi.createBulkTickets(jsonBody.tickets),
         eventsApi.addEventSchedule(id, jsonBody.event_days),
       ]);
-      // const response = await axios.post(
-      //   `${import.meta.env.VITE_API_URL}/ticket_event_details`,
-      //   jsonBody,
-      //   {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
 
-      // console.log(response.data);
       Swal.fire(
         "Success",
         "Location details submitted successfully!",

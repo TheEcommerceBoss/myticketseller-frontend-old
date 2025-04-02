@@ -136,6 +136,18 @@ export const eventsApi = {
     const res = await newApi.get("/events/my-events");
     return res.data;
   },
+  searchEvents: async function (query: string) {
+    const res = await newApi.get(`/events/search?q=${query}`);
+    return res.data;
+  },
+  getEventsByCategory: async function (category_id: string | number) {
+    const res = await newApi.get(`/events/category/${category_id}`);
+    return res.data;
+  },
+  getEventSchedule: async function (event_id: string) {
+    const res = await newApi.get(`/events/${event_id}/schedule`);
+    return res.data;
+  },
 };
 
 export const ticketsApi = {
