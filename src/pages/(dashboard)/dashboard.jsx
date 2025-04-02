@@ -39,6 +39,7 @@ import { useAuth } from "../../context/AuthContext";
 import Cookies from "js-cookie";
 import api from "../../api";
 import { Button } from "storybook/internal/components";
+import { eventsApi, dashboardApi } from "../../api.ts";
 
 const Dashboard = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState("Today");
@@ -86,24 +87,22 @@ const Dashboard = () => {
         const token = Cookies.get("auth_token");
 
         // Trigger both API requests concurrently
-        const [eventsResponse, statsResponse] = await Promise.all([
-          api.get("/get_user_events", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          api.post("/get-dashboard-stats", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
+        const [events, statsResponse] = await Promise.all([
+          eventsApi.getMyEvents(),
+          dashboardApi.getStats(),
         ]);
 
+        // api.post("/get-dashboard-stats", {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // }),
+        // console.log(eventsResponse);
         // Process events data
-        setEvents(eventsResponse.data.events);
+        setEvents(events);
 
         // Process stats data
-        const statsData = statsResponse.data;
+        const statsData = statsResponse;
         setStats(statsData.event_days);
 
         // Process your chart data logic
@@ -194,7 +193,7 @@ const Dashboard = () => {
         );
         setTotalTickets(totalTickets);
 
-        console.table(paddedData);
+        // console.table(paddedData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {
@@ -285,7 +284,12 @@ const Dashboard = () => {
         <div className=" grid lg:grid-cols-3 gap-6 mb-8">
           <StatCard
             title="Balance"
-            value={'₦' + (userData ? new Intl.NumberFormat('en-US').format(userData.user.balance) : '0.00')}
+            value={
+              "₦" +
+              (userData
+                ? new Intl.NumberFormat("en-US").format(userData.user.balance)
+                : "0.00")
+            }
             color={theme === "dark" ? "bg-[#121212]" : "bg-white"}
             textColor={theme != "dark" ? "text-[#121212]" : "text-white"}
             cardColor="bg-green-300"
@@ -446,7 +450,7 @@ const Dashboard = () => {
                   <span>No events found</span>
                 </div>
               ) : (
-                events.slice(0, 2).map((event, index) => (
+                events.slice(0, 5).map((event, index) => (
                   <div
                     key={index}
                     className={` p-4 rounded-xl ${
@@ -455,11 +459,13 @@ const Dashboard = () => {
                         : "bg-gray-100  "
                     }`}
                   >
-                    <img
-                      src={event.event_img}
-                      alt="Event"
-                      className="w-full h-48 object-cover rounded-xl mb-4"
-                    />
+                    {event.image && (
+                      <img
+                        src={event.image || ""}
+                        alt="Event"
+                        className="w-full h-48 object-cover rounded-xl mb-4"
+                      />
+                    )}
                     <div className="text-sm text-gray-500">
                       {event.created_at}
                     </div>
@@ -467,20 +473,20 @@ const Dashboard = () => {
                       onClick={() =>
                         window.scrollTo({ top: 0, behavior: "smooth" })
                       }
-                      to={"/event/view/" + event.event_id}
+                      to={"/event/view/" + event.id}
                     >
                       <div
                         className={`text-xl font-medium  mt-1 ${
                           theme === "dark" ? "text-white" : "text-[#040171]"
                         }`}
                       >
-                        {event.event_title}
+                        {event.title}
                       </div>
                     </Link>
                     {/* {console.log(event)} */}
 
                     <div className="text-sm text-gray-500 mt-1">
-                      {event.category_name}
+                      {event.category?.name || "General"}
                     </div>
                   </div>
                 ))
@@ -505,7 +511,7 @@ const Dashboard = () => {
 
 const StatCard = ({ title, value, color, textColor, cardColor, iconColor }) => {
   const [Balance_hidden, setBalance_hidden] = useState(true);
-  console.log(Balance_hidden);
+  // console.log(Balance_hidden);
 
   return (
     <div
@@ -539,7 +545,7 @@ const StatCard = ({ title, value, color, textColor, cardColor, iconColor }) => {
 
 const Calendar = ({ theme, Stats }) => {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  console.log(Stats);
+  // console.log(Stats);
 
   // Set the initial currentMonth to the actual current date
   const [currentMonth, setCurrentMonth] = useState(new Date()); // Use the actual current date

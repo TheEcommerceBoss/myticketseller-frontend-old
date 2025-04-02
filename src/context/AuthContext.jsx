@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../api.ts";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("auth_token"));
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!Cookies.get("access_token")
+  );
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
@@ -38,43 +41,46 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const fetchUser = async () => {
-        const maxRetries = 5; 
-        let attempt = 0; 
-        const token = Cookies.get("auth_token");
-        
-        while (attempt < maxRetries) {
-          try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            setUserData(response.data);
-            console.log(response.data);
-            return; // Exit the loop on successful request
-          } catch (error) {
-            attempt++;
-            if (attempt >= maxRetries) {
-              console.error("Failed to fetch user after retries:", error);
-              setIsAuthenticated(false);
-              Cookies.remove("auth_token");
-              navigate('/login');
-              return;
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-          }
-        }
-      };
-  
-      fetchUser();
+      // const fetchUser = async () => {
+      //   const maxRetries = 5;
+      //   let attempt = 0;
+      //   const token = Cookies.get("auth_token");
+      //   while (attempt < maxRetries) {
+      //     try {
+      //       const response = await axios.get(
+      //         `${import.meta.env.VITE_API_URL}/user`,
+      //         {
+      //           headers: {
+      //             Authorization: `Bearer ${token}`,
+      //           },
+      //         }
+      //       );
+      //       setUserData(response.data);
+      //       console.log(response.data);
+      //       return; // Exit the loop on successful request
+      //     } catch (error) {
+      //       attempt++;
+      //       if (attempt >= maxRetries) {
+      //         console.error("Failed to fetch user after retries:", error);
+      //         setIsAuthenticated(false);
+      //         Cookies.remove("auth_token");
+      //         navigate("/login");
+      //         return;
+      //       }
+      //       await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+      //     }
+      //   }
+      // };
+      // fetchUser();
     }
   }, [isAuthenticated, navigate]);
 
-
   const signup = async (userData) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/signup`, userData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/signup`,
+        userData
+      );
       const { token } = response.data;
       Cookies.set("auth_token", token, { expires: 7 });
       setIsAuthenticated(true);
@@ -87,9 +93,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, credentials);
-      const { token } = response.data;
-      Cookies.set("auth_token", token, { expires: 7 });
+      await authApi.login(credentials);
       setIsAuthenticated(true);
       navigate("/dashboard");
     } catch (error) {
@@ -99,14 +103,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    Cookies.remove("auth_token");
+    Cookies.remove("access_token");
     setIsAuthenticated(false);
     setUserData(null);
     navigate("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userData, signup, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, userData, signup, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

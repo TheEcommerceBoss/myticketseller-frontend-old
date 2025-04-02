@@ -21,6 +21,7 @@ import TicketModal from "./TicketModal";
 import api from "../../api";
 import MapAutocomplete from "../(maps)/Autocomplete";
 import LocationSearch from "../(maps)/LocationSearch";
+import { categoriesApi, eventsApi } from "../../api.ts";
 
 const options = [
   { value: "location1", label: "Location 1" },
@@ -71,16 +72,16 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 function FeaturedEvents({ variation, sortcategory }) {
-  const [categories, SetCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
   const navigate = useNavigate();
   // sortcategory ? alert(sortcategory) : alert('none')
   const [searchParam, UseSearchParam] = useState("");
 
   const formattedCategories = categories
-    .filter((category) => category.status === 1) // Only show active categories (status: 1)
+    // .filter((category) => category.status === 1) // Only show active categories (status: 1)
     .map((category) => ({
-      label: category.category, // Display the category name
+      label: category.name, // Display the category name
       value: category.id, // Use the category id as the value
     }));
 
@@ -103,10 +104,9 @@ function FeaturedEvents({ variation, sortcategory }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await api.get("/get_categories", {
-          headers: {},
-        });
-        SetCategories(response.data.categories);
+        const response = await categoriesApi.getCategories();
+        // console.log("Omo", response.categories);
+        setCategories(response.categories);
       } catch (error) {
         console.error("Failed to fetch user:", error);
       }
@@ -119,13 +119,15 @@ function FeaturedEvents({ variation, sortcategory }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await api.post(
-          sortcategory ? "/category_events" : "/events",
-          {
-            category: sortcategory,
-          }
-        );
-        setcards(response.data.events_list);
+        const myEvents = await eventsApi.getMyEvents();
+        console.log(myEvents);
+        // const response = await api.post(
+        //   sortcategory ? "/category_events" : "/events",
+        //   {
+        //     category: sortcategory,
+        //   }
+        // );
+        setcards(myEvents);
         // console.log(response.data.events_list[0].info[0].event_list_choice)
         // console.log(response.data.events_list);
       } catch (error) {
@@ -145,9 +147,7 @@ function FeaturedEvents({ variation, sortcategory }) {
   const totalPages = Math.ceil(cards.length / cardsPerPage);
 
   // Filter the cards based on event_list_choice
-  const filteredCards = cards.filter(
-    (card) => card.info[0].event_list_choice === "Public"
-  );
+  const filteredCards = cards.filter((card) => card.is_public);
 
   // Get the current page's cards
   const currentCards = filteredCards.slice(
@@ -441,8 +441,8 @@ function FeaturedEvents({ variation, sortcategory }) {
                           }`}
                         >
                           <img
-                            src={card.event_img}
-                            alt={card.event_title}
+                            src={card.image}
+                            alt={card.title}
                             className="w-full h-[8rem] md:h-[10rem] object-cover"
                           />
                           <div
@@ -455,7 +455,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                             <div className="flex items-center">
                               <span className="text-gray-500 flex w-2/5 items-center gap-1 text-xs">
                                 <Calendar size={16} />{" "}
-                                <span>{card.event_days[0].start_day}</span>
+                                <span>{card.days[0].event_day}</span>
                               </span>
                               <span className="text-orange-500 text-center w-1/5">
                                 |
@@ -463,9 +463,9 @@ function FeaturedEvents({ variation, sortcategory }) {
                               <span className="text-gray-500 flex w-2/5 items-center justify-end gap-1 text-xs">
                                 <MapPin size={16} />{" "}
                                 <span>
-                                  {card.event_days[0].event_type == "virtual"
+                                  {card.days[0].event_type == "virtual"
                                     ? "Virtual"
-                                    : card.event_days[0].event_address
+                                    : card.days[0].event_address
                                         .split(", ")
                                         .slice(-2)
                                         .join(", ")}
@@ -476,20 +476,17 @@ function FeaturedEvents({ variation, sortcategory }) {
                               onClick={() =>
                                 window.scrollTo({ top: 0, behavior: "smooth" })
                               }
-                              to={"/event/view/" + card.event_id}
+                              to={"/event/view/" + card.id}
                               className="text-xl my-2 text-black font-semibold"
                             >
-                              {card.event_title.length > 50
-                                ? `${card.event_title.substring(0, 50)}...`
-                                : card.event_title}
+                              {card.title.length > 50
+                                ? `${card.title.substring(0, 50)}...`
+                                : card.title}
                             </Link>
                             <span className="text-gray-500 text-sm">
-                              {card.event_description.length > 100
-                                ? `${card.event_description.substring(
-                                    0,
-                                    100
-                                  )}...`
-                                : card.event_description}
+                              {card.description.length > 100
+                                ? `${card.description.substring(0, 100)}...`
+                                : card.description}
                             </span>
                           </div>
                         </div>
@@ -500,8 +497,8 @@ function FeaturedEvents({ variation, sortcategory }) {
                           } overflow-hidden lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4`}
                         >
                           <img
-                            src={card.event_img}
-                            alt={card.event_title}
+                            src={card.image}
+                            alt={card.title}
                             className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
                           />
                           <div
@@ -520,9 +517,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                                         } `}
                                         className="w-4 h-4 md:w-3 md:h-3 mr-1"
                                       />
-                                      <span>
-                                        {card.event_days[0].start_day}
-                                      </span>
+                                      <span>{card.days[0].event_day}</span>
                                     </div>
                                     <div className="flex font-bold items-center gap-1">
                                       <Clock
@@ -531,9 +526,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                                         } `}
                                         className="w-4 h-4 md:w-3 md:h-3 mr-1"
                                       />
-                                      <span>
-                                        {card.event_days[0].open_door_time}
-                                      </span>
+                                      <span>{card.days[0].open_door}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -545,16 +538,16 @@ function FeaturedEvents({ variation, sortcategory }) {
                                       behavior: "smooth",
                                     })
                                   }
-                                  to={"/event/view/" + card.event_id}
+                                  to={"/event/view/" + card.id}
                                   className={`text-lg my-3 md:my-0 font-semibold ${
                                     theme === "dark"
                                       ? "text-[#fff]"
                                       : "text-[#040171]"
                                   } `}
                                 >
-                                  {card.event_title.length > 50
-                                    ? `${card.event_title.substring(0, 50)}...`
-                                    : card.event_title}
+                                  {card.title.length > 50
+                                    ? `${card.title.substring(0, 50)}...`
+                                    : card.title}
                                 </Link>
 
                                 <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
@@ -565,9 +558,9 @@ function FeaturedEvents({ variation, sortcategory }) {
                                     className="w-4 h-4 md:w-3 md:h-3 mr-1"
                                   />
                                   <span>
-                                    {card.event_days[0].event_type == "virtual"
+                                    {card.days[0].event_type == "virtual"
                                       ? "Virtual"
-                                      : card.event_days[0].event_address}
+                                      : card.days[0].event_address}
                                   </span>
                                 </div>
                                 <div className="h-full md:hidden mt-4 flex ">
@@ -578,7 +571,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                                         behavior: "smooth",
                                       })
                                     }
-                                    to={"/event/view/" + card.event_id}
+                                    to={"/event/view/" + card.id}
                                     className="bg-orange-500 text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300"
                                   >
                                     Buy Tickets
@@ -594,7 +587,7 @@ function FeaturedEvents({ variation, sortcategory }) {
                                       behavior: "smooth",
                                     })
                                   }
-                                  to={"/event/view/" + card.event_id}
+                                  to={"/event/view/" + card.id}
                                   className="bg-orange-500 text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300"
                                 >
                                   Buy Tickets
