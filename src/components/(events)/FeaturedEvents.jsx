@@ -119,7 +119,7 @@ function FeaturedEvents({ variation, sortcategory }) {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const myEvents = await eventsApi.getMyEvents();
+        const myEvents = await eventsApi.getEvents();
         console.log(myEvents);
         // const response = await api.post(
         //   sortcategory ? "/category_events" : "/events",

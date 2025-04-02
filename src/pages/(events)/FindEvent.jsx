@@ -1,4 +1,3 @@
-// import React from "react";
 import HeaderMain from "../../components/(headers)/HeaderMain";
 import FeaturedEvents from "../../components/(events)/FeaturedEvents";
 // import WhyUs from "../../components/(others)/WhyUs";
