@@ -72,7 +72,12 @@ export const authApi = {
     email: string;
     password: string;
   }) => {
-    const res = newApi.post("/auth/register", { full_name, email, password });
+    const res = await newApi.post("/auth/register", {
+      full_name,
+      email,
+      password,
+    });
+    return res.data;
   },
   refreshAccessToken: async () => {
     const refresh_token = Cookies.get("refresh_token");
@@ -95,6 +100,36 @@ export const authApi = {
 export const dashboardApi = {
   getStats: async function (yearly: boolean = false) {
     const res = await newApi.get(`/dashboard/stats?yearly=${yearly}`);
+    return res.data;
+  },
+};
+
+export const paymentsApi = {
+  intiate: async function (data: {
+    tickets: { ticket_id: string | number; quantity: number }[];
+    attendee_info: {
+      full_name: string;
+      email: string;
+      phone_number: string;
+    };
+    paymentMethod: "flutterwave" | "paystack" | "stripe";
+    marketingConsent: boolean;
+    currencyCode: string;
+    conversionRate: string;
+  }) {
+    const res = await newApi.post("/payments/initiate", data);
+    return res.data;
+  },
+  verify: async function (reference: string, paymentMethod: string) {
+    let payment_method: string;
+    if (paymentMethod === "card" || paymentMethod === "stripe") {
+      payment_method = "stripe";
+    } else {
+      payment_method = "flutterwave";
+    }
+    const res = await newApi.post(`/payments/verify/${reference}`, {
+      paymentMethod: payment_method,
+    });
     return res.data;
   },
 };

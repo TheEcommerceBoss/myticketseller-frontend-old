@@ -67,8 +67,6 @@ const CreateEvent = ({ manage }) => {
         //   }
         // );
         const eventData = await eventsApi.getEventById(id);
-        // console.log("Events", events);
-        // console.log(response.data);
 
         // Update the formData state with the fetched event details
         if (eventData.event) {
@@ -202,9 +200,8 @@ const CreateEvent = ({ manage }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await categoriesApi.getCategories();
-        console.log("Response", response);
-        setCategories(response.categories);
+        const categoriesData = await categoriesApi.getCategories();
+        setCategories(categoriesData.categories);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
@@ -293,9 +290,9 @@ const CreateEvent = ({ manage }) => {
     >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
-      <div className="flex-1 py-8 px-5 lg:px-8">
+      <div className="flex-1 px-5 py-8 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center  space-x-4">
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className={`rounded-lg outline-none p-3 ${
@@ -307,14 +304,14 @@ const CreateEvent = ({ manage }) => {
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            <h1 className="hidden lg:flex text-2xl font-bold">
+            <h1 className="hidden text-2xl font-bold lg:flex">
               {manage ? "Manage Event" : "Add New Event"}
             </h1>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
+            <div className="hidden relative md:flex">
+              <Search className="absolute left-3 top-1/2 w-5 h-5 text-gray-600 transform -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search"
@@ -355,10 +352,10 @@ const CreateEvent = ({ manage }) => {
           </div>
         </div>
 
-        <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
+        <div className="flex flex-col justify-center items-center pt-0 mb-8 md:pt-5 md:flex-row">
           {steps.map((s, index) => (
             <div
-              className="flex flex-col md:flex-row justify-center items-center"
+              className="flex flex-col justify-center items-center md:flex-row"
               key={index}
             >
               {index !== 0 && (
@@ -405,7 +402,7 @@ const CreateEvent = ({ manage }) => {
                 theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"
               } rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}
             >
-              <div className="mb-8 flex items-center flex-col justify-center text-center items-center">
+              <div className="flex flex-col justify-center items-center mb-8 text-center">
                 <div className="flex items-center mb-[2rem] mt-2">
                   <div
                     className={`w-5 h-5 rounded-full bg-transparent ${
@@ -448,7 +445,7 @@ const CreateEvent = ({ manage }) => {
                 theme === "dark" ? "bg-[#121212]  " : " border border-[#040171]"
               } rounded-lg p-6 md:px-[3rem]  my-6 shadow-sm`}
             >
-              <div className="mb-8 flex items-center flex-col justify-center text-center items-center ">
+              <div className="flex flex-col justify-center items-center mb-8 text-center">
                 <div className="flex items-center mb-[2rem] mt-2">
                   <div
                     className={`w-5 h-5 rounded-full bg-transparent ${
@@ -506,7 +503,7 @@ const CreateEvent = ({ manage }) => {
               } rounded-lg p-6 my-6 shadow-sm`}
             >
               {/* Event Title */}
-              <div className="mb-8 flex items-center flex-col justify-center text-center">
+              <div className="flex flex-col justify-center items-center mb-8 text-center">
                 <div className="flex items-center mb-4">
                   <div
                     className={`w-5 h-5 rounded-full bg-transparent ${
@@ -535,7 +532,7 @@ const CreateEvent = ({ manage }) => {
                 />
               </div>
 
-              <div className="mb-8 flex items-center flex-col justify-center text-center">
+              <div className="flex flex-col justify-center items-center mb-8 text-center">
                 <div className="flex items-center mb-4">
                   <div
                     className={`w-5 h-5 rounded-full bg-transparent ${
@@ -570,7 +567,7 @@ const CreateEvent = ({ manage }) => {
                 theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"
               }  flex flex-col items-center  rounded-lg p-6 my-6 shadow-sm`}
             >
-              <div className="text-center mb-4">
+              <div className="mb-4 text-center">
                 <div className="flex items-center mb-4">
                   <div
                     className={`w-5 h-5  rounded-full bg-transparent ${

@@ -10,10 +10,14 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import api from "../../api";
+import api, { paymentsApi } from "../../api";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { useTheme } from "../../context/ThemeContext";
+import { formatDate } from "../../lib/formatDate";
+import newApi from "../../api";
+import StripeModal from "../../shared/components/StripeCheckout";
+import PaystackModal from "../../shared/components/PaystackModel";
 
 const TicketModal = ({
   isOpen,
@@ -73,11 +77,16 @@ const TicketModal = ({
           setLocation(parsedLocation);
           fetchConversionRate(parsedLocation.currencyCode); // Fetch conversion rate for the current location
         } else {
-          const ipResponse = await fetch("https://api.ipify.org?format=json");
-          const ipData = await ipResponse.json();
-          const ipAddress = ipData.ip;
-          const response = await fetch(`https://ipwhois.app/json/${ipAddress}`);
-          const data = await response.json();
+          const ipResponse = await newApi.get("/ip");
+          const ipData = await ipResponse.data;
+
+          const ipAddress =
+            ipData.ip === "127.0.0.1" ? "129.205.124.208" : ipData.ip;
+          const response = await axios.get(
+            `https://ipwhois.app/json/${ipAddress}`
+          );
+          const data = await response.data;
+
           const flagUrl = `https://flagcdn.com/w320/${data.country_code.toLowerCase()}.png`;
 
           const locationInfo = {
@@ -90,7 +99,6 @@ const TicketModal = ({
             flag: flagUrl,
             currencyCode: data.currency_code,
           };
-          console.log(data);
 
           Cookies.set("locationData", JSON.stringify(locationInfo), {
             expires: 1 / 24,
@@ -170,9 +178,9 @@ const TicketModal = ({
     // Initialize ticket counts with 0 for each ticket type
     const initialCounts = {};
     ticketDetails.tickets.forEach((ticket) => {
-      initialCounts[ticket.ticket_id] = 0;
+      initialCounts[ticket.id] = 0;
     });
-    // console.log(ticketDetails.tickets)
+
     setTicketCounts(initialCounts);
   }, [ticketDetails]);
 
@@ -188,30 +196,6 @@ const TicketModal = ({
     });
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.toLocaleString("default", { month: "long" });
-    const year = date.getFullYear();
-
-    // Add the correct suffix for the day
-    const daySuffix = (day) => {
-      if (day >= 11 && day <= 13) return `${day}th`;
-      switch (day % 10) {
-        case 1:
-          return `${day}st`;
-        case 2:
-          return `${day}nd`;
-        case 3:
-          return `${day}rd`;
-        default:
-          return `${day}th`;
-      }
-    };
-
-    return `${daySuffix(day)} ${month}, ${year}`;
-  };
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -219,11 +203,11 @@ const TicketModal = ({
   });
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-  // console.table(tickets)
+  const [showStripe, setShowStripe] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
 
   useEffect(() => {
     const fetchEventDetails = () => {
-      console.log(ticketDetails);
       if (ticketDetails && ticketDetails.tickets) {
         settickets(ticketDetails.tickets);
       } else {
@@ -236,8 +220,6 @@ const TicketModal = ({
 
     fetchEventDetails();
   }, [ticketDetails]);
-
-  // console.log(tickets);
 
   const [marketingConsent, setMarketingConsent] = useState({
     organizer: false,
@@ -262,7 +244,7 @@ const TicketModal = ({
     let totalTickets = 0; // Initialize ticket counter
 
     tickets.forEach((ticket) => {
-      const ticketCount = ticketCounts[ticket.ticket_id] || 0; // Default to 0 if not set
+      const ticketCount = ticketCounts[ticket.id] || 0; // Default to 0 if not set
       subtotal += ticketCount * ticket.price; // Calculate subtotal
       totalTickets += ticketCount; // Count total number of tickets
     });
@@ -292,53 +274,66 @@ const TicketModal = ({
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckoutV2 = async () => {
     setIsLoading(true);
-    // setIsConfirmed(true);
-    // console.log(ticketCounts)
     try {
-      // Replace with your actual API endpoint
-      var data = {
-        ticketdata: ticketCounts,
-        email: formData.email,
-        phone_number: formData.phone,
-        fullname: formData.name,
-        event_id: eventDetails.id,
+      const data = {
+        tickets: Object.entries(ticketCounts).map(([ticket_id, quantity]) => ({
+          ticket_id: parseInt(ticket_id),
+          quantity,
+        })),
+        attendee_info: {
+          full_name: formData.name,
+          email: formData.email,
+          phone_number: formData.phone,
+        },
         paymentMethod,
         marketingConsent,
-        total: calculateTotal().total,
         currencyCode: location.currencyCode,
         conversionRate: conversionRate,
       };
       console.log(data);
-      const response = await api.post("/requestTicket", data);
+      const response = await paymentsApi.intiate(data);
+      console.log(response);
       setIsConfirmed(true);
-      console.log(response.data);
 
-      // Check if the link exists in the response
-      if (response.data.paystack.data.authorization_url) {
-        setshowPaystack(true);
-        setshowPaystackLink(response.data.paystack.data.authorization_url);
+      if (response.payment_url) {
+        if (paymentMethod == "card") {
+          setShowStripe(true);
+          setClientSecret(response.payment_url);
+        } else {
+          setshowPaystack(true);
+          setshowPaystackLink(response.payment_url);
+        }
       } else {
         Swal.fire("Error", "Unable to initiate payment", "error");
       }
-      // console.log(response.data)
     } catch (error) {
-      // if (error.status == 400) {
-      console.error(error.response);
-      Swal.fire(
-        "Error",
-        error.response.data.error ? error.response.data.error : "Error",
-        "error"
-      );
+      console.error(error);
+      Swal.fire("Error", error.response?.data?.error || "Error", "error");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handlePaymentVerification = async (reference) => {
+    try {
+      const response = await api.post(`/verify/${reference}`, {
+        paymentMethod,
+      });
+      if (response.data.status === "success") {
+        Swal.fire("Success", "Payment verified successfully", "success");
+      } else {
+        Swal.fire("Error", response.data.message, "error");
+      }
+    } catch (error) {
+      Swal.fire("Error", "Payment verification failed", "error");
+    }
+  };
+
   const PaymentOptions = () => (
     <div className="grid grid-cols-2 gap-4">
-      <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-500/10">
+      <label className="relative p-4 text-black rounded-lg border cursor-pointer hover:bg-gray-500/10">
         <input
           type="radio"
           name="payment"
@@ -348,7 +343,7 @@ const TicketModal = ({
           className="absolute top-4 right-4"
         />
         <div className="flex flex-col gap-2">
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <div className="flex justify-center items-center w-12 h-12 bg-blue-100 rounded-lg">
             <span className="text-blue-600">💳</span>
           </div>
           <span
@@ -360,7 +355,7 @@ const TicketModal = ({
           </span>
         </div>
       </label>
-      <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-500/10">
+      <label className="relative p-4 text-black rounded-lg border cursor-pointer hover:bg-gray-500/10">
         <input
           type="radio"
           name="payment"
@@ -370,7 +365,7 @@ const TicketModal = ({
           className="absolute top-4 right-4"
         />
         <div className="flex flex-col gap-2">
-          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+          <div className="flex justify-center items-center w-12 h-12 bg-green-100 rounded-lg">
             <span className="text-green-600">🏦</span>
           </div>
           <span
@@ -382,7 +377,7 @@ const TicketModal = ({
           </span>
         </div>
       </label>
-      <label className="relative border rounded-lg text-black p-4 cursor-pointer hover:bg-gray-500/10">
+      <label className="relative p-4 text-black rounded-lg border cursor-pointer hover:bg-gray-500/10">
         <input
           type="radio"
           name="payment"
@@ -392,7 +387,7 @@ const TicketModal = ({
           className="absolute top-4 right-4"
         />
         <div className="flex flex-col gap-2">
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+          <div className="flex justify-center items-center w-12 h-12 bg-purple-100 rounded-lg">
             <span className="text-purple-600">📱</span>
           </div>
           <span
@@ -407,73 +402,6 @@ const TicketModal = ({
     </div>
   );
 
-  // const OrderConfirmation = (theme) => (
-  //   <div className="w-full mx-auto p-6 space-y-8">
-  //     <div className="flex justify-between border-b pb-6 items-center">
-  //       <div className="flex  flex-row items-center gap-3">
-  //         <div className="w-8 h-8 bg-green-500 rounded-full flex flex-col items-center justify-center">
-  //           <Check className="w-5 font-bold h-5 text-white" />
-  //         </div>
-  //         <div className="flex flex-col items-center justify-center ">
-  //           <h1 className={`text-xl ${theme == 'dark' ? 'text-white' : 'text-[#040171]'}`}>
-  //             Thank you for your order!   { theme}
-  //           </h1>
-  //         </div>
-  //       </div>
-
-  //       <div className="flex justify-end flex-wrap-reverse gap-5 items-end">
-  //         <Link
-  //           to={"/dashboard/ticket/all"}
-  //           className="px-5  hidden md:flex py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
-  //         >
-  //           Take me to my Tickets
-  //         </Link>
-  //         <button
-  //           onClick={onClose}
-  //           className="p-2 bg-black bg-opacity-50 rounded-full"
-  //         >
-  //           <X className="w-6 h-6 text-white font-bold" />
-  //         </button>
-  //       </div>
-  //     </div>
-
-  //     <div className="space-y-2">
-  //       <p className="text-gray-600 text-xs font-medium">YOU ARE GOING TO</p>
-  //       {/* {console.log(ticketDetails.days[0].event_address)} */}
-  //       <h2 className="text-2xl font-bold text-[#040171]">
-  //         {eventDetails.event_title}
-  //       </h2>
-  //     </div>
-
-  //     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-  //       <div>
-  //         <h3 className="font-bold text-black  mb-2">
-  //           {calculateTotal().totalTickets} TICKET(S) SENT TO
-  //         </h3>
-  //         <p className="text-gray-600">{formData.email}</p>
-  //       </div>
-  //       <div>
-  //         <h3 className="font-bold text-black  mb-2">DATE</h3>
-  //         <p className="text-gray-600">
-  //           {formatDate(ticketDetails.days[0].start_day)}
-  //         </p>
-  //       </div>
-  //       <div>
-  //         <h3 className="font-bold text-black  mb-2">LOCATION</h3>
-  //         <p className="text-gray-600">{ticketDetails.days[0].event_address}</p>
-  //       </div>
-  //     </div>
-  //     <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">
-  //       <Link
-  //         to={"/dashboard/ticket/all"}
-  //         className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
-  //       >
-  //         Take me to my Tickets
-  //       </Link>
-  //     </div>
-  //   </div>
-  // );
-
   const OrderSummary = () => (
     <>
       <div className="bg-[#000080] h-full text-white rounded-lg p-6">
@@ -482,7 +410,7 @@ const TicketModal = ({
             onClick={onClose}
             className="p-2 bg-white bg-opacity-50 rounded-full"
           >
-            <X className="w-6 h-6 text-white font-bold" />
+            <X className="w-6 h-6 font-bold text-white" />
           </button>
         </div>
         <h3 className="text-xl font-normal  lg:pt-[5rem] mb-4">
@@ -509,7 +437,7 @@ const TicketModal = ({
               }).format(calculateTotal().transactionFee)}
             </span>
           </div>
-          <div className="border-t pt-4 flex justify-between font-normal">
+          <div className="flex justify-between pt-4 font-normal border-t">
             <span>Total</span>
             <span>
               {" "}
@@ -524,57 +452,30 @@ const TicketModal = ({
     </>
   );
 
-  const PaystackModal = ({ paystack }) => (
-    <>
-      <div className="bg-[#000080] h-full text-white rounded-lg ">
-        <div className="flex justify-between p-6">
-          <h3 className="text-xl font-normal mb-4">Checkout</h3>
-          <div className="flex flex-col items-end">
-            <button
-              onClick={onClose}
-              className="p-2 bg-white bg-opacity-50 rounded-full"
-            >
-              <X className="w-6 h-6 text-white font-bold" />
-            </button>
-          </div>
-        </div>
-        <div className="space-y-4">
-          <iframe
-            src={paystack}
-            title="Paystack Payment"
-            width="100%"
-            height="500"
-            frameBorder="0"
-            allow="payment"
-            className="rounded-lg"
-          ></iframe>
-        </div>
-      </div>
-    </>
-  );
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 md:p-4">
+    <div className="flex fixed inset-0 z-50 justify-center items-center p-2 bg-black bg-opacity-50 md:p-4">
       <div
         className={` rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto  ${
           theme === "dark" ? "bg-[#121212]" : "bg-[#fff]"
-        } `}
+        }  `}
       >
         <div className={`${showPaystack ? "p-1" : "p-6"}`}>
           {showPaystack ? (
-            <div className="w-full">
-              <PaystackModal paystack={showPaystackLink} />
+            <div className="w-full max-w-[650px] min-w-[500px]">
+              <PaystackModal paystack={showPaystackLink} onClose={onClose} />
+            </div>
+          ) : showStripe && clientSecret ? (
+            <div className="w-full max-w-[650px] min-w-[500px]">
+              <StripeModal clientSecret={clientSecret} />
             </div>
           ) : (
-            <div className="flex flex-col md:flex-row gap-6 ">
+            <div className="flex flex-col gap-6 md:flex-row">
               <div className="flex-1">
-                {isConfirmed ? (
-                  ""
-                ) : (
+                {!isConfirmed && (
                   <>
-                    <div className="flex justify-betweenitems-start ">
+                    <div className="flex justify-betweenitems-start">
                       {showCheckout ? (
-                        <div className="flex items-center gap-4">
+                        <div className="flex gap-4 items-center">
                           <button
                             onClick={() => setShowCheckout(false)}
                             className="p-2 bg-[#000080] bg-opacity-20 rounded-full"
@@ -592,7 +493,7 @@ const TicketModal = ({
                       )}
                     </div>
 
-                    <div className="flex flex-col w-full justify-center items-center relative mb-6 pb-6 border-b ">
+                    <div className="flex relative flex-col justify-center items-center pb-6 mb-6 w-full border-b">
                       <h2
                         className={`text-2xl font-bold  ${
                           theme === "dark" ? "text-[#fff]" : "text-[#040171]"
@@ -608,7 +509,7 @@ const TicketModal = ({
                         onClick={onClose}
                         className="p-2 bg-black bg-opacity-50 absolute right-[.2rem] rounded-full"
                       >
-                        <X className="w-6 h-6 text-white font-bold" />
+                        <X className="w-6 h-6 font-bold text-white" />
                       </button>
                     </div>
 
@@ -651,19 +552,19 @@ const TicketModal = ({
                     <div className="mb-8">
                       {tickets && tickets.length > 0 ? (
                         <>
-                          <h3 className="text-xl font-semibold mb-4">
+                          <h3 className="mb-4 text-xl font-semibold">
                             Select Ticket
                           </h3>
                           {tickets.map((ticket, index) => (
                             <div
                               key={index}
-                              className="bg-white shadow-sm border rounded-lg text-black p-4 mb-4"
+                              className="p-4 mb-4 text-black bg-white rounded-lg border shadow-sm"
                             >
                               <div className="flex justify-between items-center">
                                 <div>
-                                  <p className="text-gray-600">
-                                    {ticket.ticket_name}
-                                  </p>{" "}
+                                  <p className="text-3xl text-gray-600">
+                                    {ticket.name}
+                                  </p>
                                   <p className="text-lg font-bold text-[#040171]">
                                     {location && location.currencyCode}{" "}
                                     {(
@@ -671,27 +572,21 @@ const TicketModal = ({
                                     ).toLocaleString()}
                                   </p>
                                 </div>
-                                <div className="flex items-center gap-4">
+                                <div className="flex gap-4 items-center">
                                   <button
                                     onClick={() =>
-                                      handleTicketChange(
-                                        ticket.ticket_id,
-                                        "subtract"
-                                      )
+                                      handleTicketChange(ticket.id, "subtract")
                                     }
-                                    className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                    className="flex justify-center items-center w-10 h-10 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200"
                                   >
                                     -
                                   </button>
                                   <span className="w-8 text-center">
-                                    {ticketCounts[ticket.ticket_id] || 0}
+                                    {ticketCounts[ticket.id] || 0}
                                   </span>
                                   <button
                                     onClick={() =>
-                                      handleTicketChange(
-                                        ticket.ticket_id,
-                                        "add"
-                                      )
+                                      handleTicketChange(ticket.id, "add")
                                     }
                                     className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#040171] text-white hover:bg-[#040171]"
                                   >
@@ -704,7 +599,7 @@ const TicketModal = ({
                         </>
                       ) : (
                         <>
-                          <h5 className="text-l font-semibold mb-4">
+                          <h5 className="mb-4 font-semibold text-l">
                             No Ticket Found
                           </h5>
                         </>
@@ -713,7 +608,7 @@ const TicketModal = ({
 
                     {/* Attendee Information Form */}
                     <form onSubmit={handleContinue}>
-                      <h3 className="text-xl font-semibold mb-4">
+                      <h3 className="mb-4 text-xl font-semibold">
                         Attendee Information
                       </h3>
 
@@ -732,7 +627,7 @@ const TicketModal = ({
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder="Enter Full Name"
-                            className="w-full p-3 border bg-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="p-3 w-full bg-transparent rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                           />
                         </div>
@@ -751,7 +646,7 @@ const TicketModal = ({
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="Enter Email Address"
-                            className="w-full p-3 border  bg-transparent  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="p-3 w-full bg-transparent rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                           />
                         </div>
@@ -770,7 +665,7 @@ const TicketModal = ({
                             value={formData.phone}
                             onChange={handleInputChange}
                             placeholder="Enter Phone Number"
-                            className="w-full p-3 border  bg-transparent  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="p-3 w-full bg-transparent rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                           />
                         </div>
@@ -778,20 +673,20 @@ const TicketModal = ({
 
                       <button
                         type="submit"
-                        className="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg mt-6 hover:bg-orange-600 transition-colors"
+                        className="py-3 mt-6 w-full font-semibold text-white bg-orange-500 rounded-lg transition-colors hover:bg-orange-600"
                       >
                         Continue
                       </button>
                     </form>
                   </>
                 ) : isConfirmed ? (
-                  <div className="w-full mx-auto p-6 space-y-8">
-                    <div className="flex justify-between border-b pb-6 items-center">
-                      <div className="flex  flex-row items-center gap-3">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex flex-col items-center justify-center">
-                          <Check className="w-5 font-bold h-5 text-white" />
+                  <div className="p-6 mx-auto space-y-8 w-full">
+                    <div className="flex justify-between items-center pb-6 border-b">
+                      <div className="flex flex-row gap-3 items-center">
+                        <div className="flex flex-col justify-center items-center w-8 h-8 bg-green-500 rounded-full">
+                          <Check className="w-5 h-5 font-bold text-white" />
                         </div>
-                        <div className="flex flex-col items-center justify-center ">
+                        <div className="flex flex-col justify-center items-center">
                           <h1
                             className={`text-xl ${
                               theme == "dark" ? "text-white" : "text-[#040171]"
@@ -802,10 +697,10 @@ const TicketModal = ({
                         </div>
                       </div>
 
-                      <div className="flex justify-end flex-wrap-reverse gap-5 items-end">
+                      <div className="flex flex-wrap-reverse gap-5 justify-end items-end">
                         <Link
                           to={"/dashboard/ticket/all"}
-                          className="px-5  hidden md:flex py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+                          className="hidden px-5 py-2 text-sm text-white bg-orange-500 rounded-full transition-colors md:flex hover:bg-orange-600"
                         >
                           Take me to my Tickets
                         </Link>
@@ -813,13 +708,13 @@ const TicketModal = ({
                           onClick={onClose}
                           className="p-2 bg-black bg-opacity-50 rounded-full"
                         >
-                          <X className="w-6 h-6 text-white font-bold" />
+                          <X className="w-6 h-6 font-bold text-white" />
                         </button>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <p className="text-gray-600 text-xs font-medium">
+                      <p className="text-xs font-medium text-gray-600">
                         YOU ARE GOING TO
                       </p>
                       {/* {console.log(ticketDetails.days[0].event_address)} */}
@@ -832,7 +727,7 @@ const TicketModal = ({
                       </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                       <div>
                         <h3
                           className={`${
@@ -852,7 +747,7 @@ const TicketModal = ({
                           DATE
                         </h3>
                         <p className="text-gray-500">
-                          {formatDate(ticketDetails.days[0].start_day)}
+                          {formatDate(ticketDetails.days[0].event_day)}
                         </p>
                       </div>
                       <div>
@@ -868,10 +763,10 @@ const TicketModal = ({
                         </p>
                       </div>
                     </div>
-                    <div className="flex md:hidden justify-end flex-wrap-reverse gap-5 items-end">
+                    <div className="flex flex-wrap-reverse gap-5 justify-end items-end md:hidden">
                       <Link
                         to={"/dashboard/ticket/all"}
-                        className="px-5 py-2 text-sm bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors"
+                        className="px-5 py-2 text-sm text-white bg-orange-500 rounded-full transition-colors hover:bg-orange-600"
                       >
                         Take me to my Tickets
                       </Link>
@@ -900,7 +795,7 @@ const TicketModal = ({
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder="Enter Full Name"
-                            className="w-full p-3 border bg-gray-100/30 opacity-50  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="p-3 w-full rounded-lg border opacity-50 bg-gray-100/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                           />
                         </div>
@@ -920,7 +815,7 @@ const TicketModal = ({
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="Enter Email Address"
-                            className="w-full p-3 border bg-gray-100/30 opacity-50  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="p-3 w-full rounded-lg border opacity-50 bg-gray-100/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                           />
                         </div>
@@ -940,7 +835,7 @@ const TicketModal = ({
                             value={formData.phone}
                             onChange={handleInputChange}
                             placeholder="Enter Phone Number"
-                            className="w-full p-3 border bg-gray-100/30 opacity-50  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="p-3 w-full rounded-lg border opacity-50 bg-gray-100/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                           />
                         </div>
@@ -958,7 +853,7 @@ const TicketModal = ({
                       {/* Marketing consent checkboxes remain the same */}
                     </div>
 
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-sm text-gray-400">
                       By clicking Checkout, I agree to the{" "}
                       <Link
                         t={"/terms"}
@@ -971,9 +866,9 @@ const TicketModal = ({
                     </p>
 
                     <button
-                      onClick={handleCheckout}
+                      onClick={handleCheckoutV2}
                       disabled={isLoading || !paymentMethod}
-                      className="w-full bg-orange-500 text-white font-semibold py-3 rounded-lg hover:bg-orange-600 transition-colors disabled:bg-gray-300"
+                      className="py-3 w-full font-semibold text-white bg-orange-500 rounded-lg transition-colors hover:bg-orange-600 disabled:bg-gray-300"
                     >
                       {isLoading ? "Processing..." : "Checkout"}
                     </button>
