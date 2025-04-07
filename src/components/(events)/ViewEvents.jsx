@@ -1,33 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
-import {
-  ChevronDown,
-  Search,
-  Calendar,
-  MapPin,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  Heart,
-  Upload,
-  X,
-  Lock,
-  LockOpen,
-} from "lucide-react";
-import Select from "react-select";
-import DatePicker from "react-datepicker"; // Import the date picker
-import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
-import { Link } from "react-router-dom";
-import eventImage from "../../assets/(landing)/event.png";
-import event2Image from "../../assets/(landing)/event2.png";
-import event3Image from "../../assets/(landing)/event3.png";
-import event4Image from "../../assets/(landing)/event4.png";
+import { Calendar, MapPin, Lock, LockOpen } from "lucide-react";
 import user from "../../assets/(user)/user.png";
-import map from "../../assets/(utils)/map.png";
 import { Share2 } from "lucide-react";
 import TicketModal from "./TicketModal";
 import { useParams } from "react-router-dom";
-import { GoogleMapsProvider } from "../GoogleMapsContext";
 import SimpleMap from "../props/Map";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
@@ -59,7 +36,7 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center">
-        <div className="text-gray-600 flex flex-col items-center">
+        <div className="flex flex-col items-center text-gray-600">
           <p
             className={`${
               theme === "dark" ? "text-gray-300" : "text-gray-600"
@@ -70,18 +47,18 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
           </p>
         </div>
         <div className="">
-          {/* <button className="p-2 hover:bg-gray-100 rounded-full">
+          {/* <button className="p-2 rounded-full hover:bg-gray-100">
                         <Heart className="w-4 h-4" />
                     </button> */}
           <button
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className="p-2 rounded-full hover:bg-gray-100"
             onClick={handleShare}
           >
             <Share2 className="w-4 h-4" />
           </button>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row mt-4 justify-between items-start">
+      <div className="flex flex-col justify-between items-start mt-4 md:flex-row">
         <h1
           className={`text-2xl md:text-3xl font-bold  ${
             theme === "dark" ? "text-white" : "text-[#040171]"
@@ -92,7 +69,7 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
         <div className="flex gap-2">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-orange-500 text-white px-4 py-2 mt-2 md:mt-0 rounded-md"
+            className="px-4 py-2 mt-2 text-white bg-orange-500 rounded-md md:mt-0"
           >
             Buy Tickets
           </button>
@@ -118,12 +95,12 @@ const HostInfo = ({ theme, eventDetails }) => (
       theme === "dark" ? "bg-[#121212]" : "bg-gray-100 "
     }`}
   >
-    <div className="flex flex-col md:flex-row  md:items-center gap-4">
-      <div className="flex items-center gap-4">
+    <div className="flex flex-col gap-4 md:flex-row md:items-center">
+      <div className="flex gap-4 items-center">
         <img
           src={user}
           alt="Host"
-          className="w-12 h-12 object-cover object-center rounded-full"
+          className="object-cover object-center w-12 h-12 rounded-full"
         />
         <div className="flex-grow">
           <div
@@ -133,7 +110,7 @@ const HostInfo = ({ theme, eventDetails }) => (
           >
             Hosted by: {eventDetails.user.full_name}
           </div>
-          <div className="bg-orange-500 text-white text-sm px-3 py-1 rounded-full inline-block mt-1">
+          <div className="inline-block px-3 py-1 mt-1 text-sm text-white bg-orange-500 rounded-full">
             {eventDetails.total_events_by_this_user_with_status_1}{" "}
             {eventDetails.total_events_by_this_user_with_status_1 > 1
               ? "Events"
@@ -249,7 +226,7 @@ const Location = ({ theme, ticketDetails, day, index }) => {
           theme === "dark" ? "text-gray-300" : "text-[#040171]"
         }`}
       >
-        <MapPin className="w-5 h-5 mt-1" />
+        <MapPin className="mt-1 w-5 h-5" />
         <div>
           <div className="font-medium">
             {" "}
@@ -263,7 +240,7 @@ const Location = ({ theme, ticketDetails, day, index }) => {
       {day.event_type != "virtual" ? (
         <>
           <button
-            className="text-blue-600 font-medium flex items-center gap-1 mt-2"
+            className="flex gap-1 items-center mt-2 font-medium text-blue-600"
             onClick={() => setShowMap(!showMap)}
           >
             {showMap ? "Hide Map" : "Show Map"}
@@ -315,7 +292,7 @@ const FAQ = ({ theme }) => {
           }`}
         >
           <button
-            className="w-full py-4 text-left flex justify-between items-center"
+            className="flex justify-between items-center py-4 w-full text-left"
             onClick={() => setOpenIndex(openIndex === index ? null : index)}
           >
             <span
@@ -367,7 +344,7 @@ const Tags = ({ theme }) => {
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="bg-gray-100 text-gray-600 px-4 py-2 rounded-full text-sm"
+            className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-full"
           >
             {tag}
           </span>
@@ -488,7 +465,7 @@ function ViewEventComponent({ variation }) {
       }`}
     >
       {fetchingdataloading ? (
-        <div className={`md:col-span-3  p-2  bg-transparent   rounded-lg`}>
+        <div className={`p-2 bg-transparent rounded-lg md:col-span-3`}>
           <div style={{ height: "100%", width: "100%" }}>
             <div className="flex justify-center items-center h-96">
               <span>Loading...</span>
@@ -523,7 +500,7 @@ function ViewEventComponent({ variation }) {
       )}
       {locked ? (
         <>
-          <div className={`flex flex-col items-center justify-center  px-5`}>
+          <div className={`flex flex-col justify-center items-center px-5`}>
             <div
               className={`${
                 theme === "dark"
@@ -541,10 +518,10 @@ function ViewEventComponent({ variation }) {
                   />
                 )}
               </div>
-              <h5 className="text-center text-2xl mb-5 text-white">
+              <h5 className="mb-5 text-2xl text-center text-white">
                 This Event is Protected by a Password
               </h5>
-              <h5 className="text-center text-sm text-white mb-5">
+              <h5 className="mb-5 text-sm text-center text-white">
                 Enter the shared Password for this event or contact the event
                 organizers via {eventDetails.user.email}
               </h5>
@@ -559,7 +536,7 @@ function ViewEventComponent({ variation }) {
               />
               <button
                 onClick={unlockevent}
-                className="bg-black text-white px-4 py-2 mt-4 rounded-lg"
+                className="px-4 py-2 mt-4 text-white bg-black rounded-lg"
               >
                 {Lockicon == "lock" ? "Unlock" : "Unlocking..."}{" "}
               </button>
@@ -568,7 +545,7 @@ function ViewEventComponent({ variation }) {
         </>
       ) : (
         <div className="px-3 md:px-0">
-          <div className="flex flex-col  items-center p-1 md:p-5">
+          <div className="flex flex-col items-center p-1 md:p-5">
             {eventDetails.event_image && (
               <img
                 src={eventDetails.event_image}
@@ -577,10 +554,7 @@ function ViewEventComponent({ variation }) {
               />
             )}
           </div>
-          <div
-            className="
-                        "
-          >
+          <div className="">
             <div
               className={` ${
                 theme === "dark" ? "bg-[#000]" : "bg-white"
@@ -673,7 +647,7 @@ function ViewEventComponent({ variation }) {
                     theme === "dark" ? "bg-black" : "bg-white"
                   } mb-5 px-5  rounded-l border`}
                 >
-                  <div className={`flex items-center my-6 pb-2 `}>
+                  <div className={`flex items-center pb-2 my-6`}>
                     <span
                       className={`text-l mx-4 font-bold  ${
                         theme === "dark" ? "text-white" : "text-[#040171]"
@@ -739,16 +713,16 @@ function ViewEventComponent({ variation }) {
               </div>
 
               {/* <div className={`flex flex-col items-center my-[3rem]`}>
-                        <div className="flex flex-col w-full px-2 my-5 items-start text-start">
+                        <div className="flex flex-col items-start px-2 my-5 w-full text-start">
                             <h2 className={`text-xl font-bold text-start  ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>More Events From this Organizer</h2>
 
                         </div>
-                        <div className={`flex flex-col gap-8 px-2 `}>
+                        <div className={`flex flex-col gap-8 px-2`}>
                             {cards.map((card, index) => (
                                 <>
                                     {
 
-                                        <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md   lg:rounded-none lg:shadow-none   flex flex-col lg:flex-row  lg:gap-5 mb-4">
+                                        <div className="flex overflow-hidden flex-col p-5 mb-4 bg-white rounded-xl shadow-md lg:bg-transparent lg:p-0 lg:rounded-none lg:shadow-none lg:flex-row lg:gap-5">
                                             <img
                                                 src={card.image}
                                                 alt={card.title}
@@ -756,15 +730,15 @@ function ViewEventComponent({ variation }) {
                                             />
                                             <div className="rounded-xl lg:shadow-md  bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
                                                 <div className="flex justify-between items-start">
-                                                    <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
+                                                    <div className="flex flex-col flex-grow gap-2 justify-between w-1/3 md:px-3 md:gap-4">
                                                         <div className="">
-                                                            <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
-                                                                <div className="flex font-semibold items-center gap-1">
-                                                                    <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                            <div className="flex flex-col gap-3 py-1 mb-2 text-sm text-gray-500 rounded-full md:inline-flex md:flex-row md:gap-12 md:items-center md:text-xs md:border md:border-gray-300 md:px-2">
+                                                                <div className="flex gap-1 items-center font-semibold">
+                                                                    <Calendar color="#040171" className="mr-1 w-4 h-4 md:w-3 md:h-3" />
                                                                     <span>{card.date}</span>
                                                                 </div>
-                                                                <div className="flex font-bold items-center gap-1">
-                                                                    <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                <div className="flex gap-1 items-center font-bold">
+                                                                    <Calendar color="#040171" className="mr-1 w-4 h-4 md:w-3 md:h-3" />
                                                                     <span>{card.date}</span>
                                                                 </div>
                                                             </div>
@@ -778,22 +752,22 @@ function ViewEventComponent({ variation }) {
                                                             {card.title.length > 50 ? `${card.title.substring(0, 50)}...` : card.title}
                                                         </Link>
 
-                                                        <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
-                                                            <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                        <div className="flex gap-1 items-center mt-1 text-xs font-semibold text-gray-600">
+                                                            <MapPin color="#040171" className="mr-1 w-4 h-4 md:w-3 md:h-3" />
                                                             <span>{card.location}</span>
                                                         </div>
-                                                        <div className="h-full  md:hidden mt-4 flex ">
+                                                        <div className="flex mt-4 h-full md:hidden">
 
-                                                            <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                            <button onClick={() => setIsModalOpen(true)} className="px-6 py-2 text-lg text-white bg-orange-500 rounded-full transition duration-300 hover:bg-orange-600">
                                                                 Buy Tickets
                                                             </button>
                                                         </div>
                                                     </div>
 
 
-                                                    <div className="h-full hidden md:flex md:border-l pl-3 items-center">
+                                                    <div className="hidden items-center pl-3 h-full md:flex md:border-l">
 
-                                                        <button onClick={() => setIsModalOpen(true)} className="bg-orange-500  text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                        <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 text-xs text-white bg-orange-500 rounded-full transition duration-300 hover:bg-orange-600">
                                                             Buy Tickets
                                                         </button>
                                                     </div>

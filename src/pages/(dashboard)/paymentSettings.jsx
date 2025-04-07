@@ -1,38 +1,23 @@
-import React, { useState, useEffect } from "react";
-// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { useState, useEffect } from "react";
 import {
-  Home,
   PlusCircle,
-  ListChecks,
-  Ticket,
-  Megaphone,
-  Settings,
-  HelpCircle,
   Menu,
-  ChevronLeft,
-  ChevronRight,
   Search,
   Moon,
   Sun,
-  CalendarCogIcon,
-  BellDot,
-  Bell,
   X,
   Plus,
   Trash2,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
-import user from "../../assets/(user)/user.png";
-import eventImage from "../../assets/(landing)/event.png";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import MapAutocomplete from "../../components/(maps)/Autocomplete";
-import axios from "axios";
-
 import Cookies from "js-cookie"; // Ensure you have this import to access cookies
 import { eventsApi, ticketsApi } from "../../api";
+// import { randomUUID } from "crypto";
 
 const PaymentSettings = () => {
   let { id } = useParams();
@@ -43,7 +28,7 @@ const PaymentSettings = () => {
       try {
         // const token = Cookies.get("auth_token");
         const event = await eventsApi.getEventById(id);
-        console.log("my event", event);
+
         // console.log(response.data.event_days);
         if (event.days && event.days.length > 0) {
           // Format event days with the specified structure
@@ -88,7 +73,7 @@ const PaymentSettings = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  const [selectedTimeRange, setSelectedTimeRange] = useState("Today");
+  // const [selectedTimeRange, setSelectedTimeRange] = useState("Today");
   const { theme, toggleTheme } = useTheme();
 
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
@@ -97,7 +82,6 @@ const PaymentSettings = () => {
 
   const handleAddressSelect = (selectedAddress) => {
     setLocation(selectedAddress);
-    // console.log(selectedAddress)
   };
   const [loading, setLoading] = useState(false);
 
@@ -409,9 +393,9 @@ const PaymentSettings = () => {
     >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
-      <div className="flex-1 py-8 px-5 lg:px-8">
+      <div className="flex-1 px-5 py-8 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center  space-x-4">
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className={`rounded-lg outline-none p-3 ${
@@ -423,12 +407,12 @@ const PaymentSettings = () => {
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            <h1 className="hidden lg:flex text-2xl font-bold">Add New Event</h1>
+            <h1 className="hidden text-2xl font-bold lg:flex">Add New Event</h1>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
+            <div className="hidden relative md:flex">
+              <Search className="absolute left-3 top-1/2 w-5 h-5 text-gray-600 transform -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search"
@@ -469,7 +453,7 @@ const PaymentSettings = () => {
           </div>
         </div>
         {/* Progress Steps */}
-        <div className="flex pt-0 md:pt-5 justify-center flex-col md:flex-row mb-8 items-center">
+        <div className="flex flex-col justify-center items-center pt-0 mb-8 md:pt-5 md:flex-row">
           {steps.map((s, index) => (
             <>
               {index !== 0 && (
@@ -479,8 +463,9 @@ const PaymentSettings = () => {
                   }`}
                 />
               )}
+
               <div
-                key={s.number}
+                key={window.crypto.randomUUID()}
                 className="flex w-full px-[4rem] md:px-0 items-center"
               >
                 <div
@@ -503,11 +488,11 @@ const PaymentSettings = () => {
               : "border border-[#040171]"
           } rounded-lg p-6 my-6 shadow-sm`}
         >
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex gap-2 items-center mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
               <span>6</span>
             </div>
-            <h2 className="text-l font-medium">Create your Tickets</h2>
+            <h2 className="font-medium text-l">Create your Tickets</h2>
           </div>
 
           <div className="space-y-6">
@@ -522,7 +507,7 @@ const PaymentSettings = () => {
                 { label: "Donation", name: "donation" },
               ].map((type) => (
                 <button
-                  key={type}
+                  key={type.name}
                   onClick={() => addTicket(type.name)}
                   className="bg-gray-500 text-white py-1 px-4 w-[47%] lg:w-[10rem] mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center"
                 >
@@ -534,8 +519,8 @@ const PaymentSettings = () => {
               // console.log(ticket);
               return (
                 <div
-                  key={ticket.id}
-                  className="mb-8 border border-gray-500 p-4 rounded"
+                  key={window.crypto.randomUUID()}
+                  className="p-4 mb-8 rounded border border-gray-500"
                 >
                   <h3 className="my-2">
                     {"Ticket " + (index + 1) + "( " + ticket.type + ")"}{" "}
@@ -602,7 +587,7 @@ const PaymentSettings = () => {
                     <div className="flex gap-5">
                       <button
                         onClick={() => addTimeSlot(ticket.id)}
-                        className="bg-gray-500 hidden text-white py-1 px-4 mt-2 text-sm rounded hover:bg-gray-600 transition flex items-center"
+                        className="flex hidden items-center px-4 py-1 mt-2 text-sm text-white bg-gray-500 rounded transition hover:bg-gray-600"
                       >
                         <Plus size={17} className={"mr-2"} /> Add Time Slot
                       </button>
@@ -628,11 +613,11 @@ const PaymentSettings = () => {
               : "border border-[#040171]"
           } rounded-lg p-6 my-6 shadow-sm`}
         >
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex gap-2 items-center mb-6">
             <div className="w-6 h-6 rounded-full border border-[#040171] flex items-center justify-center text-l">
               <span>7</span>
             </div>
-            <h2 className="text-l font-medium">
+            <h2 className="font-medium text-l">
               Setup your Event Days & Locations
             </h2>
           </div>
@@ -667,7 +652,7 @@ const PaymentSettings = () => {
             <div className="space-y-4">
               {eventDays.map((eventDay, index) => (
                 <div
-                  key={index}
+                  key={window.crypto.randomUUID()}
                   className={`${
                     theme == "dark"
                       ? "bg-[#121212] border border-[#ccc]"
@@ -824,7 +809,7 @@ const PaymentSettings = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row items-center justify-between text-center">
+        <div className="flex flex-col justify-between items-center text-center lg:flex-row">
           <Link
             to={"/dashboard/event/create/" + id}
             className={`w-[12rem] bg-opacity-50 bg-[#040171] ${
@@ -834,7 +819,7 @@ const PaymentSettings = () => {
             Previous
           </Link>
 
-          <div className="flex items-center gap-3 mt-2 lg:mt-0">
+          <div className="flex gap-3 items-center mt-2 lg:mt-0">
             <button
               onClick={() => submitPayment()}
               disabled={loading}

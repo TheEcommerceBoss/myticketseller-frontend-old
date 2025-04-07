@@ -84,7 +84,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = Cookies.get("auth_token");
+        // const token = Cookies.get("auth_token");
 
         // Trigger both API requests concurrently
         const [events, statsResponse] = await Promise.all([
@@ -104,6 +104,8 @@ const Dashboard = () => {
         // Process stats data
         const statsData = statsResponse;
         setStats(statsData.event_days);
+
+        // console.log(statsData, events);
 
         // Process your chart data logic
         const monthNames = [
@@ -141,7 +143,9 @@ const Dashboard = () => {
           }));
 
         const latestEntry =
-          transformedEventData[transformedEventData.length - 1];
+          transformedEventData.length > 0
+            ? transformedEventData[transformedEventData.length - 1]
+            : {};
         const latestDate = new Date(latestEntry.year, latestEntry.month - 1);
 
         const requiredMonths = [];
@@ -211,9 +215,9 @@ const Dashboard = () => {
     >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
-      <div className="flex-1 py-8 px-5 lg:px-8">
+      <div className="flex-1 px-5 py-8 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center  space-x-4">
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className={`rounded-lg outline-none p-3 ${
@@ -226,7 +230,7 @@ const Dashboard = () => {
             </button>
 
             <div className="">
-              <h1 className="hidden lg:flex text-2xl font-bold">Dashboard</h1>
+              <h1 className="hidden text-2xl font-bold lg:flex">Dashboard</h1>
               <span
                 className={`hidden lg:flex ${
                   theme != "dark" ? "text-[#040171]" : "text-white"
@@ -238,8 +242,8 @@ const Dashboard = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
+            <div className="hidden relative md:flex">
+              <Search className="absolute left-3 top-1/2 w-5 h-5 text-gray-600 transform -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search"
@@ -281,7 +285,7 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className=" grid lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid gap-6 mb-8 lg:grid-cols-3">
           <StatCard
             title="Balance"
             value={
@@ -321,7 +325,7 @@ const Dashboard = () => {
         >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold">Account Stats</h2>
-            <div className="hidden lg:flex space-x-2">
+            <div className="hidden space-x-2 lg:flex">
               <button
                 className={`px-4 py-2 rounded-xl text-sm ${
                   theme === "dark" ? "bg-[#fff] bg-opacity-10" : "bg-white"
@@ -332,7 +336,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-8 mb-4">
+          <div className="flex items-center mb-4 space-x-8">
             <div className="flex items-center">
               <div className="w-4 h-0.5 bg-[#f97316] mr-2" />
               <span className="text-sm text-gray-600">Created Events</span>
@@ -346,11 +350,11 @@ const Dashboard = () => {
 
           <div style={{ width: "100%", height: 300 }}>
             {loading ? (
-              <div className="flex justify-center items-center ">
-                <div className="rounded-md p-4 m-1 w-full mx-auto">
-                  <div className="animate-pulse flex space-x-4">
+              <div className="flex justify-center items-center">
+                <div className="p-4 m-1 mx-auto w-full rounded-md">
+                  <div className="flex space-x-4 animate-pulse">
                     <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                    <div className="flex-1 space-y-6 py-1">
+                    <div className="flex-1 py-1 space-y-6">
                       <div className="h-[1rem] bg-slate-700 rounded"></div>
                       <div className="space-y-3">
                         <div className="grid grid-cols-3 gap-4">
@@ -412,27 +416,27 @@ const Dashboard = () => {
         </div>
 
         {/* Events and Calendar Section */}
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col gap-6 lg:flex-row">
           {/* Ongoing Events */}
           <div
             className={`flex-1 py-5 px-3 rounded-xl ${
               theme === "dark" ? "bg-[#121212] " : "bg-white"
             }`}
           >
-            <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">
+            <h2 className="px-3 pt-1 pb-1 mb-4 text-lg font-semibold">
               Recent Events
             </h2>
             <div
               className={`${
-                loading ? " md:grid-cols-1" : " md:grid-cols-2"
+                loading ? "md:grid-cols-1" : "md:grid-cols-2"
               } grid md:flex-row gap-3 `}
             >
               {loading ? (
-                <div className="flex justify-center items-center ">
-                  <div className="  rounded-md p-4 m-1 w-full mx-auto">
-                    <div className="animate-pulse flex space-x-4">
+                <div className="flex justify-center items-center">
+                  <div className="p-4 m-1 mx-auto w-full rounded-md">
+                    <div className="flex space-x-4 animate-pulse">
                       <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                      <div className="flex-1 space-y-6 py-1">
+                      <div className="flex-1 py-1 space-y-6">
                         <div className="h-[1rem] bg-slate-700 rounded"></div>
                         <div className="space-y-3">
                           <div className="grid grid-cols-3 gap-4">
@@ -463,7 +467,7 @@ const Dashboard = () => {
                       <img
                         src={event.image || ""}
                         alt="Event"
-                        className="w-full h-48 object-cover rounded-xl mb-4"
+                        className="object-cover mb-4 w-full h-48 rounded-xl"
                       />
                     )}
                     <div className="text-sm text-gray-500">
@@ -485,7 +489,7 @@ const Dashboard = () => {
                     </Link>
                     {/* {console.log(event)} */}
 
-                    <div className="text-sm text-gray-500 mt-1">
+                    <div className="mt-1 text-sm text-gray-500">
                       {event.category?.name || "General"}
                     </div>
                   </div>
@@ -515,10 +519,10 @@ const StatCard = ({ title, value, color, textColor, cardColor, iconColor }) => {
 
   return (
     <div
-      className={`flex justify-between items-center ${color} p-6 rounded-xl`}
+      className={`flex justify-between items-center p-6 rounded-xl ${color}`}
     >
       <div className="">
-        <div className={`text-2xl font-bold ${textColor} mt-2`}>
+        <div className={`mt-2 text-2xl font-bold ${textColor}`}>
           {title == "Balance" ? (Balance_hidden ? "****" : value) : value}
         </div>
         <div className="text-sm text-gray-600">{title}</div>
@@ -536,7 +540,7 @@ const StatCard = ({ title, value, color, textColor, cardColor, iconColor }) => {
             />
           </button>
         ) : (
-          <CalendarCogIcon className={`${iconColor} `} />
+          <CalendarCogIcon className={`${iconColor}`} />
         )}
       </div>
     </div>
@@ -619,13 +623,13 @@ const Calendar = ({ theme, Stats }) => {
         <div className="flex space-x-2">
           <button
             onClick={handlePreviousMonth}
-            className="p-1 hover:bg-gray-400 rounded"
+            className="p-1 rounded hover:bg-gray-400"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={handleNextMonth}
-            className="p-1 hover:bg-gray-400 rounded"
+            className="p-1 rounded hover:bg-gray-400"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -635,7 +639,7 @@ const Calendar = ({ theme, Stats }) => {
       <div className="grid grid-cols-7 gap-2 mb-2">
         {days &&
           days.map((day) => (
-            <div key={day} className="text-center text-sm text-gray-500">
+            <div key={day} className="text-sm text-center text-gray-500">
               {day}
             </div>
           ))}
@@ -660,7 +664,7 @@ const Calendar = ({ theme, Stats }) => {
                 {eventId ? (
                   <Link
                     to={`/event/view/${eventId}`}
-                    className="text-white font-bold"
+                    className="font-bold text-white"
                   >
                     {date}
                   </Link>
