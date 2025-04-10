@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Pencil, Trash2, Eye, ToggleLeftIcon, PlusCircle } from "lucide-react";
+import { Pencil, Trash2, Eye, PlusCircle } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
-import { Search, Menu, Bell, X, Moon, Sun } from "lucide-react";
+import { Search, Menu, X, Moon, Sun } from "lucide-react";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Cookies from "js-cookie";
 import api from "../../api";
@@ -64,7 +64,7 @@ const ManageEvent = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await api.post("/delete_event", { event_id: eventId });
+          await eventsApi.deleteEvent(eventId);
           setEvents(events.filter((event) => event.event_id !== eventId));
           Swal.fire({
             icon: "success",
