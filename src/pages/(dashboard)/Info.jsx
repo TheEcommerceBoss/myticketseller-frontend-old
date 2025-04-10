@@ -1,43 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  Home,
-  PlusCircle,
-  ListChecks,
-  Ticket,
-  Megaphone,
-  Settings,
-  HelpCircle,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Moon,
-  Sun,
-  CalendarCogIcon,
-  BellDot,
-  Bell,
-  X,
-} from "lucide-react";
+
+import { PlusCircle, Menu, Search, Moon, Sun, X } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
-import user from "../../assets/(user)/user.png";
 import Confetti from "react-confetti";
-import eventImage from "../../assets/(landing)/event.png";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Swal from "sweetalert2";
-import axios from "axios";
-
-import Cookies from "js-cookie"; // Ensure you have this import to access cookies
 import { eventsApi } from "../../api";
 
 const EventsInfo = () => {

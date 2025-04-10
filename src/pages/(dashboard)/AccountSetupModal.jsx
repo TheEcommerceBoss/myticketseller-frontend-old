@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useTheme } from "../../context/ThemeContext";
 import Cookies from "js-cookie";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { usersApi } from "../../api";
 const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
@@ -35,24 +36,16 @@ const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
   // New function to resolve account name
   const resolveAccountName = async (accountNum, bankCode) => {
     setError("");
-    
+
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/resolveAccount`,
-        {
-          account_number: accountNum,
-          bank_code: bankCode,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );  
-      
-      console.log(response.data)
-      
+      const response = await usersApi.resolveAccount({
+        account_number: accountNum,
+        bank_code: bankCode,
+      });
+
+      console.log(response.data);
+
       if (response.data.code === 200 && response.data.message) {
         setAccountName(response.data.message.account_name || "");
       } else {
@@ -62,7 +55,6 @@ const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
     } catch (error) {
       setError("Error resolving account name");
       setAccountName("");
-      
     } finally {
       setIsLoading(false);
     }
@@ -71,9 +63,9 @@ const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
   // Handle account number input
   const handleAccountNumberChange = (e) => {
     const inputAccountNumber = e.target.value;
-    
+
     // Only allow numeric input
-    const numericAccountNumber = inputAccountNumber.replace(/\D/g, '');
+    const numericAccountNumber = inputAccountNumber.replace(/\D/g, "");
     setAccountNumber(numericAccountNumber);
 
     // If account number is 10 digits and a bank is selected, resolve account
@@ -86,29 +78,27 @@ const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-    
+
     try {
-      const selectedBankName = banks.find((bank) => bank.code === selectedBank)?.name;
-  
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/updateAccountDetails`,
-        {
-          account_number: accountNumber,
-          bank_code: selectedBank,
-          bank_name: selectedBankName,
-          account_name: accountName,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-  
+      const selectedBankName = banks.find(
+        (bank) => bank.code === selectedBank
+      )?.name;
+
+      const response = await usersApi.updateAccountDetails({
+        account_number: accountNumber,
+        bank_code: selectedBank,
+        bank_name: selectedBankName,
+        account_name: accountName,
+      });
+
       console.log(response.data);
-  
+
       if (response.data.code === 200) {
-        Swal.fire('Account Update Successful', 'Account Details have been updated Successfully!!!', 'success').then(() => {
+        Swal.fire(
+          "Account Update Successful",
+          "Account Details have been updated Successfully!!!",
+          "success"
+        ).then(() => {
           window.location.reload(); // Reloads the page
         });
         onAccountSetupSuccess && onAccountSetupSuccess(response.data);
@@ -121,8 +111,6 @@ const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
       setIsLoading(false);
     }
   };
-
-
 
   if (!isOpen) return null;
 
@@ -166,8 +154,6 @@ const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
               required
             />
           </div>
-          
-         
 
           <div>
             <label
@@ -200,27 +186,27 @@ const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
               ))}
             </select>
           </div>
-          
+
           {accountName && (
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">
                 Account Name
               </label>
-              <div 
-                className={`w-full px-3 py-2 border border-gray-300 rounded-md 
+              <div
+                className={`w-full px-3 py-2 border border-gray-300 rounded-md
                 ${theme === "dark" ? "bg-[#121212] text-white" : "bg-white"}`}
               >
                 {accountName}
               </div>
             </div>
           )}
-          
+
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md">
               <p className="text-sm">{error}</p>
             </div>
           )}
-          
+
           <div className="flex space-x-4 pt-4">
             <button
               type="button"

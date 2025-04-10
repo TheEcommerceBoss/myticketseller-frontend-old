@@ -4,7 +4,7 @@ import { IEvent, IUpdateEventDetailsPayload } from "./types";
 
 const newApi = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1",
-  // withCredentials: true,
+  withCredentials: true,
   // withXSRFToken: true,
 });
 
@@ -56,6 +56,29 @@ newApi.interceptors.response.use(
   }
 );
 
+export const usersApi = {
+  resolveAccount: async function (data: {
+    account_number: string;
+    bank_code: string;
+  }) {
+    const res = await newApi.post("/users/resolve-account", data);
+    return res.data;
+  },
+  updateAccountDetails: async function (data: {
+    account_number: string;
+    bank_code: string;
+    bank_name: string;
+    account_name: string;
+  }) {
+    const res = await newApi.put("/users/account-details", data);
+    return res.data;
+  },
+  requestWithdrawal: async function (data: { amount: number }) {
+    const res = await newApi.post("/users/withdraw", data);
+    return res.data;
+  },
+};
+
 export const authApi = {
   login: async ({ email, password }: { email: string; password: string }) => {
     const res = await newApi.post("/auth/login", { email, password });
@@ -77,6 +100,12 @@ export const authApi = {
       email,
       password,
     });
+    console.log(
+      "Something",
+      import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1"
+    );
+    console.log(res);
+
     return res.data;
   },
   refreshAccessToken: async () => {
@@ -181,6 +210,10 @@ export const eventsApi = {
   },
   getEventSchedule: async function (event_id: string) {
     const res = await newApi.get(`/events/${event_id}/schedule`);
+    return res.data;
+  },
+  deleteEvent: async function (event_id: string) {
+    const res = await newApi.delete(`/events/${event_id}`);
     return res.data;
   },
 };
