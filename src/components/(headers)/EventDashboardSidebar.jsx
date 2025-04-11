@@ -1,26 +1,44 @@
+import { Collapse, List, ListItem, ListItemText } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import {
-	BookMarked,
+	Barcode,
+	ChartPie,
+	ChevronDown,
 	ChevronLeft,
 	ChevronRight,
-	HelpCircle,
+	DollarSign,
 	Home,
-	LucideScanFace,
-	ScanQrCodeIcon,
-	Settings,
-	SquarePen,
-	TextSearch,
-	Wallet,
+	ListIcon,
+	Mail,
+	Megaphone,
+	QrCode,
+	Send,
+	Star,
+	Ticket,
+	User,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import logoDark from "../../assets/(site_assets)/logo-dark.png";
 import logo from "../../assets/(site_assets)/logo.png";
 import { useTheme } from "../../context/ThemeContext";
+import { sidebarData } from "../../lib/data";
 
 const SideBar = ({ isOpen, toggleSidebar }) => {
 	const { id } = useParams();
 	const { theme } = useTheme();
 	const location = useLocation();
+
+	// State for expanded menu items
+	const [salesExpanded, setSalesExpanded] = useState(false);
+	const [scanningExpanded, setScanningExpanded] = useState(false);
+	const [graphicalExpanded, setGraphicalExpanded] = useState(false);
+	const [manualExpanded, setManualExpanded] = useState(false);
+	const [customerExpanded, setCustomerExpanded] = useState(false);
+	const [paymentExpanded, setPaymentExpanded] = useState(false);
+	const [referralExpanded, setReferralExpanded] = useState(false);
+	const [guestListExpanded, setGuestListExpanded] = useState(false);
+	const [subscriberExpanded, setSubscriberExpanded] = useState(false);
 
 	const NavItem = ({ icon, text, link, active }) => (
 		<Link to={link}>
@@ -55,6 +73,43 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 			</div>
 		</Link>
 	);
+	const DropdownNavItem = ({ icon, text, active, onClick }) => (
+		<button className="block w-full" onClick={onClick}>
+			<div
+				className={`flex items-center space-x-3 pl-[.2rem] pr-4 py-1 cursor-pointer transition-colors duration-200 w-full
+          ${
+				active
+					? theme === "dark"
+						? "bg-[#222]"
+						: "bg-opacity-10 text-[#040171] font-semibold"
+					: theme === "dark"
+					? "text-white hover:bg-[#222]"
+					: "text-gray-600 hover:bg-gray-100"
+			}
+          ${!isOpen ? "justify-center" : ""}`}
+			>
+				<div
+					className={`w-[.5rem] h-[2.8rem] mr-4 rounded-r-[5rem] bg-transparent`}
+				></div>
+				<div
+					className={`${
+						!isOpen
+							? "w-8 h-8 flex items-center justify-center"
+							: ""
+					}`}
+				>
+					{icon}
+				</div>
+				{isOpen && <span className="transition-opacity">{text}</span>}
+				<div>
+					<ChevronDown
+						size={24}
+						className={active && "rotate-180 text-[#040171]"}
+					/>
+				</div>
+			</div>
+		</button>
+	);
 
 	return (
 		<>
@@ -69,7 +124,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
         ${theme === "dark" ? "bg-[#121212]" : "bg-white"}
         ${
 			isOpen
-				? "w-64 translate-x-0"
+				? "w-72 translate-x-0"
 				: "w-20 -translate-x-full lg:translate-x-0"
 		}
         shadow-lg`}
@@ -107,70 +162,300 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 
 				<nav className="mt-5">
 					<NavItem
-						icon={<Home size={24} />}
+						icon={<Home size={20} />}
 						link={`/dashboard/event/${id}`}
 						text="Dashboard"
 						active={location.pathname === `/dashboard/event/${id}`}
 					/>
 					<NavItem
-						icon={<SquarePen size={24} />}
-						link="/dashboard/event/create"
-						text="Create New Event"
+						icon={<QrCode size={20} />}
+						link={`/dashboard/event/${id}/qr-code`}
+						text="Event QR Code"
 						active={location.pathname.startsWith(
-							"/dashboard/event/create"
+							`/dashboard/event/${id}/qr-code`
 						)}
 					/>
-					<NavItem
-						icon={<TextSearch size={24} />}
-						link="/dashboard/event/manage"
-						text="Manage Events"
-						active={location.pathname === "/dashboard/event/manage"}
+					<DropdownNavItem
+						icon={<ListIcon size={20} />}
+						text="Sales Sumary"
+						active={salesExpanded}
+						onClick={() => setSalesExpanded(!salesExpanded)}
 					/>
+					<Collapse in={salesExpanded} timeout="auto" unmountOnExit>
+						<List component="div" disablePadding>
+							{sidebarData.salesSummary.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
+					<DropdownNavItem
+						icon={<Barcode size={20} />}
+						text="Scanning"
+						active={scanningExpanded}
+						onClick={() => setScanningExpanded(!scanningExpanded)}
+					/>
+					<Collapse
+						in={scanningExpanded}
+						timeout="auto"
+						unmountOnExit
+					>
+						<List component="div" disablePadding>
+							{sidebarData.scanning.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
+					<DropdownNavItem
+						icon={<ChartPie size={20} />}
+						text="Graphical View"
+						active={graphicalExpanded}
+						onClick={() => setGraphicalExpanded(!graphicalExpanded)}
+					/>
+					<Collapse
+						in={graphicalExpanded}
+						timeout="auto"
+						unmountOnExit
+					>
+						<List component="div" disablePadding>
+							{sidebarData.graphicalView.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
+					<DropdownNavItem
+						icon={<User size={20} />}
+						text="Manual Sales"
+						active={manualExpanded}
+						onClick={() => setManualExpanded(!manualExpanded)}
+					/>
+					<Collapse in={manualExpanded} timeout="auto" unmountOnExit>
+						<List component="div" disablePadding>
+							{sidebarData.manualSales.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
 					<NavItem
-						icon={<ScanQrCodeIcon size={24} />}
-						link="/dashboard/ticket/scanner"
-						text="Ticket Scanner"
+						icon={<Ticket size={20} />}
+						link={`/dashboard/event/${id}/ticket-orders`}
+						text="Ticket Display Order"
 						active={
-							location.pathname === "/dashboard/ticket/scanner"
+							location.pathname ===
+							`/dashboard/event/${id}/ticket-orders`
 						}
 					/>
 					<NavItem
-						icon={<LucideScanFace size={24} />}
-						link="/dashboard/event/scan"
-						text="Scan Manager"
-						active={location.pathname.startsWith(
-							"/dashboard/event/scan"
-						)}
-					/>
-
-					<NavItem
-						icon={<Wallet size={24} />}
-						link="/dashboard/wallet"
-						text="Wallet"
-						active={location.pathname.startsWith(
-							"/dashboard/wallet"
-						)}
-					/>
-
-					<NavItem
-						icon={<BookMarked size={24} />}
-						link="/dashboard/affiliates"
-						text="Affiliates"
-						active={location.pathname.startsWith(
-							"/dashboard/affiliates"
-						)}
+						icon={<DollarSign size={20} />}
+						link={`/dashboard/event/${id}/refund-requests`}
+						text="Refund Request"
+						active={
+							location.pathname ===
+							`/dashboard/event/${id}/refund-requests`
+						}
 					/>
 					<NavItem
-						icon={<Settings size={24} />}
-						link="/dashboard/settings"
-						text="Settings"
-						active={location.pathname === "/dashboard/settings"}
+						icon={<Star size={20} />}
+						link={`/dashboard/event/${id}/refund-requests`}
+						text="Customer Review"
+						active={
+							location.pathname ===
+							`/dashboard/event/${id}/refund-requests`
+						}
 					/>
+					<DropdownNavItem
+						icon={<DollarSign size={20} />}
+						text="Payment Details"
+						active={paymentExpanded}
+						onClick={() => setPaymentExpanded(!paymentExpanded)}
+					/>
+					<Collapse in={paymentExpanded} timeout="auto" unmountOnExit>
+						<List component="div" disablePadding>
+							{sidebarData.paymentDetails.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
+					<DropdownNavItem
+						icon={<Megaphone size={20} />}
+						text="Referral"
+						active={referralExpanded}
+						onClick={() => setReferralExpanded(!referralExpanded)}
+					/>
+					<Collapse
+						in={referralExpanded}
+						timeout="auto"
+						unmountOnExit
+					>
+						<List component="div" disablePadding>
+							{sidebarData.referral.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
+					<DropdownNavItem
+						icon={<ListIcon size={20} />}
+						text="Guest List"
+						active={guestListExpanded}
+						onClick={() => setGuestListExpanded(!guestListExpanded)}
+					/>
+					<Collapse
+						in={guestListExpanded}
+						timeout="auto"
+						unmountOnExit
+					>
+						<List component="div" disablePadding>
+							{sidebarData.guestList.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
+					<DropdownNavItem
+						icon={<Mail size={20} />}
+						text="Subscriber Emails"
+						active={subscriberExpanded}
+						onClick={() =>
+							setSubscriberExpanded(!subscriberExpanded)
+						}
+					/>
+					<Collapse
+						in={subscriberExpanded}
+						timeout="auto"
+						unmountOnExit
+					>
+						<List component="div" disablePadding>
+							{sidebarData.subscriberEmails.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", id)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
 					<NavItem
-						icon={<HelpCircle size={24} />}
-						link="/dashboard/support"
-						text="Support"
-						active={location.pathname === "/dashboard/support"}
+						icon={<Send size={20} />}
+						link={`/dashboard/event/${id}/send-emails-to-attendees`}
+						text="Send Emails to Attendes"
+						active={
+							location.pathname ===
+							`/dashboard/event/${id}/send-emails-to-attendees`
+						}
 					/>
 				</nav>
 			</div>

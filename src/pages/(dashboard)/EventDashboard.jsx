@@ -52,6 +52,8 @@ const EventDashboard = () => {
 		setBottomTabValue(newValue);
 	};
 
+	console.log(bottomTabValue);
+
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, []);
@@ -714,28 +716,99 @@ const EventDashboard = () => {
 					</Box>
 
 					{/* Orders Table */}
-					<TableContainer
-						component={Paper}
-						sx={{ mt: 2, boxShadow: "none" }}
-					>
-						<Table sx={{ minWidth: 650 }} aria-label="orders table">
-							<TableHead>
-								<TableRow sx={{ bgcolor: "#f9f9f9" }}>
-									<TableCell>Order</TableCell>
-									<TableCell>Ticket Buyer/ Email</TableCell>
-									<TableCell>Type</TableCell>
-									<TableCell>Qty</TableCell>
-									<TableCell>Price</TableCell>
-									<TableCell>Date</TableCell>
-									<TableCell>Refund</TableCell>
-									<TableCell>IP</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{/* Empty state or would map through orders here */}
-							</TableBody>
-						</Table>
-					</TableContainer>
+					{bottomTabValue === 0 && (
+						<TableContainer
+							component={Paper}
+							sx={{ mt: 2, boxShadow: "none" }}
+						>
+							<Table
+								sx={{ minWidth: 650 }}
+								aria-label="orders table"
+							>
+								<TableHead>
+									<TableRow sx={{ bgcolor: "#D9D9D973" }}>
+										<TableCell>Order</TableCell>
+										<TableCell>
+											Ticket Buyer/ Email
+										</TableCell>
+										<TableCell>Type</TableCell>
+										<TableCell>Qty</TableCell>
+										<TableCell>Price</TableCell>
+										<TableCell>Date</TableCell>
+										<TableCell>Refund</TableCell>
+										<TableCell>IP</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{/* Empty state or would map through orders here */}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					)}
+					{bottomTabValue === 2 && (
+						<TableContainer
+							component={Paper}
+							sx={{ mt: 2, boxShadow: "none" }}
+						>
+							<Table
+								sx={{ minWidth: 650 }}
+								aria-label="orders table"
+							>
+								<TableHead>
+									<TableRow
+										sx={{
+											bgcolor: "#D9D9D973",
+										}}
+									>
+										<TableCell>Barcode</TableCell>
+										<TableCell>Checkin Time</TableCell>
+										<TableCell>Order</TableCell>
+										<TableCell>Label</TableCell>
+										<TableCell>Name on Tix</TableCell>
+										<TableCell>Operator</TableCell>
+										<TableCell>Status</TableCell>
+										<TableCell>Details</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{/* Empty state or would map through orders here */}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					)}
+					{bottomTabValue === 3 && (
+						<TableContainer
+							component={Paper}
+							sx={{ mt: 2, boxShadow: "none" }}
+						>
+							<Table
+								sx={{ minWidth: 650 }}
+								aria-label="orders table"
+							>
+								<TableHead>
+									<TableRow
+										sx={{
+											bgcolor: "#D9D9D973",
+										}}
+									>
+										<TableCell>Order</TableCell>
+										<TableCell>Email</TableCell>
+										<TableCell>Ticket Buyer</TableCell>
+										<TableCell>Type</TableCell>
+										<TableCell>Quantity</TableCell>
+										<TableCell>Promo Code</TableCell>
+										<TableCell>Discount</TableCell>
+										<TableCell>Date</TableCell>
+										<TableCell>Price</TableCell>
+										<TableCell>Status</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{/* Empty state or would map through orders here */}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					)}
 				</Box>
 			</div>
 		</div>
