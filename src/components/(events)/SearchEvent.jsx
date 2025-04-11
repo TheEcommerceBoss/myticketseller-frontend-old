@@ -1,19 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
-import { ChevronDown, Search, Calendar, MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react";
-import Select from "react-select";
-import DatePicker from "react-datepicker"; // Import the date picker
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Clock, MapPin, Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
-import { Link, useNavigate } from "react-router-dom";
-import eventImage from "../../assets/(landing)/event.png"
-import event2Image from "../../assets/(landing)/event2.png"
-import event3Image from "../../assets/(landing)/event3.png"
-import event4Image from "../../assets/(landing)/event4.png"
-import TicketModal from "./TicketModal";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
-import MapAutocomplete from "../(maps)/Autocomplete";
-import LocationSearch from "../(maps)/LocationSearch";
-import { useParams } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
 
 const options = [
     { value: "location1", label: "Location 1" },
@@ -33,7 +23,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 disabled:opacity-50"
+                className="flex items-center justify-center w-10 h-10 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300 disabled:opacity-50"
             >
                 <ChevronLeft size={20} />
             </button>
@@ -55,7 +45,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 disabled:opacity-50"
+                className="flex items-center justify-center w-10 h-10 text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300 disabled:opacity-50"
             >
                 <ChevronRight size={20} />
             </button>
@@ -246,7 +236,7 @@ function SearchEventComponent({ variation }) {
                     <div className={`${variation == 2 ? 'flex flex-col md:flex-row justify-between' : ''} `}>
 
                         <div className={`${variation == 2 ? 'flex justify-center w-full' : 'hidden'}`}>
-                            <div className="relative w-full max-w-7xl flex items-center justify-center">
+                            <div className="relative flex items-center justify-center w-full max-w-7xl">
                                 <form
                                     onSubmit={handleSearch}
                                     className="w-full px-2"
@@ -278,11 +268,11 @@ function SearchEventComponent({ variation }) {
 
                 </div>
                 {loading ? (
-                    <div className="flex justify-center items-center ">
-                        <div className="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
-                            <div className="animate-pulse flex space-x-4">
+                    <div className="flex items-center justify-center ">
+                        <div className="w-full p-4 m-1 mx-auto border border-gray-100 rounded-md">
+                            <div className="flex space-x-4 animate-pulse">
                                 <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                                <div className="flex-1 space-y-6 py-1">
+                                <div className="flex-1 py-1 space-y-6">
                                     <div className="h-[1rem] bg-slate-700 rounded"></div>
                                     <div className="space-y-3">
                                         <div className="grid grid-cols-3 gap-4">
@@ -313,34 +303,34 @@ function SearchEventComponent({ variation }) {
                                                     />
                                                     <div className={`flex flex-col justify-between p-6 py-4 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
                                                         <div className="flex items-center">
-                                                            <span className="text-gray-500 flex w-2/5 items-center gap-1 text-xs"><Calendar size={16} /> <span>{card.event_days[0].start_day}</span></span>
-                                                            <span className="text-orange-500 text-center w-1/5">|</span>
-                                                            <span className="text-gray-500 flex w-2/5 items-center justify-end gap-1 text-xs"><MapPin size={16} /> <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address.split(", ").slice(-2).join(", ")}</span></span>
+                                                            <span className="flex items-center w-2/5 gap-1 text-xs text-gray-500"><Calendar size={16} /> <span>{card.event_days[0].start_day}</span></span>
+                                                            <span className="w-1/5 text-center text-orange-500">|</span>
+                                                            <span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500"><MapPin size={16} /> <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address.split(", ").slice(-2).join(", ")}</span></span>
                                                         </div>
-                                                        <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="text-xl my-2 text-black font-semibold">
+                                                        <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="my-2 text-xl font-semibold text-black">
                                                             {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
                                                         </Link>
-                                                        <span className="text-gray-500 text-sm">{card.event_description.length > 100 ? `${card.event_description.substring(0, 100)}...` : card.event_description}</span>
+                                                        <span className="text-sm text-gray-500">{card.event_description.length > 100 ? `${card.event_description.substring(0, 100)}...` : card.event_description}</span>
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="overflow-hidden bg-white lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4">
+                                                <div className="flex flex-col p-5 mb-4 overflow-hidden bg-white shadow-md lg:bg-transparent lg:p-0 rounded-xl lg:rounded-none lg:shadow-none lg:flex-row lg:gap-5">
                                                     <img
                                                         src={card.event_img}
                                                         alt={card.event_title}
                                                         className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
                                                     />
                                                     <div className="rounded-xl lg:shadow-md bg-white p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4">
-                                                        <div className="flex justify-between items-start">
-                                                            <div className="w-1/3 flex-grow md:px-3 flex flex-col justify-between gap-2 md:gap-4">
+                                                        <div className="flex items-start justify-between">
+                                                            <div className="flex flex-col justify-between flex-grow w-1/3 gap-2 md:px-3 md:gap-4">
                                                                 <div className="">
-                                                                    <div className="flex gap-3 flex-col md:inline-flex md:flex-row md:gap-12 md:items-center text-sm md:text-xs text-gray-500 mb-2 md:border md:border-gray-300 rounded-full md:px-2 py-1">
-                                                                        <div className="flex font-semibold items-center gap-1">
-                                                                            <Calendar color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                    <div className="flex flex-col gap-3 py-1 mb-2 text-sm text-gray-500 rounded-full md:inline-flex md:flex-row md:gap-12 md:items-center md:text-xs md:border md:border-gray-300 md:px-2">
+                                                                        <div className="flex items-center gap-1 font-semibold">
+                                                                            <Calendar color="#040171" className="w-4 h-4 mr-1 md:w-3 md:h-3" />
                                                                             <span>{card.event_days[0].start_day}</span>
                                                                         </div>
-                                                                        <div className="flex font-bold items-center gap-1">
-                                                                            <Clock color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                        <div className="flex items-center gap-1 font-bold">
+                                                                            <Clock color="#040171" className="w-4 h-4 mr-1 md:w-3 md:h-3" />
                                                                             <span>{card.event_days[0].open_door_time}</span>
                                                                         </div>
                                                                     </div>
@@ -350,19 +340,19 @@ function SearchEventComponent({ variation }) {
                                                                     {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
                                                                 </Link>
 
-                                                                <div className="flex items-center font-semibold text-xs text-gray-600 mt-1 gap-1">
-                                                                    <MapPin color="#040171" className="w-4 h-4 md:w-3 md:h-3 mr-1" />
+                                                                <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-gray-600">
+                                                                    <MapPin color="#040171" className="w-4 h-4 mr-1 md:w-3 md:h-3" />
                                                                     <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address}</span>
                                                                 </div>
-                                                                <div className="h-full md:hidden mt-4 flex ">
-                                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="bg-orange-500 text-white text-lg px-6 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                                <div className="flex h-full mt-4 md:hidden ">
+                                                                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="px-6 py-2 text-lg text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600">
                                                                         Buy Tickets
                                                                     </Link>
                                                                 </div>
                                                             </div>
 
-                                                            <div className="h-full hidden md:flex md:border-l pl-3 items-center">
-                                                                <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="bg-orange-500 text-white text-xs px-4 py-2 rounded-full hover:bg-orange-600 transition duration-300">
+                                                            <div className="items-center hidden h-full pl-3 md:flex md:border-l">
+                                                                <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="px-4 py-2 text-xs text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600">
                                                                     Buy Tickets
                                                                 </Link>
                                                             </div>
