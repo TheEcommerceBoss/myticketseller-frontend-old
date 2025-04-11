@@ -1,44 +1,45 @@
-import React from "react";
-import { useParams, Outlet, Link } from "react-router-dom";
-import SideBar from "../../components/(headers)/EventDashboardSidebar";
-import { useEffect } from "react";
-import { useState } from "react";
-import { Menu, Moon, PlusCircle, Sun, User, X } from "lucide-react";
-import { useTheme } from "../../context/ThemeContext";
-import DashboardHeader from "../../components/(events)/DashboardHeader";
 import {
 	Box,
-	Tabs,
-	Tab,
-	Typography,
-	Paper,
 	Button,
-	TextField,
-	InputAdornment,
 	Card,
-	Grid,
 	Chip,
+	Grid,
+	InputAdornment,
+	Paper,
+	Tab,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
+	Tabs,
+	TextField,
+	Typography,
 } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import {
 	Calendar,
-	Search,
+	CalendarDays,
 	CloudDownload,
 	Eye,
+	Menu,
+	Moon,
+	PlusCircle,
+	Search,
+	Sun,
 	Users,
-	CalendarDays,
+	X,
 } from "lucide-react";
-import dayjs from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import DashboardHeader from "../../components/(events)/DashboardHeader";
+import SideBar from "../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../context/ThemeContext";
 
 const EventDashboard = () => {
-	const { id } = useParams();
 	const { theme, toggleTheme } = useTheme();
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 	const [tabValue, setTabValue] = useState(0);

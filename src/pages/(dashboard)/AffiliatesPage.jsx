@@ -81,7 +81,6 @@ const AffiliatesPage = () => {
 	}, [userData]);
 
 	const { theme, toggleTheme } = useTheme();
-	const navigate = useNavigate();
 
 	useEffect(() => {
 		window.scrollTo(0, 0);

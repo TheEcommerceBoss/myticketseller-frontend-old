@@ -1,41 +1,44 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/(landing)/Landing";
-import FindEvent from "./pages/(events)/FindEvent";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { GoogleMapsProvider } from "./components/GoogleMapsContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import UnProtectedRoute from "./components/UnProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
-import ViewEvent from "./pages/(events)/ViewEvent";
-import NotFound from "./pages/others/NotFound";
-import Dashboard from "./pages/(dashboard)/dashboard";
 import LoginPage from "./pages/(auth)/Login";
+import LogoutPage from "./pages/(auth)/logout";
 import SignupPage from "./pages/(auth)/register";
+import AffiliatesPage from "./pages/(dashboard)/AffiliatesPage";
+import CompletedCreation from "./pages/(dashboard)/CompletedCreation";
 import CreateEvent from "./pages/(dashboard)/createEvent";
-import PaymentSettings from "./pages/(dashboard)/paymentSettings";
+import Dashboard from "./pages/(dashboard)/dashboard";
+import EventDashboard from "./pages/(dashboard)/EventDashboard";
 import EventsInfo from "./pages/(dashboard)/Info";
 import ManageEvent from "./pages/(dashboard)/manageEvent";
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import LogoutPage from "./pages/(auth)/logout";
-import CompletedCreation from "./pages/(dashboard)/CompletedCreation";
-import EditEvent from "./pages/(dashboard)/editEvent";
+import ModifyScanner from "./pages/(dashboard)/ModifyScanner";
+import MyTicketsPage from "./pages/(dashboard)/MyTickets";
+import PaymentSettings from "./pages/(dashboard)/paymentSettings";
+import ScanManager from "./pages/(dashboard)/ScanManager";
+import ScannerPage from "./pages/(dashboard)/Scanner";
 import Settings from "./pages/(dashboard)/Settings";
 import SupportPage from "./pages/(dashboard)/Support";
-import ScannerPage from "./pages/(dashboard)/Scanner";
-import MyTicketsPage from "./pages/(dashboard)/MyTickets";
-import { GoogleMapsProvider } from "./components/GoogleMapsContext";
-import ValidatePayment from "./pages/(payments)/validatePayment";
-import ScanManager from "./pages/(dashboard)/ScanManager";
-import ModifyScanner from "./pages/(dashboard)/ModifyScanner";
-import UnProtectedRoute from "./components/UnProtectedRoute";
+import WalletPage from "./pages/(dashboard)/wallet";
+import AddReferral from "./pages/(event-dashboard)/referral/AddReferral";
+import ReferralPayout from "./pages/(event-dashboard)/referral/ReferralPayout";
+import ViewOrder from "./pages/(event-dashboard)/referral/ViewOrder";
+import ViewReferral from "./pages/(event-dashboard)/referral/ViewReferrals";
+import FindEvent from "./pages/(events)/FindEvent";
+import SearchEvent from "./pages/(events)/SearchEvent";
+import ViewEvent from "./pages/(events)/ViewEvent";
 import AboutUs from "./pages/(landing)/About";
 import ContactPage from "./pages/(landing)/Contact";
+import LandingPage from "./pages/(landing)/Landing";
 import PricingPage from "./pages/(landing)/Pricing";
-import SearchEvent from "./pages/(events)/SearchEvent";
-import WalletPage from "./pages/(dashboard)/wallet";
-import Terms from "./pages/(landing)/Terms";
 import Privacy from "./pages/(landing)/Privacy";
+import Terms from "./pages/(landing)/Terms";
 import CancelledPayments from "./pages/(payments)/cancelledPayment";
-import AffiliatesPage from "./pages/(dashboard)/AffiliatesPage";
-import EventDashboard from "./pages/(dashboard)/EventDashboard";
+import ValidatePayment from "./pages/(payments)/validatePayment";
+import NotFound from "./pages/others/NotFound";
+import ReferralPayoutHistory from "./pages/(event-dashboard)/referral/ReferralPayoutHistory";
 
 function App() {
 	return (
@@ -193,6 +196,48 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<AffiliatesPage />
+								</ProtectedRoute>
+							}
+						/>
+
+						{/* event dashboard routes */}
+						<Route
+							path="/dashboard/event/:id/add-referral"
+							element={
+								<ProtectedRoute>
+									<AddReferral />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/:id/view-referral"
+							element={
+								<ProtectedRoute>
+									<ViewReferral />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/:id/view-order"
+							element={
+								<ProtectedRoute>
+									<ViewOrder />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/:id/referral-payout"
+							element={
+								<ProtectedRoute>
+									<ReferralPayout />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/:id/referral-payout-history"
+							element={
+								<ProtectedRoute>
+									<ReferralPayoutHistory />
 								</ProtectedRoute>
 							}
 						/>
