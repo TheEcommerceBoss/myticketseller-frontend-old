@@ -136,3 +136,26 @@ export const sidebarData = {
 		},
 	],
 };
+
+export const howItWorksSteps = [
+	{
+		id: 1,
+		title: "Browse:",
+		description: "Explore the latest events near you.",
+	},
+	{
+		id: 2,
+		title: "Choose:",
+		description: "Select your event and ticket type.",
+	},
+	{
+		id: 3,
+		title: "Purchase:",
+		description: "Easy checkout with secure payment options.",
+	},
+	{
+		id: 4,
+		title: "Enjoy:",
+		description: "Show up and have the time of your life!",
+	},
+];

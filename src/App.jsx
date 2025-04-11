@@ -61,7 +61,6 @@ function App() {
 							}
 						/>
 						<Route path="/category/:id" element={<FindEvent />} />
-
 						<Route
 							path="/dashboard"
 							element={
@@ -241,8 +240,6 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
-						{/* <Route path="/dashboard/event/poster" element={<ProtectedRoute><BannerPage /></ProtectedRoute>} /> */}
-						{/* <Route path="/dashboard/event/poster/:id" element={<ProtectedRoute><CreateBannerPage /></ProtectedRoute>} /> */}
 						<Route
 							path="/validatePayment/"
 							element={<ValidatePayment />}
