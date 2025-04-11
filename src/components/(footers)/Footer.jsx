@@ -1,91 +1,165 @@
-import React, { useState } from 'react';
-import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
-import logoDark from '../../assets/(site_assets)/logo-dark.png';  // Adjust path as necessary
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import NewsLetter from "../(others)/NewsLetter";
+import facebook from "../../assets/(landing)/icons/facebook.svg";
+import instagram from "../../assets/(landing)/icons/instagram.svg";
+import twitter from "../../assets/(landing)/icons/twitter.svg";
+import youtube from "../../assets/(landing)/icons/youtube.svg";
+import logo from "../../assets/(site_assets)/logo-white.svg";
 
-const Footer = () => {
-    const [email, setEmail] = useState('');
+export default function Footer() {
+	return (
+		<footer className="relative pt-[201px] bg-secondary text-white md:pt-[250px]">
+			<NewsLetter />
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle newsletter signup logic here
-        console.log('Subscribing with email:', email);
-    };
+			<div className="container mx-auto max-w-7xl">
+				<div className="flex flex-col px-5 items-center gap-[56px] pb-[98px] md:items-start md:px-8 lg:flex-row lg:justify-between lg:px-5 lg:items-center xl:px-10">
+					<Link to="/" className="block text-center">
+						<img
+							src={logo}
+							alt="myticketseller"
+							width={150}
+							height={20}
+							className="w-full max-w-[150px] mx-auto lg:min-w-[180px] lg:mx-0"
+						/>
+					</Link>
 
-    return (
-        <footer className="font-sans relative mt-[10rem]">
-            <div className="absolute px-3 mx-auto max-w-5xl  left-0 right-0 -top-[6rem] md:-top-24">
-                <div className="bg-white rounded-2xl shadow-xl p-6 ">
-                    <h2 className="text-2xl font-semibold text-center mb-2">JOIN MY TICKETSELLER PARTY COMMUNITY</h2>
-                    <p className="text-gray-600 mb-4">Sign up for our newsletter to get exclusive event access, discounts and updates.</p>
-                    <form onSubmit={handleSubmit} className="flex flex-wrap">
-                        <div className="flex-grow flex items-center border border-gray-300 rounded-l-lg bg-white">
-                            <svg className="w-5 h-5 text-gray-500 ml-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                            </svg>
-                            <input
-                                type="email"
-                                placeholder="Enter Email Address"
-                                className="flex-grow p-2 focus:outline-none"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="bg-orange-500 flex  w-full md:w-auto text-white px-6 py-2 rounded-lg md:rounded-none mt-3 md:mt-0 text-center flex-col items-center  md:rounded-r-lg hover:bg-orange-600 transition duration-300"
-                        >
-                            Subscribe
-                        </button>
-                    </form>
-                </div>
-            </div>
+					<div className="flex flex-col gap-[76px] text-center md:text-left lg:flex-row lg:gap-[40px] xl:gap-[76px]">
+						<div className="flex flex-col items-center md:items-start">
+							<h3 className="mb-2 text-xl font-medium sm:text-2xl sm:mb-3">
+								About Us
+							</h3>
+							<p className="text-base max-w-[279px] sm:text-lg sm:max-w-[340px]">
+								Whether you are looking for the hottest
+								nightlife events, exclusive parties, or intimate
+								gatherings, My TicketSeller has&nbsp;got you
+								covered.
+							</p>
+						</div>
+						<div className="flex flex-col items-center md:items-start">
+							<h3 className="mb-2 text-xl font-medium xl:text-2xl sm:text-2xl sm:mb-3">
+								Our Services
+							</h3>
+							<ul className="text-base max-w-[279px] sm:text-lg md:max-w-none">
+								<li>
+									<Link
+										to="/"
+										className="transition-all ease-in-out hover:text-primary"
+									>
+										Ticketing Solutions
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="/"
+										className="transition-all ease-in-out hover:text-primary"
+									>
+										Blog
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="/"
+										className="transition-all ease-in-out hover:text-primary"
+									>
+										Pricing Plans
+									</Link>
+								</li>
+							</ul>
+						</div>
+						<div className="flex flex-col items-center md:items-start">
+							<h3 className="mb-2 text-xl font-medium xl:text-2xl sm:text-2xl sm:mb-3">
+								Terms
+							</h3>
+							<ul className="text-base max-w-[279px] sm:text-lg  md:max-w-none">
+								<li>
+									<Link
+										to="/"
+										className="transition-all ease-in-out hover:text-primary"
+									>
+										Terms and Conditions
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="/"
+										className="transition-all ease-in-out hover:text-primary"
+									>
+										Privacy Policy
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="/"
+										className="transition-all ease-in-out hover:text-primary"
+									>
+										Refund Policy
+									</Link>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 
-            <div className="bg-[#040171] text-white p-6 pt-[15rem] md:pt-[8rem] rounded-t-lg">
-                <div className="flex flex-wrap justify-between mb-8">
-                    <div className="w-full md:w-1/4 mb-6 md:mb-0">
-                        <h3 className="text-2xl font-bold mb-4">
-                            <img src={logoDark} className='w-[6rem]' />
+				<div className="h-[1px] w-full bg-white lg:hidden"></div>
 
-                        </h3>
-
-                    </div>
-                    <div className="w-full md:w-1/4 mb-6 md:mb-0 px-5">
-                        <p className="text-sm">
-                            Whether you are looking for the hottest nightlife events, exclusive parties, or unique gatherings, My TicketSeller has got you covered!
-                        </p>
-                    </div>
-                    <div className="w-full md:w-1/4 mb-6 md:mb-0">
-                        <h4 className="font-bold mb-2">Our Services</h4>
-                        <ul className="text-sm space-y-1">
-                            <li><Link to={'/login'}>Ticketing Solutions</Link></li>
-                            <li><Link to={'/about'}>About</Link></li>
-                            <li><Link to={'/pricing'}>Pricing Plans</Link></li>
-                         </ul>
-                    </div>
-                    <div className="w-full md:w-1/4">
-                        <h4 className="font-bold mb-2">Terms</h4>
-                        <ul className="text-sm space-y-1">
-                             <li><Link to={'/terms'}>Terms and Conditions</Link></li>
-                             <li><Link to={'/privacy'}>Privacy Policy</Link></li>
- 
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="flex flex-col md:flex-row justify-between items-center border-t border-blue-800 pt-4">
-                    <p className="text-sm mb-4 md:mb-0 text-center">© 2024, My TicketSeller</p>
-                    <div className="flex space-x-4 justify-between">
-                        <Facebook size={20} />
-                        <Twitter size={20} />
-                        <Instagram size={20} />
-                        <Youtube size={20} />
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
-};
-
-export default Footer;
+				{/* socials and copyright */}
+				<div>
+					<div className="pt-12 pb-[37px] px-5 mx-auto flex flex-col gap-12 items-center md:flex-row-reverse md:justify-between md:px-8 xl:px-10 lg:pb-[58px]">
+						<div className="flex items-center justify-center gap-5">
+							<Link
+								to={"/"}
+								className="p-[9px] rounded-full bg-white/20 block w-fit hover:bg-white/30 transition-all ease-in-out"
+							>
+								<img
+									src={facebook}
+									alt="facebook"
+									width={25}
+									height={25}
+								/>
+							</Link>
+							<Link
+								to={"/"}
+								className="p-[9px] rounded-full bg-white/20 block w-fit hover:bg-white/30 transition-all ease-in-out"
+							>
+								<img
+									src={twitter}
+									alt="twitter"
+									width={25}
+									height={25}
+								/>
+							</Link>
+							<Link
+								to={"/"}
+								className="p-[9px] rounded-full bg-white/20 block w-fit hover:bg-white/30 transition-all ease-in-out"
+							>
+								<img
+									src={instagram}
+									alt="instagram"
+									width={25}
+									height={25}
+								/>
+							</Link>
+							<Link
+								to={"/"}
+								className="p-[9px] rounded-full bg-white/20 block w-fit hover:bg-white/30 transition-all ease-in-out"
+							>
+								<img
+									src={youtube}
+									alt="youtube"
+									width={25}
+									height={25}
+								/>
+							</Link>
+						</div>
+						<div className="text-center max-w-[240px] md:max-w-full lg:text-lg xl:text-xl">
+							© 2024 My TicketSeller. Powered by{" "}
+							<Link to={"/"} className="underline">
+								The Ecommerce Boss.
+							</Link>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	);
+}
