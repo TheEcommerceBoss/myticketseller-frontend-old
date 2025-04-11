@@ -1,5 +1,5 @@
+/* eslint-disable react/prop-types */
 import { Collapse, List, ListItem, ListItemText } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import {
 	Barcode,
 	ChartPie,
@@ -17,7 +17,7 @@ import {
 	Ticket,
 	User,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import logoDark from "../../assets/(site_assets)/logo-dark.png";
 import logo from "../../assets/(site_assets)/logo.png";
@@ -34,7 +34,6 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 	const [scanningExpanded, setScanningExpanded] = useState(false);
 	const [graphicalExpanded, setGraphicalExpanded] = useState(false);
 	const [manualExpanded, setManualExpanded] = useState(false);
-	const [customerExpanded, setCustomerExpanded] = useState(false);
 	const [paymentExpanded, setPaymentExpanded] = useState(false);
 	const [referralExpanded, setReferralExpanded] = useState(false);
 	const [guestListExpanded, setGuestListExpanded] = useState(false);
