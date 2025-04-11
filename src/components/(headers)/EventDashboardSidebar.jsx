@@ -12,12 +12,13 @@ import {
 	Wallet,
 } from "lucide-react";
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import logoDark from "../../assets/(site_assets)/logo-dark.png";
 import logo from "../../assets/(site_assets)/logo.png";
 import { useTheme } from "../../context/ThemeContext";
 
 const SideBar = ({ isOpen, toggleSidebar }) => {
+	const { id } = useParams();
 	const { theme } = useTheme();
 	const location = useLocation();
 
@@ -107,9 +108,9 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 				<nav className="mt-5">
 					<NavItem
 						icon={<Home size={24} />}
-						link="/dashboard"
+						link={`/dashboard/event/${id}`}
 						text="Dashboard"
-						active={location.pathname === "/dashboard"}
+						active={location.pathname === `/dashboard/event/${id}`}
 					/>
 					<NavItem
 						icon={<SquarePen size={24} />}

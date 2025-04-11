@@ -34,179 +34,207 @@ import WalletPage from "./pages/(dashboard)/wallet";
 import Terms from "./pages/(landing)/Terms";
 import Privacy from "./pages/(landing)/Privacy";
 import CancelledPayments from "./pages/(payments)/cancelledPayment";
+import AffiliatesPage from "./pages/(dashboard)/AffiliatesPage";
+import EventDashboard from "./pages/(dashboard)/EventDashboard";
 
 function App() {
-  return (
-    <ThemeProvider>
-      <Router>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/event/find" element={<FindEvent />} />
-            <Route path="/event/search/:search" element={<SearchEvent />} />
-            <Route
-              path="/event/view/:id"
-              element={
-                <GoogleMapsProvider>
-                  <ViewEvent />
-                </GoogleMapsProvider>
-              }
-            />
-            <Route path="/category/:id" element={<FindEvent />} />
+	return (
+		<ThemeProvider>
+			<Router>
+				<AuthProvider>
+					<Routes>
+						<Route path="/" element={<LandingPage />} />
+						<Route path="/event/find" element={<FindEvent />} />
+						<Route
+							path="/event/search/:search"
+							element={<SearchEvent />}
+						/>
+						<Route
+							path="/event/view/:id"
+							element={
+								<GoogleMapsProvider>
+									<ViewEvent />
+								</GoogleMapsProvider>
+							}
+						/>
+						<Route path="/category/:id" element={<FindEvent />} />
 
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/wallet"
-              element={
-                <ProtectedRoute>
-                  <WalletPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/create"
-              element={
-                <ProtectedRoute>
-                  <CreateEvent />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/manage"
-              element={
-                <ProtectedRoute>
-                  <ManageEvent />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/create/:id"
-              element={
-                <ProtectedRoute>
-                  <CreateEvent manage={true} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/manage/:id"
-              element={
-                <ProtectedRoute>
-                  <CreateEvent manage={true} />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/create/:id/payments"
-              element={
-                <ProtectedRoute>
-                  <PaymentSettings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/create/:id/info"
-              element={
-                <ProtectedRoute>
-                  <EventsInfo />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/create/:id/completed"
-              element={
-                <ProtectedRoute>
-                  <CompletedCreation />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/support"
-              element={
-                <ProtectedRoute>
-                  <SupportPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/ticket/scanner"
-              element={
-                <ProtectedRoute>
-                  <ScannerPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/ticket/all"
-              element={
-                <ProtectedRoute>
-                  <MyTicketsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/scan"
-              element={
-                <ProtectedRoute>
-                  <ScanManager />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/event/scan/:id"
-              element={
-                <ProtectedRoute>
-                  <ModifyScanner />
-                </ProtectedRoute>
-              }
-            />
-            {/* <Route path="/dashboard/event/poster" element={<ProtectedRoute><BannerPage /></ProtectedRoute>} /> */}
-            {/* <Route path="/dashboard/event/poster/:id" element={<ProtectedRoute><CreateBannerPage /></ProtectedRoute>} /> */}
-            <Route path="/validatePayment/" element={<ValidatePayment />} />
-            <Route path="/canceledPayment" element={<CancelledPayments />} />
+						<Route
+							path="/dashboard"
+							element={
+								<ProtectedRoute>
+									<Dashboard />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/wallet"
+							element={
+								<ProtectedRoute>
+									<WalletPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/create"
+							element={
+								<ProtectedRoute>
+									<CreateEvent />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/manage"
+							element={
+								<ProtectedRoute>
+									<ManageEvent />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/create/:id"
+							element={
+								<ProtectedRoute>
+									<CreateEvent manage={true} />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/manage/:id"
+							element={
+								<ProtectedRoute>
+									<CreateEvent manage={true} />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/create/:id/payments"
+							element={
+								<ProtectedRoute>
+									<PaymentSettings />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/create/:id/info"
+							element={
+								<ProtectedRoute>
+									<EventsInfo />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/create/:id/completed"
+							element={
+								<ProtectedRoute>
+									<CompletedCreation />
+								</ProtectedRoute>
+							}
+						/>
 
-            <Route
-              path="/login"
-              element={
-                <UnProtectedRoute>
-                  <LoginPage />
-                </UnProtectedRoute>
-              }
-            />
-            <Route path="/logout" element={<LogoutPage />} />
-            <Route path="/about" element={<AboutUs />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route
-              path="/register"
-              element={
-                <UnProtectedRoute>
-                  <SignupPage />
-                </UnProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </Router>
-    </ThemeProvider>
-  );
+						<Route
+							path="/dashboard/event/:id"
+							element={
+								<ProtectedRoute>
+									<EventDashboard />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/settings"
+							element={
+								<ProtectedRoute>
+									<Settings />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/support"
+							element={
+								<ProtectedRoute>
+									<SupportPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/ticket/scanner"
+							element={
+								<ProtectedRoute>
+									<ScannerPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/ticket/all"
+							element={
+								<ProtectedRoute>
+									<MyTicketsPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/scan"
+							element={
+								<ProtectedRoute>
+									<ScanManager />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/event/scan/:id"
+							element={
+								<ProtectedRoute>
+									<ModifyScanner />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/affiliates"
+							element={
+								<ProtectedRoute>
+									<AffiliatesPage />
+								</ProtectedRoute>
+							}
+						/>
+						{/* <Route path="/dashboard/event/poster" element={<ProtectedRoute><BannerPage /></ProtectedRoute>} /> */}
+						{/* <Route path="/dashboard/event/poster/:id" element={<ProtectedRoute><CreateBannerPage /></ProtectedRoute>} /> */}
+						<Route
+							path="/validatePayment/"
+							element={<ValidatePayment />}
+						/>
+						<Route
+							path="/canceledPayment"
+							element={<CancelledPayments />}
+						/>
+
+						<Route
+							path="/login"
+							element={
+								<UnProtectedRoute>
+									<LoginPage />
+								</UnProtectedRoute>
+							}
+						/>
+						<Route path="/logout" element={<LogoutPage />} />
+						<Route path="/about" element={<AboutUs />} />
+						<Route path="/contact" element={<ContactPage />} />
+						<Route path="/pricing" element={<PricingPage />} />
+						<Route path="/terms" element={<Terms />} />
+						<Route path="/privacy" element={<Privacy />} />
+						<Route
+							path="/register"
+							element={
+								<UnProtectedRoute>
+									<SignupPage />
+								</UnProtectedRoute>
+							}
+						/>
+						<Route path="*" element={<NotFound />} />
+					</Routes>
+				</AuthProvider>
+			</Router>
+		</ThemeProvider>
+	);
 }
 
 export default App;
