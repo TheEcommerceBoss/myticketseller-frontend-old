@@ -4,7 +4,7 @@ import { useTheme } from "../../context/ThemeContext";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { usersApi } from "../../api";
+import { usersApi } from "../../shared/services/api";
 const AccountSetupModal = ({ isOpen, onClose, onAccountSetupSuccess }) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");

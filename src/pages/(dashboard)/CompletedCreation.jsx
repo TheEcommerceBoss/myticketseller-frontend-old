@@ -37,7 +37,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import api, { eventsApi } from "../../api";
+import api, { eventsApi } from "../../shared/services/api";
 import axios from "axios";
 
 const CompletedCreation = () => {

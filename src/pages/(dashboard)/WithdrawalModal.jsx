@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import { usersApi } from "../../api";
+import { usersApi } from "../../shared/services/api";
 
 const WithdrawalModal = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState("");
