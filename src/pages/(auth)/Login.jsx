@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import HeaderMain from "../../components/(headers)/HeaderMain";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
-import { authApi } from "../../api.ts";
+// import { authApi } from "../../shared/services/api.ts";
 
 function LoginPage() {
   const { theme } = useTheme();

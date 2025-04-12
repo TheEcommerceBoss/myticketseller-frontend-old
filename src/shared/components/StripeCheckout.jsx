@@ -1,59 +1,63 @@
-// components/CheckoutForm.js
-import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-
-export function CheckoutForm({ clientSecret }) {
-	const stripe = useStripe();
-	const elements = useElements();
-
-	console.log(stripe, clientSecret);
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		if (!stripe || !elements) return;
-
-		const result = await stripe.confirmCardPayment(clientSecret, {
-			payment_method: {
-				card: elements.getElement(CardElement),
-				billing_details: { name: "John Doe" },
-			},
-		});
-		console.log(result);
-
-		if (result.error) {
-			console.error(result.error.message);
-		} else if (result.paymentIntent.status === "succeeded") {
-			const res = await paymentsApi.verify(
-				result.paymentIntent.id,
-				"stripe"
-			);
-			console.log(res);
-		}
-	};
-
-	return (
-		<form onSubmit={handleSubmit}>
-			<CardElement />
-			<button
-				type="submit"
-				disabled={!stripe || !clientSecret}
-				className="px-4 py-2 text-white bg-orange-500 rounded"
-			>
-				Pay
-			</button>
-		</form>
-	);
-}
-
-import { Elements } from "@stripe/react-stripe-js";
+import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { paymentsApi } from "../../api";
+import { paymentsApi } from "../services/api";
+import { STRIPE_PUBLISHABLE_KEY } from "../config/env";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+// Initialize Stripe with your publishable key
+const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
-export default function StripeModal({ clientSecret }) {
-	return (
-		<Elements stripe={stripePromise}>
-			<CheckoutForm clientSecret={clientSecret} />
-		</Elements>
-	);
-}
+const CheckoutForm = ({ ticketDetails }) => {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    setLoading(true);
+
+    try {
+      localStorage.setItem("ticketDetails", JSON.stringify(ticketDetails));
+      // Step 1: Create a Checkout Session on the backend
+      const response = await paymentsApi.createCheckoutSession({
+        ticket_details: {
+          ...ticketDetails,
+          success_url: `${window.location.origin}/payment-success`,
+          cancel_url: `${window.location.origin}/payment-cancel`,
+        },
+      });
+      const { data } = response;
+
+      if (!data.url) {
+        setError("Failed to create checkout session.");
+        setLoading(false);
+        return;
+      }
+
+      // Step 2: Redirect to the Checkout Session URL
+      const stripe = await stripePromise;
+      console.log("my data", data);
+      console.log(stripe);
+      const { error: redirectError } = await stripe.redirectToCheckout({
+        sessionId: data.session_id,
+      });
+
+      if (redirectError) {
+        setError(redirectError.message);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("Error during checkout:", err);
+      setError("An error occurred. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      {error && <div style={{ color: "red" }}>{error}</div>}
+      <button onClick={handleCheckout} disabled={loading}>
+        {loading ? "Processing..." : "Pay with Stripe"}
+      </button>
+    </div>
+  );
+};
+
+export default CheckoutForm;

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api.ts";
+import { authApi } from "../shared/services/api.ts";
 
 const AuthContext = createContext();
 

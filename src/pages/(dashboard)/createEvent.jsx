@@ -20,15 +20,11 @@ import {
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
-import user from "../../assets/(user)/user.png";
-import eventImage from "../../assets/(landing)/event.png";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
-import Cookies from "js-cookie";
+
 import Swal from "sweetalert2";
-import api from "../../api";
-import axios from "axios";
-import { categoriesApi, eventsApi } from "../../api.ts";
+import { categoriesApi, eventsApi } from "../../shared/services/api.ts";
 
 const CreateEvent = ({ manage }) => {
   let { id } = useParams();
