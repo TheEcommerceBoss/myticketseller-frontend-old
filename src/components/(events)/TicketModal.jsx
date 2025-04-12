@@ -1,23 +1,15 @@
-import React, { useEffect, useState } from "react";
-import {
-	X,
-	ArrowLeft,
-	Check,
-	Instagram,
-	Facebook,
-	Twitter,
-	CheckCircle,
-} from "lucide-react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import api, { paymentsApi } from "../../api";
-import Swal from "sweetalert2";
 import Cookies from "js-cookie";
+import { ArrowLeft, Check, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { default as api, default as newApi, paymentsApi } from "../../api";
 import { useTheme } from "../../context/ThemeContext";
 import { formatDate } from "../../lib/formatDate";
-import newApi from "../../api";
-import StripeModal from "../../shared/components/StripeCheckout";
 import PaystackModal from "../../shared/components/PaystackModel";
+import StripeModal from "../../shared/components/StripeCheckout";
+import FlutterwaveCheckout from "../../shared/components/FlutterwaveCheckout";
 
 const TicketModal = ({
 	isOpen,
@@ -32,33 +24,33 @@ const TicketModal = ({
 	const { theme, toggleTheme } = useTheme();
 
 	const [tickets, settickets] = useState([]);
-	const [showPaystack, setshowPaystack] = useState(false);
+	const [showFlutter, setShowFlutterwave] = useState(false);
 	const [showPaystackLink, setshowPaystackLink] = useState("");
 
 	const [location, setLocation] = useState(null);
 	const [conversionRate, setConversionRate] = useState(1);
 	const supportedCurrencies = {
-		GBP: { name: "British Pound Sterling", countryCode: "GB" },
+		// GBP: { name: "British Pound Sterling", countryCode: "GB" },
 		CAD: { name: "Canadian Dollar", countryCode: "CA" },
 		NGN: { name: "Nigerian Naira", countryCode: "NG" },
 		USD: { name: "United States Dollar", countryCode: "US" },
-		ZAR: { name: "South African Rand", countryCode: "ZA" },
-		XAF: { name: "Central African CFA Franc", countryCode: "CF" },
-		CLP: { name: "Chilean Peso", countryCode: "CL" },
-		COP: { name: "Colombian Peso", countryCode: "CO" },
-		EGP: { name: "Egyptian Pound", countryCode: "EG" },
-		EUR: { name: "SEPA", countryCode: "EU" },
-		GHS: { name: "Ghanaian Cedi", countryCode: "GH" },
-		GNF: { name: "Guinean Franc", countryCode: "GN" },
-		KES: { name: "Kenyan Shilling", countryCode: "KE" },
-		MWK: { name: "Malawian Kwacha", countryCode: "MW" },
-		MAD: { name: "Moroccan Dirham", countryCode: "MA" },
-		RWF: { name: "Rwandan Franc", countryCode: "RW" },
-		SLL: { name: "Sierra Leonean Leone", countryCode: "SL" },
-		TZS: { name: "Tanzanian Shilling", countryCode: "TZ" },
-		UGX: { name: "Ugandan Shilling", countryCode: "UG" },
-		XOF: { name: "West African CFA Franc BCEAO", countryCode: "WA" },
-		ZMW: { name: "Zambian Kwacha", countryCode: "ZM" },
+		// ZAR: { name: "South African Rand", countryCode: "ZA" },
+		// XAF: { name: "Central African CFA Franc", countryCode: "CF" },
+		// CLP: { name: "Chilean Peso", countryCode: "CL" },
+		// COP: { name: "Colombian Peso", countryCode: "CO" },
+		// EGP: { name: "Egyptian Pound", countryCode: "EG" },
+		// EUR: { name: "SEPA", countryCode: "EU" },
+		// GHS: { name: "Ghanaian Cedi", countryCode: "GH" },
+		// GNF: { name: "Guinean Franc", countryCode: "GN" },
+		// KES: { name: "Kenyan Shilling", countryCode: "KE" },
+		// MWK: { name: "Malawian Kwacha", countryCode: "MW" },
+		// MAD: { name: "Moroccan Dirham", countryCode: "MA" },
+		// RWF: { name: "Rwandan Franc", countryCode: "RW" },
+		// SLL: { name: "Sierra Leonean Leone", countryCode: "SL" },
+		// TZS: { name: "Tanzanian Shilling", countryCode: "TZ" },
+		// UGX: { name: "Ugandan Shilling", countryCode: "UG" },
+		// XOF: { name: "West African CFA Franc BCEAO", countryCode: "WA" },
+		// ZMW: { name: "Zambian Kwacha", countryCode: "ZM" },
 	};
 
 	useEffect(() => {
@@ -282,40 +274,40 @@ const TicketModal = ({
 
 	const handleCheckoutV2 = async () => {
 		setIsLoading(true);
+		setShowFlutterwave(true);
 		try {
-			const data = {
-				tickets: Object.entries(ticketCounts).map(
-					([ticket_id, quantity]) => ({
-						ticket_id: parseInt(ticket_id),
-						quantity,
-					})
-				),
-				attendee_info: {
-					full_name: formData.name,
-					email: formData.email,
-					phone_number: formData.phone,
-				},
-				paymentMethod,
-				marketingConsent,
-				currencyCode: location.currencyCode,
-				conversionRate: conversionRate,
-			};
-			console.log(data);
-			const response = await paymentsApi.intiate(data);
-			console.log(response);
-			setIsConfirmed(true);
-
-			if (response.payment_url) {
-				if (paymentMethod == "card") {
-					setShowStripe(true);
-					setClientSecret(response.payment_url);
-				} else {
-					setshowPaystack(true);
-					setshowPaystackLink(response.payment_url);
-				}
-			} else {
-				Swal.fire("Error", "Unable to initiate payment", "error");
-			}
+			// const data = {
+			// 	tickets: Object.entries(ticketCounts).map(
+			// 		([ticket_id, quantity]) => ({
+			// 			ticket_id: parseInt(ticket_id),
+			// 			quantity,
+			// 		})
+			// 	),
+			// 	attendee_info: {
+			// 		full_name: formData.name,
+			// 		email: formData.email,
+			// 		phone_number: formData.phone,
+			// 	},
+			// 	paymentMethod,
+			// 	marketingConsent,
+			// 	currencyCode: location.currencyCode,
+			// 	conversionRate: conversionRate,
+			// };
+			// console.log(data);
+			// const response = await paymentsApi.intiate(data);
+			// console.log(response);
+			// setIsConfirmed(true);
+			// if (response.payment_url) {
+			// 	if (paymentMethod == "card") {
+			// 		setShowStripe(true);
+			// 		setClientSecret(response.payment_url);
+			// 	} else {
+			// 		setShowFlutterwave(true);
+			// 		setshowPaystackLink(response.payment_url);
+			// 	}
+			// } else {
+			// 	Swal.fire("Error", "Unable to initiate payment", "error");
+			// }
 		} catch (error) {
 			console.error(error);
 			Swal.fire("Error", error.response?.data?.error || "Error", "error");
@@ -371,43 +363,21 @@ const TicketModal = ({
 				<input
 					type="radio"
 					name="payment"
-					value="transfer"
-					checked={paymentMethod === "transfer"}
+					value="flutterwave"
+					checked={paymentMethod === "flutterwave"}
 					onChange={(e) => setPaymentMethod(e.target.value)}
 					className="absolute top-4 right-4"
 				/>
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
-						<span className="text-green-600">🏦</span>
+						<span className="text-green-600">🏦 </span>
 					</div>
 					<span
 						className={`font-medium  ${
 							theme === "dark" ? "text-[#fff]" : "text-[#000]"
 						} `}
 					>
-						Bank Transfer
-					</span>
-				</div>
-			</label>
-			<label className="relative p-4 text-black border rounded-lg cursor-pointer hover:bg-gray-500/10">
-				<input
-					type="radio"
-					name="payment"
-					value="ussd"
-					checked={paymentMethod === "ussd"}
-					onChange={(e) => setPaymentMethod(e.target.value)}
-					className="absolute top-4 right-4"
-				/>
-				<div className="flex flex-col gap-2">
-					<div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
-						<span className="text-purple-600">📱</span>
-					</div>
-					<span
-						className={`font-medium  ${
-							theme === "dark" ? "text-[#fff]" : "text-[#000]"
-						} `}
-					>
-						USSD
+						Flutterwave
 					</span>
 				</div>
 			</label>
@@ -471,13 +441,10 @@ const TicketModal = ({
 					theme === "dark" ? "bg-[#121212]" : "bg-[#fff]"
 				}  `}
 			>
-				<div className={`${showPaystack ? "p-1" : "p-6"}`}>
-					{showPaystack ? (
+				<div className={`${showFlutter ? "p-1" : "p-6"}`}>
+					{showFlutter ? (
 						<div className="w-full max-w-[650px] min-w-[500px]">
-							<PaystackModal
-								paystack={showPaystackLink}
-								onClose={onClose}
-							/>
+							<FlutterwaveCheckout />
 						</div>
 					) : showStripe && clientSecret ? (
 						<div className="w-full max-w-[650px] min-w-[500px]">

@@ -1,8 +1,7 @@
-import { cn } from "@/lib/utils";
-import { IconProps } from "@/types";
-import React from "react";
+import { cn } from "../../lib/utils";
+import PropTypes from "prop-types";
 
-const SearchIcon = ({ className, fillColor }: IconProps) => {
+const SearchIcon = ({ className, fillColor }) => {
 	return (
 		<svg
 			width="22"
@@ -19,6 +18,10 @@ const SearchIcon = ({ className, fillColor }: IconProps) => {
 			/>
 		</svg>
 	);
+};
+SearchIcon.propTypes = {
+	className: PropTypes.string,
+	fillColor: PropTypes.string,
 };
 
 export default SearchIcon;
