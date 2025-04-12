@@ -1,3 +1,10 @@
+import eventImg1 from "../assets/(landing)/event_img1.jpg";
+import eventImg2 from "../assets/(landing)/event_img2.jpg";
+import eventImg3 from "../assets/(landing)/event_img3.jpg";
+import eventImg4 from "../assets/(landing)/event_img4.jpg";
+import eventImg5 from "../assets/(landing)/event_img5.jpg";
+import eventImg6 from "../assets/(landing)/event_img6.jpg";
+
 export const sidebarData = {
 	salesSummary: [
 		{
@@ -157,5 +164,77 @@ export const howItWorksSteps = [
 		id: 4,
 		title: "Enjoy:",
 		description: "Show up and have the time of your life!",
+	},
+];
+
+export const tabs = [
+	{
+		id: "all",
+		label: "All",
+	},
+	{
+		id: "concerts",
+		label: "Concerts & Music Festivals",
+	},
+	{
+		id: "networking",
+		label: "Networking",
+	},
+	{
+		id: "family-kids",
+		label: "Family and Kids Events",
+	},
+	{
+		id: "fuji-parties",
+		label: "Fuji & Parties",
+	},
+	{
+		id: "comedy-shows",
+		label: "Comedy Shows",
+	},
+];
+
+export const featuredEvents = [
+	{
+		image: eventImg1,
+		title: "Nicki Minaj Live at Los Angeles",
+		date: "Wed, Oct 31, 6:30 PM",
+		location: "Los Angeles, USA",
+		category: "Concerts",
+	},
+	{
+		image: eventImg2,
+		title: "Nicki Minaj Live at Los Angeles",
+		date: "Mon, Oct 31, 6:30 PM",
+		location: "Los Angeles, USA",
+		category: "Birthday Parties",
+	},
+	{
+		image: eventImg3,
+		title: "Nicki Minaj Live at Los Angeles",
+		date: "Mon, Oct 31, 6:30 PM",
+		location: "Los Angeles, USA",
+		category: "Conferences",
+	},
+	{
+		image: eventImg4,
+		title: "Nicki Minaj Live at Los Angeles",
+		date: "Wed, Oct 31, 6:30 PM",
+		location: "Los Angeles, USA",
+		category: "Concerts",
+	},
+	{
+		image: eventImg5,
+		title: "Nicki Minaj Live at Los Angeles",
+		date: "Mon, Oct 31, 6:30 PM",
+		location: "Los Angeles, USA",
+		category: "Festivals",
+	},
+	{
+		image: eventImg6,
+		title: "Nicki Minaj Live at Los Angeles",
+		date: "Mon, Oct 31, 6:30 PM",
+		location: "Los Angeles, USA",
+		category: "Sports",
 	},
 ];

@@ -1,7 +1,6 @@
-import { IconProps } from "@/types";
-import React from "react";
+import PropTypes from "prop-types";
 
-export default function LocationIcon({ className, fillColor }: IconProps) {
+export default function LocationIcon({ className, fillColor }) {
 	return (
 		<svg
 			width="16"
@@ -19,3 +18,8 @@ export default function LocationIcon({ className, fillColor }: IconProps) {
 		</svg>
 	);
 }
+
+LocationIcon.propTypes = {
+	className: PropTypes.string,
+	fillColor: PropTypes.string,
+};

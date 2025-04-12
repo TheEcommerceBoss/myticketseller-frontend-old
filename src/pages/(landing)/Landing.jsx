@@ -1,6 +1,7 @@
 import Banner from "../../assets/(landing)/banner.png";
 import Banner2 from "../../assets/(landing)/banner2.png";
 import Clown from "../../assets/(landing)/clown.png";
+import FeaturedEvents2 from "../../components/(events)/FeaturedEvents2";
 import FeaturedEvents from "../../components/(events)/FeaturedEvents";
 import Footer from "../../components/(footers)/Footer";
 // import Footer from "../../components/(footers)/Footer2";
@@ -113,6 +114,7 @@ function LandingPage() {
 					</div>
 				</div>
 			</div>
+			<FeaturedEvents2 />
 			<FeaturedEvents />
 			<WhyTicketSeller />
 			<HowItWorks />

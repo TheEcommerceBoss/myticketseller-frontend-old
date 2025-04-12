@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
-import { IconProps } from "@/types";
-import React from "react";
+import PropTypes from "prop-types";
 
-export const Facebook = ({ className, fillColor }: IconProps) => {
+export const Facebook = ({ className, fillColor }) => {
 	return (
 		<svg
 			width="25"
@@ -21,7 +20,7 @@ export const Facebook = ({ className, fillColor }: IconProps) => {
 	);
 };
 
-export const Twitter = ({ className, fillColor }: IconProps) => {
+export const Twitter = ({ className, fillColor }) => {
 	return (
 		<svg
 			width="25"
@@ -47,7 +46,7 @@ export const Twitter = ({ className, fillColor }: IconProps) => {
 	);
 };
 
-export const Instagram = ({ className, fillColor }: IconProps) => {
+export const Instagram = ({ className, fillColor }) => {
 	return (
 		<svg
 			width="25"
@@ -73,7 +72,7 @@ export const Instagram = ({ className, fillColor }: IconProps) => {
 	);
 };
 
-export const YouTube = ({ className, fillColor }: IconProps) => {
+export const YouTube = ({ className, fillColor }) => {
 	return (
 		<svg
 			width="25"
@@ -95,4 +94,24 @@ export const YouTube = ({ className, fillColor }: IconProps) => {
 			/>
 		</svg>
 	);
+};
+
+Facebook.propTypes = {
+	className: PropTypes.string,
+	fillColor: PropTypes.string,
+};
+
+Twitter.propTypes = {
+	className: PropTypes.string,
+	fillColor: PropTypes.string,
+};
+
+Instagram.propTypes = {
+	className: PropTypes.string,
+	fillColor: PropTypes.string,
+};
+
+YouTube.propTypes = {
+	className: PropTypes.string,
+	fillColor: PropTypes.string,
 };
