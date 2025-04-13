@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { paymentsApi } from "../services/api";
+import Swal from "sweetalert2";
 
-export default function FlutterwaveCheckout({ ticketDetails }) {
+export default function FlutterwaveCheckout({
+  ticketDetails,
+  setShowFlutterWave = true,
+}) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const config = {
     public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
+
     tx_ref: `tx_${Date.now()}`,
     amount: ticketDetails.total_amount,
     currency: ticketDetails.currencyCode,
@@ -24,40 +29,52 @@ export default function FlutterwaveCheckout({ ticketDetails }) {
   };
 
   async function handleFlutterwavePayment(response) {
-    if (response.status === "successful") {
+    if (response.status === "completed" || response.status === "successful") {
+      setLoading(true);
+
       const paymentResult = await paymentsApi.processPayment({
         payment_id: response.transaction_id,
         payment_method: "flutterwave",
         ticket_details: ticketDetails,
       });
 
-      console.log("my result", paymentResult);
       if (paymentResult.status === "success") {
-        alert("Payment successful! Check your email for the ticket.");
+        Swal.fire({
+          title: "Ticket sold successfully",
+          message: "Payment successful! Check your email for the ticket.",
+          color: "green",
+          timer: 5000,
+        });
+        setShowFlutterWave(false);
+        window.location.href = `/event/view/${ticketDetails.event_id}`;
       } else {
         setError(paymentResult.message);
+        console.log("some err");
       }
     } else {
       setError("Payment failed. Please try again.");
+      setError("An error");
     }
     setLoading(false);
     closePaymentModal();
   }
 
-  console.log(ticketDetails);
-
   return (
-    <div>
+    <div className="p-4">
       {error && <div className="text-red-500">{error}</div>}
-      <h1>Payment for Event</h1>
+      <h1>Payment for Event Tickets</h1>
       <small>Handle payment for event</small>
-      <FlutterWaveButton
-        {...config}
-        text={loading ? "Processing..." : "Pay Now"}
-        callback={handleFlutterwavePayment}
-        onClose={() => setLoading(false)}
-        disabled={loading}
-      />
+      <p>Total: {ticketDetails.total_amount}</p>
+      <div>
+        <FlutterWaveButton
+          {...config}
+          text={loading ? "Processing..." : "Pay Now"}
+          callback={handleFlutterwavePayment}
+          onClose={() => setLoading(false)}
+          disabled={loading}
+          className="bg-primary text-white p-4 rounded-md"
+        />
+      </div>
     </div>
   );
 }

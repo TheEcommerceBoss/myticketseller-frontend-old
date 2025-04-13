@@ -30,7 +30,6 @@ const PaymentSuccess = () => {
 
       // Fetch the Checkout Session to get the PaymentIntent ID
       const sessionResult = await paymentsApi.getCheckoutSession(sessionId);
-      console.log(sessionResult);
 
       if (sessionResult.status !== "success") {
         setError(sessionResult.message);
@@ -52,10 +51,10 @@ const PaymentSuccess = () => {
       Swal.fire({
         title: "Payment Successful",
         text: result.message,
-        timer: 2000,
+        timer: 5000,
         color: "green",
       });
-      navigate("/");
+      navigate(`/event/view/${ticketDetails.event_id}`);
     };
 
     processPayment();
