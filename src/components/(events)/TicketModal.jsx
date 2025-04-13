@@ -201,21 +201,6 @@ const TicketModal = ({
         conversionRate: conversionRate,
       };
       setCheckoutDetails(data);
-      console.log(data);
-      // const response = await paymentsApi.intiate(data);
-      // console.log(response);
-      // setIsConfirmed(true);
-      // if (response.payment_url) {
-      // 	if (paymentMethod == "card") {
-      // 		setShowStripe(true);
-      // 		setClientSecret(response.payment_url);
-      // 	} else {
-      // 		setShowFlutterwave(true);
-      // 		setshowPaystackLink(response.payment_url);
-      // 	}
-      // } else {
-      // 	Swal.fire("Error", "Unable to initiate payment", "error");
-      // }
     } catch (error) {
       console.error(error);
       Swal.fire("Error", error.response?.data?.error || "Error", "error");
@@ -348,7 +333,10 @@ const TicketModal = ({
         <div className={`${showFlutter ? "p-1" : "p-6"}`}>
           {showFlutter ? (
             <div className="w-full max-w-[650px] min-w-[500px]">
-              <FlutterwaveCheckout ticketDetails={checkoutDetails} />
+              <FlutterwaveCheckout
+                ticketDetails={checkoutDetails}
+                setShowFlutterWave={setShowFlutterwave}
+              />
             </div>
           ) : showStripe ? (
             <div className="w-full max-w-[650px] min-w-[500px]">
