@@ -303,9 +303,9 @@ function SearchEventComponent({ variation }) {
                                                     />
                                                     <div className={`flex flex-col justify-between p-6 py-4 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
                                                         <div className="flex items-center">
-                                                            <span className="flex items-center w-2/5 gap-1 text-xs text-gray-500"><Calendar size={16} /> <span>{card.event_days[0].start_day}</span></span>
+                                                            <span className="flex items-center w-2/5 gap-1 text-xs text-gray-500"><Calendar size={16} /> <span>{card.event_days[0]?.start_day}</span></span>
                                                             <span className="w-1/5 text-center text-orange-500">|</span>
-                                                            <span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500"><MapPin size={16} /> <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address.split(", ").slice(-2).join(", ")}</span></span>
+                                                            <span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500"><MapPin size={16} /> <span>{card.event_days[0]?.event_type == 'virtual' ? 'Virtual' : card.event_days[0]?.event_address.split(", ").slice(-2).join(", ")}</span></span>
                                                         </div>
                                                         <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="my-2 text-xl font-semibold text-black">
                                                             {card.event_title.length > 50 ? `${card.event_title.substring(0, 50)}...` : card.event_title}
@@ -327,11 +327,11 @@ function SearchEventComponent({ variation }) {
                                                                     <div className="flex flex-col gap-3 py-1 mb-2 text-sm text-gray-500 rounded-full md:inline-flex md:flex-row md:gap-12 md:items-center md:text-xs md:border md:border-gray-300 md:px-2">
                                                                         <div className="flex items-center gap-1 font-semibold">
                                                                             <Calendar color="#040171" className="w-4 h-4 mr-1 md:w-3 md:h-3" />
-                                                                            <span>{card.event_days[0].start_day}</span>
+                                                                            <span>{card.event_days[0]?.event_day}</span>
                                                                         </div>
                                                                         <div className="flex items-center gap-1 font-bold">
                                                                             <Clock color="#040171" className="w-4 h-4 mr-1 md:w-3 md:h-3" />
-                                                                            <span>{card.event_days[0].open_door_time}</span>
+                                                                            <span>{card.event_days[0]?.open_door}</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -342,7 +342,7 @@ function SearchEventComponent({ variation }) {
 
                                                                 <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-gray-600">
                                                                     <MapPin color="#040171" className="w-4 h-4 mr-1 md:w-3 md:h-3" />
-                                                                    <span>{card.event_days[0].event_type == 'virtual' ? 'Virtual' : card.event_days[0].event_address}</span>
+                                                                    <span>{card.event_days[0]?.event_type == 'virtual' ? 'Virtual' : card.event_days[0]?.event_address}</span>
                                                                 </div>
                                                                 <div className="flex h-full mt-4 md:hidden ">
                                                                     <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} to={'/event/view/' + card.event_id} className="px-6 py-2 text-lg text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600">

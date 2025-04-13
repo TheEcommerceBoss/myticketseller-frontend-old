@@ -591,7 +591,7 @@ const TicketModal = ({
                       <p className="text-xs font-medium text-gray-600">
                         YOU ARE GOING TO
                       </p>
-                      {/* {console.log(ticketDetails.days[0].event_address)} */}
+
                       <h2
                         className={`text-2xl ${
                           theme == "dark" ? "text-white" : "text-[#040171]"
@@ -621,7 +621,7 @@ const TicketModal = ({
                           DATE
                         </h3>
                         <p className="text-gray-500">
-                          {formatDate(ticketDetails.days[0].event_day)}
+                          {formatDate(ticketDetails.days[0]?.event_day)}
                         </p>
                       </div>
                       <div>
@@ -633,7 +633,7 @@ const TicketModal = ({
                           LOCATION
                         </h3>
                         <p className="text-gray-500">
-                          {ticketDetails.days[0].event_address}
+                          {ticketDetails.days[0]?.event_address}
                         </p>
                       </div>
                     </div>
