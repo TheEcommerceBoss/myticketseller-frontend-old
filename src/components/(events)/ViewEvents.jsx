@@ -44,7 +44,7 @@ const Header = ({ theme, eventDetails, ticketDetails, id }) => {
             }`}
           >
             {ticketDetails.days[0] &&
-              formatDate(ticketDetails.days[0].event_day)}
+              formatDate(ticketDetails.days[0]?.event_day)}
           </p>
         </div>
         <div className="">

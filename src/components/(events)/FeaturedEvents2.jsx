@@ -455,9 +455,9 @@ function FeaturedEvents2({ variation, sortcategory }) {
                               <span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500">
                                 <MapPin size={16} />{" "}
                                 <span>
-                                  {card.days[0].event_type == "virtual"
+                                  {card.days[0]?.event_type == "virtual"
                                     ? "Virtual"
-                                    : card.days[0].event_address
+                                    : card.days[0]?.event_address
                                         .split(", ")
                                         .slice(-2)
                                         .join(", ")}
@@ -512,7 +512,7 @@ function FeaturedEvents2({ variation, sortcategory }) {
                                         } `}
                                         className="w-4 h-4 mr-1 md:w-3 md:h-3"
                                       />
-                                      <span>{card.days[0].event_day}</span>
+                                      <span>{card.days[0]?.event_day}</span>
                                     </div>
                                     <div className="flex items-center gap-1 font-bold">
                                       <Clock
@@ -521,7 +521,7 @@ function FeaturedEvents2({ variation, sortcategory }) {
                                         } `}
                                         className="w-4 h-4 mr-1 md:w-3 md:h-3"
                                       />
-                                      <span>{card.days[0].open_door}</span>
+                                      <span>{card.days[0]?.open_door}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -553,9 +553,9 @@ function FeaturedEvents2({ variation, sortcategory }) {
                                     className="w-4 h-4 mr-1 md:w-3 md:h-3"
                                   />
                                   <span>
-                                    {card.days[0].event_type == "virtual"
+                                    {card.days[0]?.event_type == "virtual"
                                       ? "Virtual"
-                                      : card.days[0].event_address}
+                                      : card.days[0]?.event_address}
                                   </span>
                                 </div>
                                 <div className="flex h-full mt-4 md:hidden ">
