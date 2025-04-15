@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Link } from "react-router-dom";
 import FeatureCard from "../ui/FeatureCard";
 import Button from "../ui/button";
@@ -35,13 +36,13 @@ export default function WhyTicketSeller() {
 					/>
 				</div>
 
-				<div className="flex justify-center mt-12 md:mt-[67px] lg:mt-[121px]">
+				{/* <div className="flex justify-center mt-12 md:mt-[67px] lg:mt-[121px]">
 					<Link to={"/"} className="block">
 						<Button className="flex font-semibold rounded-full h-12 e w-[223px] gap-[10px] text-lg lg:h-14 bg-primary">
 							View Our Services
 						</Button>
 					</Link>
-				</div>
+				</div> */}
 			</div>
 		</section>
 	);
