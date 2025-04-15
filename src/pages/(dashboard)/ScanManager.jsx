@@ -1,13 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { useState, useEffect } from "react";
+// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import {
-  Home,
   PlusCircle,
-  ListChecks,
-  Ticket,
-  Megaphone,
-  Settings,
-  HelpCircle,
   Menu,
   ChevronLeft,
   ChevronRight,
@@ -15,23 +9,18 @@ import {
   Moon,
   Sun,
   CalendarCogIcon,
-  BellDot,
-  Bell,
   X,
-} from 'lucide-react';
+} from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import SideBar from '../../components/(headers)/DashboardSidebar';
-import user from "../../assets/(user)/user.png"
-import eventImage from "../../assets/(landing)/event.png"
-import { Link } from 'react-router-dom';
-import DashboardHeader from '../../components/(events)/DashboardHeader';
-import Greetings from '../../components/(snippets)/Greetings';
-import { useAuth } from '../../context/AuthContext';
-import Cookies from "js-cookie";
-import api from "../../api";
+import SideBar from "../../components/(headers)/DashboardSidebar";
+import { Link } from "react-router-dom";
+import DashboardHeader from "../../components/(events)/DashboardHeader";
+import Greetings from "../../components/(snippets)/Greetings";
+import { useAuth } from "../../context/AuthContext";
+import { dashboardApi, eventsApi } from "../../shared/services/api";
 
 const ScanManager = () => {
-  const [selectedTimeRange, setSelectedTimeRange] = useState('Today');
+  // const [selectedTimeRange, setSelectedTimeRange] = useState("Today");
   const { theme, toggleTheme } = useTheme();
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
@@ -50,10 +39,10 @@ const ScanManager = () => {
 
     handleResize();
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -62,9 +51,6 @@ const ScanManager = () => {
   };
 
   const { userData } = useAuth();
-  // console.log(userData&&userData.user)
-
-  // console.log(userData&& userData.user.balance)
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true); // Track loading state
@@ -74,13 +60,8 @@ const ScanManager = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const token = Cookies.get("auth_token");
-        const response = await api.get("/get_user_events", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setEvents(response.data.events);
+        const response = await eventsApi.getMyEvents();
+        setEvents(response.events);
       } catch (error) {
         console.error("Failed to fetch events:", error);
       } finally {
@@ -92,79 +73,109 @@ const ScanManager = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = Cookies.get("auth_token");
-
-        const response = await api.post("/get-dashboard-stats", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await dashboardApi.getStats();
 
         console.log(response.data);
-        setStats(response.data.event_days)
+        setStats(response.data.event_days);
 
         // Month names for formatting
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
 
         // Formatter function
-        const formatMonthYear = (month, year) => `${monthNames[month - 1]} '${year.toString().slice(-2)}`;
+        const formatMonthYear = (month, year) =>
+          `${monthNames[month - 1]} '${year.toString().slice(-2)}`;
 
         // Transform original data for events
-        const transformedEventData = response.data.event_creation_rate && response.data.event_creation_rate.map((entry) => ({
-          month: entry.month,
-          year: entry.year,
-          total_events: entry.total_events,
-        }));
+        const transformedEventData =
+          response.data.event_creation_rate &&
+          response.data.event_creation_rate.map((entry) => ({
+            month: entry.month,
+            year: entry.year,
+            total_events: entry.total_events,
+          }));
 
         // Transform original data for successful transactions
-        const transformedSuccessfulTransactions = response.data && response.data.successful_transactions.map((entry) => ({
-          month: entry.month,
-          year: entry.year,
-          total_scans: entry.total_scans,
-          total_tickets: entry.total_tickets,
-        }));
+        const transformedSuccessfulTransactions =
+          response.data &&
+          response.data.successful_transactions.map((entry) => ({
+            month: entry.month,
+            year: entry.year,
+            total_scans: entry.total_scans,
+            total_tickets: entry.total_tickets,
+          }));
 
         // Get the latest month and year from transformedEventData
-        const latestEntry = transformedEventData[transformedEventData.length - 1];
+        const latestEntry =
+          transformedEventData[transformedEventData.length - 1];
         const latestDate = new Date(latestEntry.year, latestEntry.month - 1); // Month is zero-indexed
 
         // Generate the last five months and one future month
         const requiredMonths = [];
         for (let i = -5; i <= 1; i++) {
-          const date = new Date(latestDate.getFullYear(), latestDate.getMonth() + i);
+          const date = new Date(
+            latestDate.getFullYear(),
+            latestDate.getMonth() + i
+          );
           requiredMonths.push({
             month: date.getMonth() + 1,
             year: date.getFullYear(),
             total_events: 0,
             total_scans: 0, // Default successful transactions value
             total_tickets: 0, // Default successful transactions value
-            label: formatMonthYear(date.getMonth() + 1, date.getFullYear()) // Add formatted label
+            label: formatMonthYear(date.getMonth() + 1, date.getFullYear()), // Add formatted label
           });
         }
 
         // Update requiredMonths with actual data from both transformed data arrays
-        const paddedData = requiredMonths && requiredMonths.map((required) => {
-          const eventData = transformedEventData.find(
-            (entry) => entry.month === required.month && entry.year === required.year
-          );
-          const successfulTransactionData = transformedSuccessfulTransactions.find(
-            (entry) => entry.month === required.month && entry.year === required.year
-          );
+        const paddedData =
+          requiredMonths &&
+          requiredMonths.map((required) => {
+            const eventData = transformedEventData.find(
+              (entry) =>
+                entry.month === required.month && entry.year === required.year
+            );
+            const successfulTransactionData =
+              transformedSuccessfulTransactions.find(
+                (entry) =>
+                  entry.month === required.month && entry.year === required.year
+              );
 
-          // Update total_events, total_scans, and total_tickets
-          return {
-            ...required,
-            total_events: eventData ? eventData.total_events : required.total_events,
-            total_scans: successfulTransactionData ? successfulTransactionData.total_scans : required.total_scans,
-            total_tickets: successfulTransactionData ? successfulTransactionData.total_tickets : required.total_tickets,
-          };
-        });
+            // Update total_events, total_scans, and total_tickets
+            return {
+              ...required,
+              total_events: eventData
+                ? eventData.total_events
+                : required.total_events,
+              total_scans: successfulTransactionData
+                ? successfulTransactionData.total_scans
+                : required.total_scans,
+              total_tickets: successfulTransactionData
+                ? successfulTransactionData.total_tickets
+                : required.total_tickets,
+            };
+          });
 
         // Update chartData state
         setChartData(paddedData);
 
         // Calculate the total tickets (sum of total_tickets for all months)
-        const totalTickets = paddedData.reduce((acc, entry) => acc + entry.total_tickets, 0);
+        const totalTickets = paddedData.reduce(
+          (acc, entry) => acc + entry.total_tickets,
+          0
+        );
         setTotalTickets(totalTickets); // Update the total tickets state
 
         console.table(paddedData);
@@ -178,24 +189,38 @@ const ScanManager = () => {
     fetchStats();
   }, []);
   return (
-    <div className={`flex min-h-screen  ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
+    <div
+      className={`flex min-h-screen  ${
+        theme === "dark" ? "bg-[#222]" : "bg-gray-100"
+      }`}
+    >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-
 
       <div className="flex-1 py-8 px-5 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center  space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "bg-[#121212]"}`}
+              className={`rounded-lg outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200  hover:bg-gray-100"
+                  : "bg-[#121212]"
+              }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
             <div className="">
-              <h1 className="hidden lg:flex text-2xl font-bold">Scan Manager</h1>
-              <span className={`hidden lg:flex ${theme != 'dark' ? 'text-[#040171]' : 'text-white'} `}><Greetings />, {userData && userData.user.fullname}</span>
-
+              <h1 className="hidden lg:flex text-2xl font-bold">
+                Scan Manager
+              </h1>
+              <span
+                className={`hidden lg:flex ${
+                  theme != "dark" ? "text-[#040171]" : "text-white"
+                } `}
+              >
+                <Greetings />, {userData && userData.user.fullname}
+              </span>
             </div>
           </div>
 
@@ -205,18 +230,34 @@ const ScanManager = () => {
               <input
                 type="text"
                 placeholder="Search"
-                className={`pl-10 pr-4 py-2 rounded-[4rem] border ${theme === 'dark' ? 'bg-[#222]  border-[#444]' : 'bg-transparent  border-gray-400'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`pl-10 pr-4 py-2 rounded-[4rem] border ${
+                  theme === "dark"
+                    ? "bg-[#222]  border-[#444]"
+                    : "bg-transparent  border-gray-400"
+                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
             </div>
-            <Link to={'/dashboard/event/create'}
-              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+            <Link
+              to={"/dashboard/event/create"}
+              className={`rounded-full outline-none  p-3 ${
+                theme === "light"
+                  ? "bg-gray-200  hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
-              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+              <PlusCircle
+                color={theme === "light" ? "#040171" : "white"}
+                size={20}
+              />
             </Link>
             <button
               onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              className={`rounded-full outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200  hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
@@ -226,12 +267,17 @@ const ScanManager = () => {
           </div>
         </div>
 
-
         {/* Events and Calendar Section */}
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Ongoing Events */}
-          <div className={`flex-1 py-5 px-3 rounded-xl ${theme === 'dark' ? 'bg-[#121212] ' : 'bg-white'}`}>
-            <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">Select Events</h2>
+          <div
+            className={`flex-1 py-5 px-3 rounded-xl ${
+              theme === "dark" ? "bg-[#121212] " : "bg-white"
+            }`}
+          >
+            <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">
+              Select Events
+            </h2>
             <div className="grid lg:grid-cols-4  md:flex-row gap-3 ">
               {loading ? (
                 <div className="flex justify-center items-center ">
@@ -255,35 +301,56 @@ const ScanManager = () => {
                 <div className="flex justify-center items-center h-96">
                   <span>No events found</span>
                 </div>
-              ) : events.map((event, index) => (
-                <div key={index} className={` p-4 rounded-xl ${theme === 'dark' ? 'bg-[#121212] shadow-[0_0px_4px_rgba(255,255,255,0.2)]' : 'bg-gray-100  '}`} >
-                  <img src={event.event_img} alt="Event" className="w-full h-24 object-cover rounded-xl mb-4" />
-                  <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    to={'/dashboard/event/scan/' + event.event_id} >
-
-                    <div className={`text-xl font-medium text-center  mt-1 ${theme === 'dark' ? 'text-white' : 'text-[#040171]'}`}>{event.event_title}</div>
-                  </Link>
-
-
-                  <div className="flex">
-                    <Link onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                      to={'/dashboard/event/scan/' + event.event_id}
-                      type="submit"
-                      className="w-full bg-orange-500 text-center text-white font-semibold py-3 rounded-lg mt-3 hover:bg-orange-600 transition-colors"
+              ) : (
+                events.map((event, index) => (
+                  <div
+                    key={index}
+                    className={` p-4 rounded-xl ${
+                      theme === "dark"
+                        ? "bg-[#121212] shadow-[0_0px_4px_rgba(255,255,255,0.2)]"
+                        : "bg-gray-100  "
+                    }`}
+                  >
+                    <img
+                      src={event.event_img}
+                      alt="Event"
+                      className="w-full h-24 object-cover rounded-xl mb-4"
+                    />
+                    <Link
+                      onClick={() =>
+                        window.scrollTo({ top: 0, behavior: "smooth" })
+                      }
+                      to={"/dashboard/event/scan/" + event.event_id}
                     >
-                      Manage Scanner
+                      <div
+                        className={`text-xl font-medium text-center  mt-1 ${
+                          theme === "dark" ? "text-white" : "text-[#040171]"
+                        }`}
+                      >
+                        {event.event_title}
+                      </div>
                     </Link>
+
+                    <div className="flex">
+                      <Link
+                        onClick={() =>
+                          window.scrollTo({ top: 0, behavior: "smooth" })
+                        }
+                        to={"/dashboard/event/scan/" + event.event_id}
+                        type="submit"
+                        className="w-full bg-orange-500 text-center text-white font-semibold py-3 rounded-lg mt-3 hover:bg-orange-600 transition-colors"
+                      >
+                        Manage Scanner
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
-
-
         </div>
-
       </div>
-    </div >
+    </div>
   );
 };
 
@@ -295,14 +362,16 @@ const StatCard = ({ title, value, color, textColor, cardColor, iconColor }) => (
       <div className={`text-2xl font-bold ${textColor} mt-2`}>{value}</div>
       <div className="text-sm text-gray-600">{title}</div>
     </div>
-    <div className={`flex ${cardColor} bg-opacity-20 px-4 py-5 rounded-xl  rounded-b-[1.4rem]`}>
+    <div
+      className={`flex ${cardColor} bg-opacity-20 px-4 py-5 rounded-xl  rounded-b-[1.4rem]`}
+    >
       <CalendarCogIcon className={`${iconColor} `} />
     </div>
   </div>
 );
 
 const Calendar = ({ theme, Stats }) => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   console.log(Stats);
 
   // Set the initial currentMonth to the actual current date
@@ -315,16 +384,28 @@ const Calendar = ({ theme, Stats }) => {
   }, []);
 
   const handlePreviousMonth = () => {
-    setCurrentMonth((prevMonth) => new Date(prevMonth.setMonth(prevMonth.getMonth() - 1)));
+    setCurrentMonth(
+      (prevMonth) => new Date(prevMonth.setMonth(prevMonth.getMonth() - 1))
+    );
   };
 
   const handleNextMonth = () => {
-    setCurrentMonth((prevMonth) => new Date(prevMonth.setMonth(prevMonth.getMonth() + 1)));
+    setCurrentMonth(
+      (prevMonth) => new Date(prevMonth.setMonth(prevMonth.getMonth() + 1))
+    );
   };
 
   // Generate the dates for the current month
-  const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-  const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+  const startOfMonth = new Date(
+    currentMonth.getFullYear(),
+    currentMonth.getMonth(),
+    1
+  );
+  const endOfMonth = new Date(
+    currentMonth.getFullYear(),
+    currentMonth.getMonth() + 1,
+    0
+  );
   const numDaysInMonth = endOfMonth.getDate();
 
   const dates = Array.from({ length: numDaysInMonth }, (_, i) => i + 1);
@@ -341,8 +422,12 @@ const Calendar = ({ theme, Stats }) => {
         const eventMonth = eventDateObj.getMonth() + 1; // Months are 0-indexed
 
         // If the year and month match and the day is the same
-        if (eventYear === currentYear && eventMonth === currentMonthIndex && eventDateObj.getDate() === date) {
-          return eventId;  // Return the eventId when found
+        if (
+          eventYear === currentYear &&
+          eventMonth === currentMonthIndex &&
+          eventDateObj.getDate() === date
+        ) {
+          return eventId; // Return the eventId when found
         }
       }
     }
@@ -352,50 +437,69 @@ const Calendar = ({ theme, Stats }) => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">{currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+        <h2 className="text-lg font-semibold">
+          {currentMonth.toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          })}
+        </h2>
         <div className="flex space-x-2">
-          <button onClick={handlePreviousMonth} className="p-1 hover:bg-gray-400 rounded">
+          <button
+            onClick={handlePreviousMonth}
+            className="p-1 hover:bg-gray-400 rounded"
+          >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <button onClick={handleNextMonth} className="p-1 hover:bg-gray-400 rounded">
+          <button
+            onClick={handleNextMonth}
+            className="p-1 hover:bg-gray-400 rounded"
+          >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-7 gap-2 mb-2">
-        {days && days.map((day) => (
-          <div key={day} className="text-center text-sm text-gray-500">
-            {day}
-          </div>
-        ))}
+        {days &&
+          days.map((day) => (
+            <div key={day} className="text-center text-sm text-gray-500">
+              {day}
+            </div>
+          ))}
       </div>
 
       <div className="grid grid-cols-7 gap-2">
-        {dates && dates.map((date) => {
-          const eventId = isEventDay(date); // Check if there's an event for this date
-          return (
-            <div
-              key={date}
-              className={`text-center py-2 text-sm rounded-full hover:bg-gray-500 cursor-pointer
-                ${date === today ? 'bg-blue-600 text-white hover:bg-blue-700' : ''}
-                ${eventId ? 'bg-red-500 bg-opacity-50  text-white' : ''}
+        {dates &&
+          dates.map((date) => {
+            const eventId = isEventDay(date); // Check if there's an event for this date
+            return (
+              <div
+                key={date}
+                className={`text-center py-2 text-sm rounded-full hover:bg-gray-500 cursor-pointer
+                ${
+                  date === today
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : ""
+                }
+                ${eventId ? "bg-red-500 bg-opacity-50  text-white" : ""}
               `}
-            >
-              {eventId ? (
-                <Link to={`/event/view/${eventId}`} className="text-white font-bold">
-                  {date}
-                </Link>
-              ) : (
-                date
-              )}
-            </div>
-          );
-        })}
+              >
+                {eventId ? (
+                  <Link
+                    to={`/event/view/${eventId}`}
+                    className="text-white font-bold"
+                  >
+                    {date}
+                  </Link>
+                ) : (
+                  date
+                )}
+              </div>
+            );
+          })}
       </div>
     </>
   );
 };
-
 
 export default ScanManager;

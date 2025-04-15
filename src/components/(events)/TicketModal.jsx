@@ -1,10 +1,7 @@
-import axios from "axios";
-import Cookies from "js-cookie";
 import { ArrowLeft, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { default as api, default as newApi } from "../../shared/services/api";
 import { useTheme } from "../../context/ThemeContext";
 import { formatDate } from "../../lib/formatDate";
 import StripeModal from "../../shared/components/StripeCheckout";
@@ -123,15 +120,15 @@ const TicketModal = ({
     };
 
     fetchEventDetails();
-  }, [ticketDetails]);
+  }, [ticketDetails, eventTitle]);
 
-  const [marketingConsent, setMarketingConsent] = useState({
+  const [marketingConsent] = useState({
     organizer: false,
     platform: false,
   });
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isConfirmed] = useState(false);
 
   if (!isOpen) return null;
 
@@ -206,21 +203,6 @@ const TicketModal = ({
       Swal.fire("Error", error.response?.data?.error || "Error", "error");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handlePaymentVerification = async (reference) => {
-    try {
-      const response = await api.post(`/verify/${reference}`, {
-        paymentMethod,
-      });
-      if (response.data.status === "success") {
-        Swal.fire("Success", "Payment verified successfully", "success");
-      } else {
-        Swal.fire("Error", response.data.message, "error");
-      }
-    } catch (error) {
-      Swal.fire("Error", "Payment verification failed", "error");
     }
   };
 

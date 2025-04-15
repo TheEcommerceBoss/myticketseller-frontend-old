@@ -1,34 +1,16 @@
-import React, { useState, useEffect } from "react";
-import {
-  Home,
-  PlusCircle,
-  ListChecks,
-  Ticket,
-  Megaphone,
-  Settings,
-  HelpCircle,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Moon,
-  Sun,
-  CalendarCogIcon,
-  BellDot,
-  Bell,
-  X,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { PlusCircle, Menu, Search, Moon, Sun, X } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 
 import Swal from "sweetalert2";
-import { categoriesApi, eventsApi } from "../../shared/services/api.ts";
+import { categoriesApi, eventsApi } from "../../shared/services/api";
 
 const CreateEvent = ({ manage }) => {
   let { id } = useParams();
-  const [eventData, setEventData] = useState(null);
+  // const [eventData, setEventData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchingdataloading, setfetchingdataLoading] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -49,19 +31,6 @@ const CreateEvent = ({ manage }) => {
     const fetchEvents = async () => {
       setfetchingdataLoading(true);
       try {
-        // const token = Cookies.get("auth_token");
-        // const response = await axios.post(
-        //   `${import.meta.env.VITE_API_URL}/event_details`,
-        //   {
-        //     event_id: id,
-        //   },
-        //   {
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //       Authorization: `Bearer ${token}`,
-        //     },
-        //   }
-        // );
         const eventData = await eventsApi.getEventById(id);
 
         // Update the formData state with the fetched event details
@@ -95,9 +64,9 @@ const CreateEvent = ({ manage }) => {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
   const navigate = useNavigate();
 
-  const [selectedTimeRange, setSelectedTimeRange] = useState("Today");
+  // const [selectedTimeRange, setSelectedTimeRange] = useState("Today");
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState("");
+  const [_, setError] = useState("");
 
   const handleTypeChange = (type) => {
     setFormData((prevState) => ({
@@ -118,22 +87,12 @@ const CreateEvent = ({ manage }) => {
   const CreateEventHandler = async () => {
     const {
       category,
-      specific_type,
-      event_title,
-      event_description,
+
       event_image,
       title,
       description,
     } = formData;
 
-    // if (!category || !event_title || !event_description || !event_image) {
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Incomplete Form",
-    //     text: "Please fill in all required fields.",
-    //   });
-    //   return;
-    // }
     if (!title || !description || !category || !event_image) {
       Swal.fire({
         icon: "error",
@@ -154,16 +113,6 @@ const CreateEvent = ({ manage }) => {
       myForm.append("image", formData.event_image);
       myForm.append("category", formData.category);
       const data = await eventsApi.createEvent(myForm);
-
-      // api.post(
-      //   manage ? "/modify_event" : "/create-event",
-      //   formData,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
 
       Swal.fire({
         icon: "success",
@@ -205,8 +154,8 @@ const CreateEvent = ({ manage }) => {
     fetchCategories();
   }, []);
 
-  const [step, setStep] = useState(1);
-  const [isPublic, setIsPublic] = useState(false);
+  const [step] = useState(1);
+  // const [isPublic, setIsPublic] = useState(false);
 
   const steps = [
     { number: 1, title: "General Information", active: true },
