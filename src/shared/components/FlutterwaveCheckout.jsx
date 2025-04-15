@@ -4,6 +4,7 @@ import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { paymentsApi } from "../services/api";
 import Swal from "sweetalert2";
 import flutterwaveLogo from "../../assets/(svg)/flutterwave.svg";
+import Confetti from "react-confetti";
 
 export default function FlutterwaveCheckout({
 	ticketDetails,
@@ -11,6 +12,7 @@ export default function FlutterwaveCheckout({
 }) {
 	const [error, setError] = useState(null);
 	const [loading, setLoading] = useState(false);
+	const [showConfetti, setShowConfetti] = useState(false);
 
 	const config = {
 		public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY,
@@ -44,15 +46,20 @@ export default function FlutterwaveCheckout({
 			});
 
 			if (paymentResult.status === "success") {
-				Swal.fire({
+				setShowConfetti(true); // show confetti immediately
+				await Swal.fire({
 					title: "Ticket sold successfully",
-					message:
-						"Payment successful! Check your email for the ticket.",
-					color: "green",
-					timer: 5000,
+					text: "Payment successful! Check your email for the ticket.",
+					icon: "success",
+					timer: 4000,
+					timerProgressBar: true,
+					allowOutsideClick: false,
+					showConfirmButton: false,
+					didClose: () => {
+						window.location.href = `/event/view/${ticketDetails.event_id}`;
+					},
 				});
-				setShowFlutterWave(false);
-				window.location.href = `/event/view/${ticketDetails.event_id}`;
+				setShowFlutterWave(false); // hide Flutterwave component after redirect
 			} else {
 				setError(paymentResult.message);
 				console.log("some err");
@@ -66,33 +73,38 @@ export default function FlutterwaveCheckout({
 	}
 
 	return (
-		<div className="p-4 md:py-10">
-			<div className="flex justify-center">
-				<img src={flutterwaveLogo} alt="Flutterwave" />
+		<>
+			<div className="p-4 md:py-10">
+				<div className="flex justify-center">
+					<img src={flutterwaveLogo} alt="Flutterwave" />
+				</div>
+				<h1 className="my-2 text-xl text-center lg:text-2xl">
+					Proceed with Payment
+				</h1>
+				<div className="text-sm text-center text-gray-600 lg:text-base">
+					You will be redirected to the Flutterwave checkout
+				</div>
+				<div className="flex justify-between py-4 my-8 text-lg border-gray-200 border-y lg:text-xl">
+					<span>Total</span>
+					<span>{`${ticketDetails.currencyCode} ${ticketDetails.total_amount}`}</span>
+				</div>
+				<div>
+					<FlutterWaveButton
+						{...config}
+						text={loading ? "Processing..." : "Pay Now"}
+						callback={handleFlutterwavePayment}
+						onClose={() => setLoading(false)}
+						disabled={loading}
+						className="w-full p-3 text-white rounded-md bg-primary"
+					/>
+					{error && (
+						<div className="mt-2 text-center text-red-500">
+							{error}
+						</div>
+					)}
+				</div>
 			</div>
-			<h1 className="my-2 text-xl text-center lg:text-2xl">
-				Proceed with Payment
-			</h1>
-			<div className="text-sm text-center text-gray-600 lg:text-base">
-				You will be redirected to the Flutterwave checkout
-			</div>
-			<div className="flex justify-between py-4 my-8 text-lg border-gray-200 border-y lg:text-xl">
-				<span>Total</span>
-				<span>{`${ticketDetails.currencyCode} ${ticketDetails.total_amount}`}</span>
-			</div>
-			<div>
-				<FlutterWaveButton
-					{...config}
-					text={loading ? "Processing..." : "Pay Now"}
-					callback={handleFlutterwavePayment}
-					onClose={() => setLoading(false)}
-					disabled={loading}
-					className="w-full p-3 text-white rounded-md bg-primary"
-				/>
-				{error && (
-					<div className="mt-2 text-center text-red-500">{error}</div>
-				)}
-			</div>
-		</div>
+			{showConfetti && <Confetti numberOfPieces={100} />}
+		</>
 	);
 }
