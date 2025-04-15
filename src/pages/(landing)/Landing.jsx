@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Banner from "../../assets/(landing)/banner.png";
 import Banner2 from "../../assets/(landing)/banner2.png";
 import Clown from "../../assets/(landing)/clown.png";
@@ -115,7 +116,7 @@ function LandingPage() {
 				</div>
 			</div>
 			<FeaturedEvents2 />
-			<FeaturedEvents />
+			{/* <FeaturedEvents /> */}
 			<WhyTicketSeller />
 			<HowItWorks />
 			<Footer />
