@@ -14,7 +14,8 @@ import DatePicker from "react-datepicker"; // Import the date picker
 import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
 import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { categoriesApi, eventsApi } from "../../shared/services/api.ts";
+import { categoriesApi } from "../../shared/services/api/index";
+import { eventsApi } from "../../shared/services/api/eventsApi";
 import { useTheme } from "../../context/ThemeContext.jsx"; // Adjust path as necessary
 import FeaturedEventCard from "../ui/FeaturedEventCard.jsx";
 import { cn, formatEventDate } from "../../lib/utils.js";

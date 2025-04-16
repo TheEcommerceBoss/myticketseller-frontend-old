@@ -17,7 +17,8 @@ import { Link } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Greetings from "../../components/(snippets)/Greetings";
 import { useAuth } from "../../context/AuthContext";
-import { dashboardApi, eventsApi } from "../../shared/services/api";
+import { dashboardApi } from "../../shared/services/api/index";
+import { eventsApi } from "../../shared/services/api/eventsApi";
 
 const ScanManager = () => {
   // const [selectedTimeRange, setSelectedTimeRange] = useState("Today");
@@ -196,9 +197,9 @@ const ScanManager = () => {
     >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
-      <div className="flex-1 py-8 px-5 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center  space-x-4">
+      <div className="flex-1 px-5 py-8 lg:px-8">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className={`rounded-lg outline-none p-3 ${
@@ -211,7 +212,7 @@ const ScanManager = () => {
             </button>
 
             <div className="">
-              <h1 className="hidden lg:flex text-2xl font-bold">
+              <h1 className="hidden text-2xl font-bold lg:flex">
                 Scan Manager
               </h1>
               <span
@@ -225,8 +226,8 @@ const ScanManager = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
+            <div className="relative hidden md:flex">
+              <Search className="absolute w-5 h-5 text-gray-600 transform -translate-y-1/2 left-3 top-1/2" />
               <input
                 type="text"
                 placeholder="Search"
@@ -268,23 +269,23 @@ const ScanManager = () => {
         </div>
 
         {/* Events and Calendar Section */}
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col gap-6 lg:flex-row">
           {/* Ongoing Events */}
           <div
             className={`flex-1 py-5 px-3 rounded-xl ${
               theme === "dark" ? "bg-[#121212] " : "bg-white"
             }`}
           >
-            <h2 className="text-lg font-semibold mb-4 pt-1 px-3 pb-1">
+            <h2 className="px-3 pt-1 pb-1 mb-4 text-lg font-semibold">
               Select Events
             </h2>
-            <div className="grid lg:grid-cols-4  md:flex-row gap-3 ">
+            <div className="grid gap-3 lg:grid-cols-4 md:flex-row ">
               {loading ? (
-                <div className="flex justify-center items-center ">
-                  <div className="border border-gray-100  rounded-md p-4 m-1 w-full mx-auto">
-                    <div className="animate-pulse flex space-x-4">
+                <div className="flex items-center justify-center ">
+                  <div className="w-full p-4 m-1 mx-auto border border-gray-100 rounded-md">
+                    <div className="flex space-x-4 animate-pulse">
                       <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                      <div className="flex-1 space-y-6 py-1">
+                      <div className="flex-1 py-1 space-y-6">
                         <div className="h-[1rem] bg-slate-700 rounded"></div>
                         <div className="space-y-3">
                           <div className="grid grid-cols-3 gap-4">
@@ -298,7 +299,7 @@ const ScanManager = () => {
                   </div>
                 </div>
               ) : events.length === 0 ? (
-                <div className="flex justify-center items-center h-96">
+                <div className="flex items-center justify-center h-96">
                   <span>No events found</span>
                 </div>
               ) : (
@@ -314,7 +315,7 @@ const ScanManager = () => {
                     <img
                       src={event.event_img}
                       alt="Event"
-                      className="w-full h-24 object-cover rounded-xl mb-4"
+                      className="object-cover w-full h-24 mb-4 rounded-xl"
                     />
                     <Link
                       onClick={() =>
@@ -338,7 +339,7 @@ const ScanManager = () => {
                         }
                         to={"/dashboard/event/scan/" + event.event_id}
                         type="submit"
-                        className="w-full bg-orange-500 text-center text-white font-semibold py-3 rounded-lg mt-3 hover:bg-orange-600 transition-colors"
+                        className="w-full py-3 mt-3 font-semibold text-center text-white transition-colors bg-orange-500 rounded-lg hover:bg-orange-600"
                       >
                         Manage Scanner
                       </Link>
@@ -436,7 +437,7 @@ const Calendar = ({ theme, Stats }) => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">
           {currentMonth.toLocaleString("default", {
             month: "long",
@@ -446,13 +447,13 @@ const Calendar = ({ theme, Stats }) => {
         <div className="flex space-x-2">
           <button
             onClick={handlePreviousMonth}
-            className="p-1 hover:bg-gray-400 rounded"
+            className="p-1 rounded hover:bg-gray-400"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={handleNextMonth}
-            className="p-1 hover:bg-gray-400 rounded"
+            className="p-1 rounded hover:bg-gray-400"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -462,7 +463,7 @@ const Calendar = ({ theme, Stats }) => {
       <div className="grid grid-cols-7 gap-2 mb-2">
         {days &&
           days.map((day) => (
-            <div key={day} className="text-center text-sm text-gray-500">
+            <div key={day} className="text-sm text-center text-gray-500">
               {day}
             </div>
           ))}
@@ -487,7 +488,7 @@ const Calendar = ({ theme, Stats }) => {
                 {eventId ? (
                   <Link
                     to={`/event/view/${eventId}`}
-                    className="text-white font-bold"
+                    className="font-bold text-white"
                   >
                     {date}
                   </Link>
