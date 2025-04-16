@@ -6,7 +6,6 @@ import { ArrowLeft, Check, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import { default as api, default as newApi } from "../../shared/services/api";
 import { useTheme } from "../../context/ThemeContext";
 import { formatDate } from "../../lib/formatDate";
 import StripeModal from "../../shared/components/StripeCheckout";

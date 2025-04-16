@@ -1,25 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { Home, PlusCircle, ListChecks, Ticket, Megaphone, HelpCircle, Settings, Menu, ChevronLeft, ChevronRight, Search, Moon, Sun, CalendarCogIcon, BellDot, Bell, X } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  Home,
+  PlusCircle,
+  ListChecks,
+  Ticket,
+  Megaphone,
+  HelpCircle,
+  Settings,
+  Menu,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Moon,
+  Sun,
+  CalendarCogIcon,
+  BellDot,
+  Bell,
+  X,
+} from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import SideBar from '../../components/(headers)/DashboardSidebar';
+import SideBar from "../../components/(headers)/DashboardSidebar";
 import user from "../../assets/(user)/user.png";
 import eventImage from "../../assets/(landing)/event.png";
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import DashboardHeader from '../../components/(events)/DashboardHeader';
+import { Link, useNavigate, useParams } from "react-router-dom";
+import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import api from "../../api";
-import { useAuth } from '../../context/AuthContext';
-import { Scanner } from '@yudiel/react-qr-scanner';
-import axios from 'axios';
+import { useAuth } from "../../context/AuthContext";
+import { Scanner } from "@yudiel/react-qr-scanner";
+import axios from "axios";
+import { scanApi } from "../../shared/services/api";
 const ScannerPage = () => {
   const { userData } = useAuth();
   const [formData, setFormData] = useState({
     email: userData && userData.user.email,
     fullname: userData && userData.user.fullname,
-    instagram: '',
-    tiktok: '',
-    twitter: '',
+    instagram: "",
+    tiktok: "",
+    twitter: "",
   });
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -41,10 +60,10 @@ const ScannerPage = () => {
 
     handleResize();
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -52,48 +71,39 @@ const ScannerPage = () => {
     setIsOpen(!isOpen);
   };
 
-
-  const [result, setResult] = useState('No result');
+  const [result, setResult] = useState("No result");
   const [resultData, setresultData] = useState([]);
 
   // Handle QR scan result
   const handleScan = async (data) => {
     if (data && data[0]) {
       const scannedValue = data[0].rawValue;
-      setResult('verifying...');
+      setResult("verifying...");
 
-      console.log('Scanned result:', scannedValue);
+      console.log("Scanned result:", scannedValue);
 
       try {
-        setresultData([])
-        const token = Cookies.get("auth_token");
+        setresultData([]);
 
-        const response = await axios.post(import.meta.env.VITE_API_URL + 'scanTicket', {
-          ticket_code: scannedValue
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        console.log(response.data);
+        const response = await scanApi.scanTicket(scannedValue);
+        console.log(response);
         setResult("QR Valid");
-        setresultData(response.data)
-        console.log(response.data.data)
+        setresultData(response.data);
+        console.log(response.data.data);
       } catch (error) {
-        console.error('API error:', error);
-        console.log(error.response.data.message)
+        console.error("API error:", error);
+        console.log(error.response.data.message);
         setResult(error.response.data.message);
-
       }
     } else {
-      console.log('Failed to parse QR code');
+      console.log("Failed to parse QR code");
     }
   };
 
   // Handle scan errors
   const handleError = (err) => {
     console.error(err);
-    alert('Error: ' + err);
+    alert("Error: " + err);
   };
 
   const CenteredHr = ({ text, style = "", type = 1 }) => {
@@ -101,7 +111,9 @@ const ScannerPage = () => {
       <div className={`flex items-center my-6 pb-2 ${style}`}>
         {type == 1 ? (
           <div className="flex-1 border-t border-gray-300"></div>
-        ) : ('')}
+        ) : (
+          ""
+        )}
         {text && (
           <span className="mx-4 text-sm font-bold text-white">{text}</span>
         )}
@@ -110,9 +122,12 @@ const ScannerPage = () => {
     );
   };
 
-
   return (
-    <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-[#222]' : 'bg-gray-100'}`}>
+    <div
+      className={`flex min-h-screen ${
+        theme === "dark" ? "bg-[#222]" : "bg-gray-100"
+      }`}
+    >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
       <div className="flex-1 py-8 px-5 lg:px-8">
@@ -120,7 +135,11 @@ const ScannerPage = () => {
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`rounded-lg outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "bg-[#121212]"}`}
+              className={`rounded-lg outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200 hover:bg-gray-100"
+                  : "bg-[#121212]"
+              }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -129,15 +148,27 @@ const ScannerPage = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link to={'/dashboard/event/create'}
-              className={`rounded-full outline-none  p-3 ${theme === "light" ? "bg-gray-200  hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+            <Link
+              to={"/dashboard/event/create"}
+              className={`rounded-full outline-none  p-3 ${
+                theme === "light"
+                  ? "bg-gray-200  hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
-              <PlusCircle color={theme === "light" ? "#040171" : "white"} size={20} />
+              <PlusCircle
+                color={theme === "light" ? "#040171" : "white"}
+                size={20}
+              />
             </Link>
             <button
               onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${theme === "light" ? "bg-gray-200 hover:bg-gray-100" : "hover:bg-[#111] bg-[#121212]"}`}
+              className={`rounded-full outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200 hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
@@ -147,8 +178,12 @@ const ScannerPage = () => {
           </div>
         </div>
 
-        <div className={`${theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"} rounded-lg p-6 my-6 shadow-sm`}>
-          <h5 className='text-center mt-[1rem] mb-[2rem]'>Ticket Scanner</h5>
+        <div
+          className={`${
+            theme === "dark" ? "bg-[#121212]" : "border border-[#040171]"
+          } rounded-lg p-6 my-6 shadow-sm`}
+        >
+          <h5 className="text-center mt-[1rem] mb-[2rem]">Ticket Scanner</h5>
           <div className="flex flex-col items-center justify-center ">
             <div className="bg-white shadow-lg rounded-lg w-full lg:w-[40rem] p-6 mb-6">
               <Scanner
@@ -158,19 +193,21 @@ const ScannerPage = () => {
                 scanDelay={5000}
               />
               {resultData && resultData.status ? (
-                resultData.status != 'success' ? (
+                resultData.status != "success" ? (
                   <div className="w-full mt-5 h-auto bg-red-500 text-white p-4 rounded-lg">
                     <div className="mb-4">
-
-                      <h2 className="text-2xl font-bold text-center mt-2">Invalid Ticket</h2>
+                      <h2 className="text-2xl font-bold text-center mt-2">
+                        Invalid Ticket
+                      </h2>
                     </div>
                   </div>
                 ) : (
                   <div className="w-full mt-5 h-auto bg-black text-white p-4 rounded-lg">
                     {/* Main Event Info */}
                     <div className="mb-4">
-
-                      <h2 className="text-2xl font-bold text-center mt-2">{resultData.event_title || 'Untitled Event'}</h2>
+                      <h2 className="text-2xl font-bold text-center mt-2">
+                        {resultData.event_title || "Untitled Event"}
+                      </h2>
                     </div>
 
                     <div className="mb-4">
@@ -186,7 +223,6 @@ const ScannerPage = () => {
                       <p>Phone Number: {resultData.phone_number}</p>
                     </div>
 
-
                     <div className="mb-4">
                       <CenteredHr text="Ticket Info" />
                       <p>Ticket Name: {resultData.ticket_name}</p>
@@ -199,19 +235,19 @@ const ScannerPage = () => {
                       <p>Purchase Date: {resultData.purchase_date}</p>
                       <p>Payment Status: {resultData.status}</p>
                     </div>
-
                   </div>
                 )
-              ) : (result ? (
-
+              ) : result ? (
                 <div className="w-full mt-5 h-auto bg-red-800 text-white p-4 rounded-lg">
                   <div className="mb-4">
-
-                    <h2 className="text-l font-bold text-center mt-2">{result}</h2>
+                    <h2 className="text-l font-bold text-center mt-2">
+                      {result}
+                    </h2>
                   </div>
                 </div>
-
-              ) : '')}
+              ) : (
+                ""
+              )}
 
               {/* {console.log(result)} */}
             </div>
