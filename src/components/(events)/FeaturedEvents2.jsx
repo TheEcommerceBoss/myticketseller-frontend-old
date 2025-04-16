@@ -145,10 +145,9 @@ function FeaturedEvents2({ variation, sortcategory }) {
 	const filteredCards = cards.filter((card) => card.is_public);
 
 	// Get the current page's cards
-	const currentCards = filteredCards.slice(
-		(currentPage - 1) * cardsPerPage,
-		currentPage * cardsPerPage
-	);
+	const startIndex = (currentPage - 1) * cardsPerPage;
+	const endIndex = startIndex + cardsPerPage;
+	const currentCards = filteredCards?.slice(startIndex, endIndex) || [];
 
 	console.log(currentCards);
 
@@ -232,6 +231,11 @@ function FeaturedEvents2({ variation, sortcategory }) {
 
 	const handleLocationChange = (newLocation) => {
 		setSearchLocation(newLocation);
+	};
+
+	const handlePageChange = (pageNumber) => {
+		if (pageNumber < 1 || pageNumber > totalPages) return;
+		setCurrentPage(pageNumber);
 	};
 
 	return (
@@ -486,235 +490,92 @@ function FeaturedEvents2({ variation, sortcategory }) {
 								} w-full grid gap-8 px-2`}
 							>
 								{currentCards &&
-									currentCards.map((card, index) => (
-										<div key={index}>
-											{variation !== 2 ? (
-												// <div
-												// 	className={`bg-white shadow-lg  rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${
-												// 		theme === "dark"
-												// 			? "bg-gray-900"
-												// 			: "bg-white"
-												// 	}`}
-												// >
-												// 	<img
-												// 		src={card.image}
-												// 		alt={card.title}
-												// 		className="w-full h-[8rem] md:h-[10rem] object-cover"
-												// 	/>
-												// 	<div
-												// 		className={`flex flex-col justify-between p-6 py-4 ${
-												// 			theme === "dark"
-												// 				? "text-gray-200"
-												// 				: "text-gray-700"
-												// 		}`}
-												// 	>
-												// 		<div className="flex items-center">
-												// 			<span className="flex items-center w-2/5 gap-1 text-xs text-gray-500">
-												// 				<Calendar
-												// 					size={16}
-												// 				/>{" "}
-												// 				<span>
-												// 					{
-												// 						card
-												// 							?.days[0]
-												// 							?.event_day
-												// 					}
-												// 				</span>
-												// 			</span>
-												// 			<span className="w-1/5 text-center text-orange-500">
-												// 				|
-												// 			</span>
-												// 			<span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500">
-												// 				<MapPin
-												// 					size={16}
-												// 				/>{" "}
-												// 				<span>
-												// 					{card
-												// 						.days[0]
-												// 						?.event_type ==
-												// 					"virtual"
-												// 						? "Virtual"
-												// 						: card.days[0]?.event_address
-												// 								.split(
-												// 									", "
-												// 								)
-												// 								.slice(
-												// 									-2
-												// 								)
-												// 								.join(
-												// 									", "
-												// 								)}
-												// 				</span>
-												// 			</span>
-												// 		</div>
-												// 		<Link
-												// 			onClick={() =>
-												// 				window.scrollTo(
-												// 					{
-												// 						top: 0,
-												// 						behavior:
-												// 							"smooth",
-												// 					}
-												// 				)
-												// 			}
-												// 			to={
-												// 				"/event/view/" +
-												// 				card.id
-												// 			}
-												// 			className="my-2 text-xl font-semibold text-black"
-												// 		>
-												// 			{card.title.length >
-												// 			50
-												// 				? `${card.title.substring(
-												// 						0,
-												// 						50
-												// 				  )}...`
-												// 				: card.title}
-												// 		</Link>
-												// 		<span className="text-sm text-gray-500">
-												// 			{card.description
-												// 				.length > 100
-												// 				? `${card.description.substring(
-												// 						0,
-												// 						100
-												// 				  )}...`
-												// 				: card.description}
-												// 		</span>
-												// 	</div>
-												// </div>
-												<FeaturedEventCard
-													id={card.id}
-													title={card.title}
-													image={card.image}
-													date={formatEventDate(
-														card.days[0].event_day,
-														card.days[0].open_door
-													)}
-													description={
-														card.description
-													}
-													location={
-														card.days[0]
-															.event_address
-													}
-													category={"rides"}
-												/>
-											) : (
-												<div
-													className={`${
-														theme === "dark"
-															? "bg-[#000]"
-															: "bg-white"
-													} overflow-hidden lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4`}
-												>
-													<img
-														src={card.image}
-														alt={card.title}
-														className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
+									currentCards.map((card, index) =>
+										card ? (
+											<div key={index}>
+												{variation !== 2 ? (
+													<FeaturedEventCard
+														id={card.id}
+														title={card.title}
+														image={card.image}
+														date={formatEventDate(
+															card.days[0]
+																.event_day,
+															card.days[0]
+																.open_door
+														)}
+														description={
+															card.description
+														}
+														location={
+															card.days[0]
+																.event_address
+														}
+														category={"rides"}
 													/>
+												) : (
 													<div
 														className={`${
 															theme === "dark"
 																? "bg-[#000]"
 																: "bg-white"
-														} rounded-xl lg:shadow-md   p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4`}
+														} overflow-hidden lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4`}
 													>
-														<div className="flex items-start justify-between">
-															<div className="flex flex-col justify-between flex-grow w-1/3 gap-2 md:px-3 md:gap-4">
-																<div className="">
-																	<div className="flex flex-col gap-3 py-1 mb-2 text-sm text-gray-500 rounded-full md:inline-flex md:flex-row md:gap-12 md:items-center md:text-xs md:border md:border-gray-300 md:px-2">
-																		<div className="flex items-center gap-1 font-semibold">
-																			<Calendar
-																				color={`${
-																					theme ===
-																					"dark"
-																						? "#fff"
-																						: "#040171"
-																				} `}
-																				className="w-4 h-4 mr-1 md:w-3 md:h-3"
-																			/>
-																			<span>
-																				{
-																					card
-																						.days[0]
-																						?.event_day
-																				}
-																			</span>
-																		</div>
-																		<div className="flex items-center gap-1 font-bold">
-																			<Clock
-																				color={`${
-																					theme ===
-																					"dark"
-																						? "#fff"
-																						: "#040171"
-																				} `}
-																				className="w-4 h-4 mr-1 md:w-3 md:h-3"
-																			/>
-																			<span>
-																				{
-																					card
-																						.days[0]
-																						?.open_door
-																				}
-																			</span>
+														<img
+															src={card.image}
+															alt={card.title}
+															className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
+														/>
+														<div
+															className={`${
+																theme === "dark"
+																	? "bg-[#000]"
+																	: "bg-white"
+															} rounded-xl lg:shadow-md   p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4`}
+														>
+															<div className="flex items-start justify-between">
+																<div className="flex flex-col justify-between flex-grow w-1/3 gap-2 md:px-3 md:gap-4">
+																	<div className="">
+																		<div className="flex flex-col gap-3 py-1 mb-2 text-sm text-gray-500 rounded-full md:inline-flex md:flex-row md:gap-12 md:items-center md:text-xs md:border md:border-gray-300 md:px-2">
+																			<div className="flex items-center gap-1 font-semibold">
+																				<Calendar
+																					color={`${
+																						theme ===
+																						"dark"
+																							? "#fff"
+																							: "#040171"
+																					} `}
+																					className="w-4 h-4 mr-1 md:w-3 md:h-3"
+																				/>
+																				<span>
+																					{
+																						card
+																							.days[0]
+																							?.event_day
+																					}
+																				</span>
+																			</div>
+																			<div className="flex items-center gap-1 font-bold">
+																				<Clock
+																					color={`${
+																						theme ===
+																						"dark"
+																							? "#fff"
+																							: "#040171"
+																					} `}
+																					className="w-4 h-4 mr-1 md:w-3 md:h-3"
+																				/>
+																				<span>
+																					{
+																						card
+																							.days[0]
+																							?.open_door
+																					}
+																				</span>
+																			</div>
 																		</div>
 																	</div>
-																</div>
 
-																<Link
-																	onClick={() =>
-																		window.scrollTo(
-																			{
-																				top: 0,
-																				behavior:
-																					"smooth",
-																			}
-																		)
-																	}
-																	to={
-																		"/event/view/" +
-																		card.id
-																	}
-																	className={`text-lg my-3 md:my-0 font-semibold ${
-																		theme ===
-																		"dark"
-																			? "text-[#fff]"
-																			: "text-[#040171]"
-																	} `}
-																>
-																	{card.title
-																		.length >
-																	50
-																		? `${card.title.substring(
-																				0,
-																				50
-																		  )}...`
-																		: card.title}
-																</Link>
-
-																<div className="flex items-center gap-1 mt-1 text-xs font-semibold text-gray-600">
-																	<MapPin
-																		color={`${
-																			theme ===
-																			"dark"
-																				? "#fff"
-																				: "#040171"
-																		} `}
-																		className="w-4 h-4 mr-1 md:w-3 md:h-3"
-																	/>
-																	<span>
-																		{card
-																			.days[0]
-																			?.event_type ==
-																		"virtual"
-																			? "Virtual"
-																			: card
-																					.days[0]
-																					?.event_address}
-																	</span>
-																</div>
-																<div className="flex h-full mt-4 md:hidden ">
 																	<Link
 																		onClick={() =>
 																			window.scrollTo(
@@ -729,40 +590,98 @@ function FeaturedEvents2({ variation, sortcategory }) {
 																			"/event/view/" +
 																			card.id
 																		}
-																		className="px-6 py-2 text-lg text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
+																		className={`text-lg my-3 md:my-0 font-semibold ${
+																			theme ===
+																			"dark"
+																				? "text-[#fff]"
+																				: "text-[#040171]"
+																		} `}
+																	>
+																		{card
+																			.title
+																			.length >
+																		50
+																			? `${card.title.substring(
+																					0,
+																					50
+																			  )}...`
+																			: card.title}
+																	</Link>
+
+																	<div className="flex items-center gap-1 mt-1 text-xs font-semibold text-gray-600">
+																		<MapPin
+																			color={`${
+																				theme ===
+																				"dark"
+																					? "#fff"
+																					: "#040171"
+																			} `}
+																			className="w-4 h-4 mr-1 md:w-3 md:h-3"
+																		/>
+																		<span>
+																			{card
+																				.days[0]
+																				?.event_type ==
+																			"virtual"
+																				? "Virtual"
+																				: card
+																						.days[0]
+																						?.event_address}
+																		</span>
+																	</div>
+																	<div className="flex h-full mt-4 md:hidden ">
+																		<Link
+																			onClick={() =>
+																				window.scrollTo(
+																					{
+																						top: 0,
+																						behavior:
+																							"smooth",
+																					}
+																				)
+																			}
+																			to={
+																				"/event/view/" +
+																				card.id
+																			}
+																			className="px-6 py-2 text-lg text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
+																		>
+																			Buy
+																			Tickets
+																		</Link>
+																	</div>
+																</div>
+
+																<div className="items-center hidden h-full pl-3 md:flex md:border-l">
+																	<Link
+																		onClick={() =>
+																			window.scrollTo(
+																				{
+																					top: 0,
+																					behavior:
+																						"smooth",
+																				}
+																			)
+																		}
+																		to={
+																			"/event/view/" +
+																			card.id
+																		}
+																		className="px-4 py-2 text-xs text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
 																	>
 																		Buy
 																		Tickets
 																	</Link>
 																</div>
 															</div>
-
-															<div className="items-center hidden h-full pl-3 md:flex md:border-l">
-																<Link
-																	onClick={() =>
-																		window.scrollTo(
-																			{
-																				top: 0,
-																				behavior:
-																					"smooth",
-																			}
-																		)
-																	}
-																	to={
-																		"/event/view/" +
-																		card.id
-																	}
-																	className="px-4 py-2 text-xs text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
-																>
-																	Buy Tickets
-																</Link>
-															</div>
 														</div>
 													</div>
-												</div>
-											)}
-										</div>
-									))}
+												)}
+											</div>
+										) : (
+											null()
+										)
+									)}
 							</div>
 						</div>
 
@@ -771,7 +690,7 @@ function FeaturedEvents2({ variation, sortcategory }) {
 							<Pagination
 								currentPage={currentPage}
 								totalPages={totalPages}
-								onPageChange={setCurrentPage}
+								onPageChange={handlePageChange}
 							/>
 						</div>
 					</>
@@ -782,3 +701,97 @@ function FeaturedEvents2({ variation, sortcategory }) {
 }
 
 export default FeaturedEvents2;
+
+// <div
+// 	className={`bg-white shadow-lg  rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${
+// 		theme === "dark"
+// 			? "bg-gray-900"
+// 			: "bg-white"
+// 	}`}
+// >
+// 	<img
+// 		src={card.image}
+// 		alt={card.title}
+// 		className="w-full h-[8rem] md:h-[10rem] object-cover"
+// 	/>
+// 	<div
+// 		className={`flex flex-col justify-between p-6 py-4 ${
+// 			theme === "dark"
+// 				? "text-gray-200"
+// 				: "text-gray-700"
+// 		}`}
+// 	>
+// 		<div className="flex items-center">
+// 			<span className="flex items-center w-2/5 gap-1 text-xs text-gray-500">
+// 				<Calendar
+// 					size={16}
+// 				/>{" "}
+// 				<span>
+// 					{
+// 						card
+// 							?.days[0]
+// 							?.event_day
+// 					}
+// 				</span>
+// 			</span>
+// 			<span className="w-1/5 text-center text-orange-500">
+// 				|
+// 			</span>
+// 			<span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500">
+// 				<MapPin
+// 					size={16}
+// 				/>{" "}
+// 				<span>
+// 					{card
+// 						.days[0]
+// 						?.event_type ==
+// 					"virtual"
+// 						? "Virtual"
+// 						: card.days[0]?.event_address
+// 								.split(
+// 									", "
+// 								)
+// 								.slice(
+// 									-2
+// 								)
+// 								.join(
+// 									", "
+// 								)}
+// 				</span>
+// 			</span>
+// 		</div>
+// 		<Link
+// 			onClick={() =>
+// 				window.scrollTo(
+// 					{
+// 						top: 0,
+// 						behavior:
+// 							"smooth",
+// 					}
+// 				)
+// 			}
+// 			to={
+// 				"/event/view/" +
+// 				card.id
+// 			}
+// 			className="my-2 text-xl font-semibold text-black"
+// 		>
+// 			{card.title.length >
+// 			50
+// 				? `${card.title.substring(
+// 						0,
+// 						50
+// 				  )}...`
+// 				: card.title}
+// 		</Link>
+// 		<span className="text-sm text-gray-500">
+// 			{card.description
+// 				.length > 100
+// 				? `${card.description.substring(
+// 						0,
+// 						100
+// 				  )}...`
+// 				: card.description}
+// 		</span>
+// 	</div>
+// </div>
