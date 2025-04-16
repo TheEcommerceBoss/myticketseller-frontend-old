@@ -26,7 +26,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 
 import Swal from "sweetalert2";
-import { categoriesApi, eventsApi } from "../../shared/services/api.ts";
+import { categoriesApi, eventsApi } from "../../shared/services/api";
 
 const CreateEvent = ({ manage }) => {
 	let { id } = useParams();
@@ -47,23 +47,15 @@ const CreateEvent = ({ manage }) => {
 		img: "",
 	});
 
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setfetchingdataLoading(true);
+      try {
+        const eventData = await eventsApi.getEventById(id);
 	useEffect(() => {
 		const fetchEvents = async () => {
 			setfetchingdataLoading(true);
 			try {
-				// const token = Cookies.get("auth_token");
-				// const response = await axios.post(
-				//   `${import.meta.env.VITE_API_URL}/event_details`,
-				//   {
-				//     event_id: id,
-				//   },
-				//   {
-				//     headers: {
-				//       "Content-Type": "application/json",
-				//       Authorization: `Bearer ${token}`,
-				//     },
-				//   }
-				// );
 				const eventData = await eventsApi.getEventById(id);
 
 				// Update the formData state with the fetched event details
@@ -128,14 +120,6 @@ const CreateEvent = ({ manage }) => {
 			description,
 		} = formData;
 
-		// if (!category || !event_title || !event_description || !event_image) {
-		//   Swal.fire({
-		//     icon: "error",
-		//     title: "Incomplete Form",
-		//     text: "Please fill in all required fields.",
-		//   });
-		//   return;
-		// }
 		if (!title || !description || !category || !event_image) {
 			Swal.fire({
 				icon: "error",
@@ -157,15 +141,6 @@ const CreateEvent = ({ manage }) => {
 			myForm.append("category", formData.category);
 			const data = await eventsApi.createEvent(myForm);
 
-			// api.post(
-			//   manage ? "/modify_event" : "/create-event",
-			//   formData,
-			//   {
-			//     headers: {
-			//       Authorization: `Bearer ${token}`,
-			//     },
-			//   }
-			// );
 
 			Swal.fire({
 				icon: "success",

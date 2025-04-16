@@ -15,7 +15,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import MapAutocomplete from "../../components/(maps)/Autocomplete";
-import Cookies from "js-cookie"; // Ensure you have this import to access cookies
 import { eventsApi, ticketsApi } from "../../shared/services/api";
 // import { randomUUID } from "crypto";
 
@@ -78,16 +77,16 @@ const PaymentSettings = () => {
 
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
-  const [location, setLocation] = useState("");
+  // const [location, setLocation] = useState("");
 
-  const handleAddressSelect = (selectedAddress) => {
-    setLocation(selectedAddress);
-  };
+  // const handleAddressSelect = (selectedAddress) => {
+  //   setLocation(selectedAddress);
+  // };
   const [loading, setLoading] = useState(false);
 
-  const [step, setStep] = useState(2);
-  const [isPublic, setIsPublic] = useState(false);
-  const [eventType, setEventType] = useState("onsite");
+  const [step] = useState(2);
+  // const [isPublic, setIsPublic] = useState(false);
+  // const [eventType, setEventType] = useState("onsite");
 
   const steps = [
     { number: 1, title: "General Information", active: false },
@@ -123,33 +122,33 @@ const PaymentSettings = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-  const [file, setFile] = useState(null);
+  // const [file, setFile] = useState(null);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) setFile(droppedFile);
-  };
+  // const handleDrop = (e) => {
+  //   e.preventDefault();
+  //   const droppedFile = e.dataTransfer.files[0];
+  //   if (droppedFile) setFile(droppedFile);
+  // };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  // const handleDragOver = (e) => {
+  //   e.preventDefault();
+  // };
 
-  const handleFileInput = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) setFile(selectedFile);
-  };
+  // const handleFileInput = (e) => {
+  //   const selectedFile = e.target.files[0];
+  //   if (selectedFile) setFile(selectedFile);
+  // };
 
-  const [isPaid, setIsPaid] = useState(false);
-  const [pricingCount, setPricingCount] = useState(3);
+  // const [isPaid, setIsPaid] = useState(false);
+  // const [pricingCount, setPricingCount] = useState(3);
   const [dayCount, setDayCount] = useState(0);
 
-  const handlePricingCountChange = (increment) => {
-    const newCount = pricingCount + increment;
-    if (newCount >= 1 && newCount <= 10) {
-      setPricingCount(newCount);
-    }
-  };
+  // const handlePricingCountChange = (increment) => {
+  //   const newCount = pricingCount + increment;
+  //   if (newCount >= 1 && newCount <= 10) {
+  //     setPricingCount(newCount);
+  //   }
+  // };
 
   const submitPayment = async () => {
     if (tickets.length < 1) {
@@ -217,7 +216,7 @@ const PaymentSettings = () => {
       }
 
       // Check if the date is in the past
-      const currentDate = new Date();
+      // const currentDate = new Date();
       const selectedDate = new Date(day.startDate);
       // if (selectedDate < currentDate) {
       //   Swal.fire('Error', 'The start date cannot be in the past for the event day ' + (day.index) + '.', 'error');
@@ -281,9 +280,9 @@ const PaymentSettings = () => {
 
     try {
       // console.log(jsonBody)
-      const token = Cookies.get("auth_token"); // Ensure the token is fetched from cookies
+      // const token = Cookies.get("auth_token"); // Ensure the token is fetched from cookies
 
-      const [ticketsData, eventsData] = await Promise.all([
+      await Promise.all([
         ticketsApi.createBulkTickets(jsonBody.tickets),
         eventsApi.addEventSchedule(id, jsonBody.event_days),
       ]);
@@ -590,7 +589,7 @@ const PaymentSettings = () => {
                   <div className="mb-4">
                     <div className="flex gap-5">
                       <button
-                        onClick={() => addTimeSlot(ticket.id)}
+                        // onClick={() => addTimeSlot(ticket.id)}
                         className="flex items-center hidden px-4 py-1 mt-2 text-sm text-white transition bg-gray-500 rounded hover:bg-gray-600"
                       >
                         <Plus size={17} className={"mr-2"} /> Add Time Slot
