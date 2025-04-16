@@ -47,11 +47,6 @@ const CreateEvent = ({ manage }) => {
 		img: "",
 	});
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setfetchingdataLoading(true);
-      try {
-        const eventData = await eventsApi.getEventById(id);
 	useEffect(() => {
 		const fetchEvents = async () => {
 			setfetchingdataLoading(true);
@@ -62,14 +57,15 @@ const CreateEvent = ({ manage }) => {
 				if (eventData.event) {
 					const { category, is_listed, title, description, image } =
 						eventData.event;
-					setFormData({
+					setFormData((prevFormData) => ({
+						...prevFormData,
 						category: category || "",
-						specific_type: is_listed || true,
+						specific_type: is_listed ?? true,
 						event_title: title || "",
 						event_description: description || "",
 						event_image: image || "",
 						event_id: id,
-					});
+					}));
 				}
 			} catch (error) {
 				console.error("Failed to fetch event details:", error);
@@ -78,7 +74,7 @@ const CreateEvent = ({ manage }) => {
 			}
 		};
 
-		if (manage) {
+		if (manage && id) {
 			fetchEvents();
 		}
 	}, [manage, id]);
@@ -140,7 +136,6 @@ const CreateEvent = ({ manage }) => {
 			myForm.append("image", formData.event_image);
 			myForm.append("category", formData.category);
 			const data = await eventsApi.createEvent(myForm);
-
 
 			Swal.fire({
 				icon: "success",
