@@ -30,7 +30,7 @@ import { useAuth } from "../../context/AuthContext";
 import Cookies from "js-cookie";
 import axios from "axios";
 import api from "../../api";
-
+import { usersApi } from "../../shared/services/api";
 
 const WalletDashboard = () => {
   const [activeTab, setActiveTab] = useState("expenses");
@@ -42,7 +42,7 @@ const WalletDashboard = () => {
   const { userData } = useAuth();
   // console.log(userData && userData.user.balance)
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [withdrawals, setWithdrawals] = useState([]);
   const [earnings, setEarnings] = useState([]);
   const [withdrawalschart, setWithdrawalschart] = useState([]);
@@ -69,15 +69,131 @@ const WalletDashboard = () => {
   const paginatedWithdrawals = paginate(withdrawals, withdrawalsPage);
   const totalWithdrawalsPages = Math.ceil(withdrawals.length / itemsPerPage);
 
-  console.log(chartData)
+  console.log(chartData);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Trigger both API requests concurrently
+        const [statsResponse, eventsResponse] = await Promise.all([
+          usersApi.getWithdrawals(),
+          usersApi.getEarnings(),
+        ]);
+        console.log(statsResponse, eventsResponse);
+        if (eventsResponse && eventsResponse.data) {
+          if (eventsResponse.code === 200) {
+            setEarnings(eventsResponse.data);
+            const earnings = eventsResponse.data;
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+            // Reduce earnings to accumulate monthly totals
+            const monthlyData = earnings.reduce((acc, earning) => {
+              const date = new Date(earning.request_time);
+              const month = date
+                .toLocaleString("default", { month: "short" })
+                .toUpperCase();
+              const amount = Number(earning.initial_amount);
+              acc[month] = (acc[month] || 0) + amount;
+              return acc;
+            }, {});
 
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
+            // Include all months in order
+            const monthOrder = [
+              "JAN",
+              "FEB",
+              "MAR",
+              "APR",
+              "MAY",
+              "JUN",
+              "JUL",
+              "AUG",
+              "SEP",
+              "OCT",
+              "NOV",
+              "DEC",
+            ];
+            const sortedEarningsData = monthOrder.map((month) => ({
+              name: month,
+              value: monthlyData[month] || 0, // Default to 0 if no data for the month
+            }));
+
+            setEarningschart(sortedEarningsData);
+          } else {
+            setError(
+              eventsResponse.message || "Failed to fetch earnings records"
+            );
+          }
+        }
+
+        if (statsResponse && statsResponse.data) {
+          if (statsResponse.code === 200) {
+            setWithdrawals(statsResponse.data);
+            const withdrawals = statsResponse.data;
+
+            // Filter withdrawals to only include those with status "success"
+            const successfulWithdrawals = withdrawals.filter(
+              (withdrawal) => withdrawal.status.toLowerCase() === "success"
+            );
+
+            // Reduce successful withdrawals to accumulate monthly totals
+            const monthlyData = successfulWithdrawals.reduce(
+              (acc, withdrawal) => {
+                const date = new Date(withdrawal.request_time);
+                const month = date
+                  .toLocaleString("default", { month: "short" })
+                  .toUpperCase();
+                const amount = Number(withdrawal.amount);
+                acc[month] = (acc[month] || 0) + amount;
+                return acc;
+              },
+              {}
+            );
+
+            // Include all months in order
+            const monthOrder = [
+              "JAN",
+              "FEB",
+              "MAR",
+              "APR",
+              "MAY",
+              "JUN",
+              "JUL",
+              "AUG",
+              "SEP",
+              "OCT",
+              "NOV",
+              "DEC",
+            ];
+            const sortedWithdrawalsData = monthOrder.map((month) => ({
+              name: month,
+              value: monthlyData[month] || 0, // Default to 0 if no data for the month
+            }));
+
+            setWithdrawalschart(sortedWithdrawalsData);
+          } else {
+            setError(
+              statsResponse.message || "Failed to fetch withdrawal records"
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        console.log("done");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (earningschart.length && withdrawalschart.length) {
+      const combinedData = earningschart.map((earning, index) => ({
+        name: earning.name,
+        earnings: earning.value,
+        withdrawals: withdrawalschart[index]?.value || 0,
+      }));
+      setChartData(combinedData);
+    }
+  }, [earningschart, withdrawalschart]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -101,120 +217,27 @@ const WalletDashboard = () => {
     };
   }, []);
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  const StatementRequest = () =>{
-    alert('requesting statement');
-  }
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = Cookies.get("auth_token");
-
-        // Trigger both API requests concurrently
-        const [statsResponse,eventsResponse] = await Promise.all([
-          api.get("/fetchUserWithdrawals", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          api.post("/fetchUserEarnings", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
-
-        if(eventsResponse && eventsResponse.data){
-          if (eventsResponse.data.code === 200) {
-            setEarnings(eventsResponse.data.data);
-            const earnings = eventsResponse.data.data;
-  
-            // Reduce earnings to accumulate monthly totals
-            const monthlyData = earnings.reduce((acc, earning) => {
-              const date = new Date(earning.request_time);
-              const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
-              const amount = Number(earning.amount);
-              acc[month] = (acc[month] || 0) + amount;
-              return acc;
-            }, {});
-  
-            // Include all months in order
-            const monthOrder = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            const sortedEarningsData = monthOrder.map((month) => ({
-              name: month,
-              value: monthlyData[month] || 0, // Default to 0 if no data for the month
-            }));
-  
-            setEarningschart(sortedEarningsData);
-          } else {
-            setError(eventsResponse.data.message || 'Failed to fetch earnings records');
-          }
-        }
-
-        if(statsResponse && statsResponse.data){
-          if (statsResponse.data.code === 200) {
-            setWithdrawals(statsResponse.data.data);
-            const withdrawals = statsResponse.data.data;
-  
-            // Filter withdrawals to only include those with status "success"
-            const successfulWithdrawals = withdrawals.filter(withdrawal => withdrawal.status.toLowerCase() === 'success');
-  
-            // Reduce successful withdrawals to accumulate monthly totals
-            const monthlyData = successfulWithdrawals.reduce((acc, withdrawal) => {
-              const date = new Date(withdrawal.request_time);
-              const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
-              const amount = Number(withdrawal.amount);
-              acc[month] = (acc[month] || 0) + amount;
-              return acc;
-            }, {});
-  
-            // Include all months in order
-            const monthOrder = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            const sortedWithdrawalsData = monthOrder.map((month) => ({
-              name: month,
-              value: monthlyData[month] || 0, // Default to 0 if no data for the month
-            }));
-  
-            setWithdrawalschart(sortedWithdrawalsData);
-          } else {
-            setError(statsResponse.data.message || 'Failed to fetch withdrawal records');
-          }
-  
-
-        }
-      
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      } finally {
-        console.log('done');
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (earningschart.length && withdrawalschart.length) {
-      const combinedData = earningschart.map((earning, index) => ({
-        name: earning.name,
-        earnings: earning.value,
-        withdrawals: withdrawalschart[index]?.value || 0,
-      }));
-      setChartData(combinedData);
-    }
-  }, [earningschart, withdrawalschart]);
-
-
+  const StatementRequest = () => {
+    alert("requesting statement");
+  };
 
   return (
     <div
-      className={`flex flex-col md:flex-row min-h-screen ${theme === "dark" ? "bg-[#222]" : "bg-gray-100"
-        }`}
+      className={`flex flex-col md:flex-row min-h-screen ${
+        theme === "dark" ? "bg-[#222]" : "bg-gray-100"
+      }`}
     >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
@@ -223,10 +246,11 @@ const WalletDashboard = () => {
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`rounded-lg outline-none p-3 ${theme === "light"
-                ? "bg-gray-200 hover:bg-gray-100"
-                : "bg-[#121212]"
-                }`}
+              className={`rounded-lg outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200 hover:bg-gray-100"
+                  : "bg-[#121212]"
+              }`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -237,10 +261,11 @@ const WalletDashboard = () => {
           <div className="flex items-center space-x-4">
             <Link
               to={"/dashboard/event/create"}
-              className={`rounded-full outline-none  p-3 ${theme === "light"
-                ? "bg-gray-200  hover:bg-gray-100"
-                : "hover:bg-[#111] bg-[#121212]"
-                }`}
+              className={`rounded-full outline-none  p-3 ${
+                theme === "light"
+                  ? "bg-gray-200  hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
               <CirclePlus
@@ -250,10 +275,11 @@ const WalletDashboard = () => {
             </Link>
             <button
               onClick={toggleTheme}
-              className={`rounded-full outline-none p-3 ${theme === "light"
-                ? "bg-gray-200 hover:bg-gray-100"
-                : "hover:bg-[#111] bg-[#121212]"
-                }`}
+              className={`rounded-full outline-none p-3 ${
+                theme === "light"
+                  ? "bg-gray-200 hover:bg-gray-100"
+                  : "hover:bg-[#111] bg-[#121212]"
+              }`}
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
@@ -289,16 +315,35 @@ const WalletDashboard = () => {
                   </div>
                 </div>
                 <div className="flex flex-col justify-between h-full">
-                  <div className="text-sm ">{userData && userData.user.account_name ? userData.user.account_name : 'Add Account to continue'}</div>
+                  <div className="text-sm ">
+                    {userData && userData.user.account_name
+                      ? userData.user.account_name
+                      : "Add Account to continue"}
+                  </div>
 
-                  <div className="text-2xl tracking-wider mb-2">₦{userData ? new Intl.NumberFormat('en-US').format(userData.user.balance) : '0.00'}</div>
+                  <div className="text-2xl tracking-wider mb-2">
+                    ₦
+                    {userData
+                      ? new Intl.NumberFormat("en-US").format(
+                          userData.user.balance
+                        )
+                      : "0.00"}
+                  </div>
                   <div className="flex flex-col z-10">
-                    <div className="text-sm ">{userData && userData.user.account_number ? userData.user.account_number : ' '}</div>
-                    <div className="text-sm ">{userData && userData.user.bank_name ? userData.user.bank_name : ' '}</div></div>
+                    <div className="text-sm ">
+                      {userData && userData.user.account_number
+                        ? userData.user.account_number
+                        : " "}
+                    </div>
+                    <div className="text-sm ">
+                      {userData && userData.user.bank_name
+                        ? userData.user.bank_name
+                        : " "}
+                    </div>
+                  </div>
                 </div>
                 <div className="absolute bottom-0 right-0 bg-[#ff6600] w-24 h-full -skew-x-12 transform origin-bottom-right"></div>
-                <div className="absolute bottom-2 right-4 text-white text-xs md:text-sm font-medium">
-                </div>
+                <div className="absolute bottom-2 right-4 text-white text-xs md:text-sm font-medium"></div>
               </div>
 
               <div className="bg-black text-white rounded-2xl w-full p-4 md:p-6 relative overflow-hidden">
@@ -328,11 +373,11 @@ const WalletDashboard = () => {
               </div>
             </div>
 
-             <div
-              className={`${theme === "light" ? "bg-white" : "bg-[#121212]"
-                } md:col-span-2 rounded-3xl p-4 md:p-8 mb-4 md:mb-8 shadow-sm`}
+            <div
+              className={`${
+                theme === "light" ? "bg-white" : "bg-[#121212]"
+              } md:col-span-2 rounded-3xl p-4 md:p-8 mb-4 md:mb-8 shadow-sm`}
             >
-
               <div className="h-48 md:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={chartData}>
@@ -344,8 +389,13 @@ const WalletDashboard = () => {
                         if (active && payload && payload.length) {
                           return (
                             <div className="bg-black text-white p-2 rounded">
-                              <p className="font-bold">Withdrawal - ₦{payload[0].value.toLocaleString()}</p>
-                              <p className="font-bold">Earning - ₦{payload[1].value.toLocaleString()}</p>
+                              <p className="font-bold">
+                                Withdrawal - ₦
+                                {payload[0].value.toLocaleString()}
+                              </p>
+                              <p className="font-bold">
+                                Earning - ₦{payload[1].value.toLocaleString()}
+                              </p>
                             </div>
                           );
                         }
@@ -378,125 +428,171 @@ const WalletDashboard = () => {
 
           <div className="grid md:grid-cols-2 gap-4 md:gap-8">
             {/* Earnings Section */}
-            <div className={`${theme === "light" ? "bg-white" : "bg-[#121212]"} rounded-3xl p-4 md:p-8 shadow-sm`}>
+            <div
+              className={`${
+                theme === "light" ? "bg-white" : "bg-[#121212]"
+              } rounded-3xl p-4 md:p-8 shadow-sm`}
+            >
               <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6">
-                <h2 className={`${theme === "light" ? "text-gray-800" : "text-white"} text-xl md:text-2xl font-bold mb-2 md:mb-0`}>
+                <h2
+                  className={`${
+                    theme === "light" ? "text-gray-800" : "text-white"
+                  } text-xl md:text-2xl font-bold mb-2 md:mb-0`}
+                >
                   Ticket Sales
                 </h2>
               </div>
               <div className="space-y-4 md:space-y-6">
-                {paginatedEarnings.length > 0 ?
-                paginatedEarnings.map((transaction) => (
-                 <div key={transaction.id} className="space-y-4 md:space-y-6">
-                   <div  className="flex items-center justify-between">
-                     <div className="flex items-center space-x-2 md:space-x-4">
-                       <div className="bg-[#030171] rounded-full p-2">
-                         <MinusCircle className="h-6 w-6 text-white" />
-                       </div>
-                       <div>
-                         <div className="text-sm text-red-500 md:text-base font-medium">
-                            - ₦{userData ? new Intl.NumberFormat('en-US').format(transaction.initial_amount - transaction.amount) : '0.00'} {" - "} { "(Charge + Tax)"}
-                         </div>
-                         <div className="text-xs md:text-sm text-gray-500">
-                           {transaction.request_time}
-                         </div>
-                       </div>
-                     </div>
-                     <div className="text-sm md:text-base font-medium">
-                       {transaction.status}
-                     </div>
-                   </div>
-                   <div className="flex items-center justify-between">
-                     <div className="flex items-center space-x-2 md:space-x-4">
-                       <div className="bg-[#030171] rounded-full p-2">
-                         <ArrowDown className="h-6 w-6 text-white" />
-                       </div>
-                       <div>
-                         <div className="text-sm text-green-500 md:text-base font-medium">
-                           ₦ {userData ? new Intl.NumberFormat('en-US').format(transaction.initial_amount) : '0.00'}
-                         </div>
-                         <div className="text-xs md:text-sm text-gray-500">
-                           {transaction.request_time}
-                         </div>
-                       </div>
-                     </div>
-                     <div className="text-sm md:text-base font-medium">
-                       {transaction.status}
-                     </div>
-                   </div>
-                 </div>
-                ))
-                : 'No Transaction Found!!'}
+                {paginatedEarnings.length > 0
+                  ? paginatedEarnings.map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className="space-y-4 md:space-y-6"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 md:space-x-4">
+                            <div className="bg-[#030171] rounded-full p-2">
+                              <MinusCircle className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <div className="text-sm text-red-500 md:text-base font-medium">
+                                - ₦
+                                {userData
+                                  ? new Intl.NumberFormat("en-US").format(
+                                      transaction.initial_amount -
+                                        transaction.amount
+                                    )
+                                  : "0.00"}{" "}
+                                {" - "} {"(Charge + Tax)"}
+                              </div>
+                              <div className="text-xs md:text-sm text-gray-500">
+                                {transaction.request_time}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-sm md:text-base font-medium">
+                            {transaction.status}
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2 md:space-x-4">
+                            <div className="bg-[#030171] rounded-full p-2">
+                              <ArrowDown className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <div className="text-sm text-green-500 md:text-base font-medium">
+                                ₦{" "}
+                                {userData
+                                  ? new Intl.NumberFormat("en-US").format(
+                                      transaction.initial_amount
+                                    )
+                                  : "0.00"}
+                              </div>
+                              <div className="text-xs md:text-sm text-gray-500">
+                                {transaction.request_time}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-sm md:text-base font-medium">
+                            {transaction.status}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  : "No Transaction Found!!"}
               </div>
 
               {/* Pagination Controls for Earnings */}
-              {totalEarningsPages > 1 &&
-                (
-                  <div className="flex justify-center items-center mt-6 space-x-4">
-                    <button
-                      disabled={earningsPage === 1}
-                      onClick={() => setEarningsPage(earningsPage - 1)}
-                      className={`py-2 px-4 rounded-lg border ${earningsPage === 1 ? 'bg-black/50 text-white cursor-not-allowed' : 'bg-black text-white hover:bg-black/90'}`}
-                    >
-                      Previous
-                    </button>
-                    <span className="text-sm text-gray-500">
-                      Page {earningsPage} of {totalEarningsPages}
-                    </span>
-                    <button
-                      disabled={earningsPage === totalEarningsPages}
-                      onClick={() => setEarningsPage(earningsPage + 1)}
-                      className={`py-2 px-4 rounded-lg border ${earningsPage === totalEarningsPages ? 'bg-black/50 text-white cursor-not-allowed' : 'bg-black text-white hover:bg-black/90'}`}
-                    >
-                      Next
-                    </button>
-                  </div>
-                )
-              }
+              {totalEarningsPages > 1 && (
+                <div className="flex justify-center items-center mt-6 space-x-4">
+                  <button
+                    disabled={earningsPage === 1}
+                    onClick={() => setEarningsPage(earningsPage - 1)}
+                    className={`py-2 px-4 rounded-lg border ${
+                      earningsPage === 1
+                        ? "bg-black/50 text-white cursor-not-allowed"
+                        : "bg-black text-white hover:bg-black/90"
+                    }`}
+                  >
+                    Previous
+                  </button>
+                  <span className="text-sm text-gray-500">
+                    Page {earningsPage} of {totalEarningsPages}
+                  </span>
+                  <button
+                    disabled={earningsPage === totalEarningsPages}
+                    onClick={() => setEarningsPage(earningsPage + 1)}
+                    className={`py-2 px-4 rounded-lg border ${
+                      earningsPage === totalEarningsPages
+                        ? "bg-black/50 text-white cursor-not-allowed"
+                        : "bg-black text-white hover:bg-black/90"
+                    }`}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Withdrawals Section */}
-            <div className={`${theme === "light" ? "bg-white" : "bg-[#121212]"} rounded-3xl p-4 md:p-8 shadow-sm`}>
+            <div
+              className={`${
+                theme === "light" ? "bg-white" : "bg-[#121212]"
+              } rounded-3xl p-4 md:p-8 shadow-sm`}
+            >
               <div className="flex flex-col md:flex-row justify-between items-center mb-4 md:mb-6">
-                <h2 className={`${theme === "light" ? "text-gray-800" : "text-white"} text-xl md:text-2xl font-bold mb-2 md:mb-0`}>
+                <h2
+                  className={`${
+                    theme === "light" ? "text-gray-800" : "text-white"
+                  } text-xl md:text-2xl font-bold mb-2 md:mb-0`}
+                >
                   Withdrawals
                 </h2>
               </div>
               <div className="space-y-4 md:space-y-6">
-                
-              {paginatedWithdrawals.length > 0 ?             
-                paginatedWithdrawals.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2 md:space-x-4">
-                      <div className="bg-[#030171] rounded-full p-2">
-                        <ArrowDown className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
+                {paginatedWithdrawals.length > 0
+                  ? paginatedWithdrawals.map((transaction) => (
+                      <div
+                        key={transaction.id}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center space-x-2 md:space-x-4">
+                          <div className="bg-[#030171] rounded-full p-2">
+                            <ArrowDown className="h-6 w-6 text-white" />
+                          </div>
+                          <div>
+                            <div className="text-sm md:text-base font-medium">
+                              ₦{" "}
+                              {userData
+                                ? new Intl.NumberFormat("en-US").format(
+                                    transaction.amount
+                                  )
+                                : "0.00"}
+                            </div>
+                            <div className="text-xs md:text-sm text-gray-500">
+                              {transaction.request_time}
+                            </div>
+                          </div>
+                        </div>
                         <div className="text-sm md:text-base font-medium">
-                          ₦ {userData ? new Intl.NumberFormat('en-US').format(transaction.amount) : '0.00'}
-                        </div>
-                        <div className="text-xs md:text-sm text-gray-500">
-                          {transaction.request_time}
+                          {transaction.status}
                         </div>
                       </div>
-                    </div>
-                    <div className="text-sm md:text-base font-medium">
-                      {transaction.status}
-                    </div>
-                  </div>
-                ))
-                : 'No Transaction Found!!'}
-
+                    ))
+                  : "No Transaction Found!!"}
               </div>
 
               {/* Pagination Controls for Withdrawals */}
-              {totalWithdrawalsPages > 1 &&
-
+              {totalWithdrawalsPages > 1 && (
                 <div className="flex justify-center items-center mt-6 space-x-4">
                   <button
                     disabled={withdrawalsPage === 1}
                     onClick={() => setWithdrawalsPage(withdrawalsPage - 1)}
-                    className={`py-2 px-4 rounded-lg border ${withdrawalsPage === 1 ? 'bg-black/50 text-white cursor-not-allowed' : 'bg-black text-white hover:bg-black/90'}`}
+                    className={`py-2 px-4 rounded-lg border ${
+                      withdrawalsPage === 1
+                        ? "bg-black/50 text-white cursor-not-allowed"
+                        : "bg-black text-white hover:bg-black/90"
+                    }`}
                   >
                     Previous
                   </button>
@@ -506,12 +602,16 @@ const WalletDashboard = () => {
                   <button
                     disabled={withdrawalsPage === totalWithdrawalsPages}
                     onClick={() => setWithdrawalsPage(withdrawalsPage + 1)}
-                    className={`py-2 px-4 rounded-lg border ${withdrawalsPage === totalWithdrawalsPages ? 'bg-black/50 text-white cursor-not-allowed' : 'bg-black text-white hover:bg-black/90'}`}
+                    className={`py-2 px-4 rounded-lg border ${
+                      withdrawalsPage === totalWithdrawalsPages
+                        ? "bg-black/50 text-white cursor-not-allowed"
+                        : "bg-black text-white hover:bg-black/90"
+                    }`}
                   >
                     Next
                   </button>
                 </div>
-              }
+              )}
             </div>
           </div>
         </div>

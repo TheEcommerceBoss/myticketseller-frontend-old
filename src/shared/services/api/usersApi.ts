@@ -21,4 +21,12 @@ export const usersApi = {
     const res = await newApi.post("/users/withdraw", data);
     return res.data;
   },
+  getWithdrawals: async function () {
+    const res = await newApi.get("/users/withdrawals");
+    return res.data;
+  },
+  getEarnings: async function () {
+    const res = await newApi.get("/users/earnings");
+    return res.data;
+  },
 };
