@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import {
   Calendar,
   ChevronDown,
@@ -14,6 +16,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { categoriesApi, eventsApi } from "../../shared/services/api";
 import { useTheme } from "../../context/ThemeContext.jsx"; // Adjust path as necessary
+import FeaturedEventCard from "../ui/FeaturedEventCard.jsx";
+import { cn, formatEventDate } from "../../lib/utils.js";
 
 const options = [
   { value: "location1", label: "Location 1" },
@@ -96,32 +100,27 @@ function FeaturedEvents2({ variation, sortcategory }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await categoriesApi.getCategories();
-        // console.log("Omo", response.categories);
-        setCategories(response.categories);
+        const categoriesData = await categoriesApi.getCategories();
+        setCategories(categoriesData.categories);
       } catch (error) {
-        console.error("Failed to fetch user:", error);
+        console.error("Failed to fetch categories:", error);
       }
     };
-
     fetchCategories();
   }, []);
+
   const [loading, setLoading] = useState(true); // Track loading state
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const myEvents = await eventsApi.getEvents();
-        console.log(myEvents);
-        // const response = await api.post(
-        //   sortcategory ? "/category_events" : "/events",
-        //   {
-        //     category: sortcategory,
-        //   }
-        // );
+
+        console.log("Empty", myEvents);
+
+        setLoading(false);
+
         setcards(myEvents);
-        // console.log(response.data.events_list[0].info[0].event_list_choice)
-        // console.log(response.data.events_list);
       } catch (error) {
         console.error("Failed to fetch user:", error);
       } finally {
@@ -142,10 +141,11 @@ function FeaturedEvents2({ variation, sortcategory }) {
   const filteredCards = cards.filter((card) => card.is_public);
 
   // Get the current page's cards
-  const currentCards = filteredCards.slice(
-    (currentPage - 1) * cardsPerPage,
-    currentPage * cardsPerPage
-  );
+  const startIndex = (currentPage - 1) * cardsPerPage;
+  const endIndex = startIndex + cardsPerPage;
+  const currentCards = filteredCards?.slice(startIndex, endIndex) || [];
+
+  // console.log(currentCards);
 
   const { theme } = useTheme();
   const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
@@ -228,9 +228,17 @@ function FeaturedEvents2({ variation, sortcategory }) {
   const handleLocationChange = (newLocation) => {
     setSearchLocation(newLocation);
   };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <section
-      className={`py-16 ${theme === "dark" ? "bg-[#121212]" : "bg-gray-100"}`}
+      className={`${variation !== 2 ? "py-16" : "pt-16 pb-96 md:pb-72"} ${
+        theme === "dark" ? "bg-[#121212]" : "bg-gray-100"
+      }`}
     >
       <div
         className={`${
@@ -310,27 +318,44 @@ function FeaturedEvents2({ variation, sortcategory }) {
               variation == 2 ? "flex flex-col md:flex-row justify-between" : ""
             } `}
           >
-            <h2
-              className={`${
-                variation == 2
-                  ? "hidden text-lg  md:text-2xl  "
-                  : " text-xl  md:text-3xl  "
-              }  pb-1 mb-3 relative inline-block font-bold uppercase ${
-                theme === "dark" ? "text-white" : "text-[#040171]"
-              }`}
-            >
-              {variation == 2 ? "Browse Events" : "Featured Events Around You"}
+            {/* <h2
+							className={`${
+								variation == 2
+									? "hidden text-lg  md:text-2xl  "
+									: " text-xl  md:text-3xl  "
+							}  pb-1 mb-3 relative inline-block font-bold uppercase ${
+								theme === "dark"
+									? "text-white"
+									: "text-[#040171]"
+							}`}
+						>
+							{variation == 2
+								? "Browse Events"
+								: "Featured Events Around You"}
 
-              <span
-                className={` absolute bottom-0 ${
-                  variation == 2 ? " left-0 " : " right-0 "
-                } w-[5rem] h-[.1rem] bg-orange-500 `}
-              ></span>
-              <span
-                className={` absolute bottom-1 ${
-                  variation == 2 ? " left-0 " : " right-0 "
-                } w-[5rem] h-[.1rem] bg-orange-500 `}
-              ></span>
+							<span
+								className={` absolute bottom-0 ${
+									variation == 2 ? " left-0 " : " right-0 "
+								} w-[5rem] h-[.1rem] bg-orange-500 `}
+							></span>
+							<span
+								className={` absolute bottom-1 ${
+									variation == 2 ? " left-0 " : " right-0 "
+								} w-[5rem] h-[.1rem] bg-orange-500 `}
+							></span>
+						</h2> */}
+
+            <h2
+              className={cn(
+                "relative text-2xl font-semibold mb-10 text-center uppercase tracking-wide text-secondary leading-normal md:text-3xl md:w-fit md:mx-auto md:mb-12 lg:text-[2rem] xl:mb-14",
+                variation === 2 && "hidden"
+              )}
+            >
+              Featured Events <br className="md:hidden" /> Around You
+              <div className="absolute left-0 right-0 -bottom-[20px] flex flex-col gap-[2px] items-center md:items-end ">
+                <div className="bg-primary h-[4px] w-full max-w-[86px] md:max-w-[122px]"></div>
+                <div className="bg-primary h-[4px] w-full max-w-[86px] md:max-w-[122px]"></div>
+              </div>
             </h2>
 
             <div
@@ -356,13 +381,25 @@ function FeaturedEvents2({ variation, sortcategory }) {
             </div>
           </div>
 
+          {/* <p
+						className={`${
+							variation == 2 ? "hidden" : ""
+						} text-sm px-5  ${
+							theme === "dark" ? "text-gray-300" : "text-gray-700"
+						}`}
+					>
+						Check out what’s trending now and grab your tickets
+						before they sell out!
+					</p> */}
+
           <p
-            className={`${variation == 2 ? "hidden" : ""} text-sm px-5  ${
-              theme === "dark" ? "text-gray-300" : "text-gray-700"
-            }`}
+            className={cn(
+              "text-center mb-[44px] text-lg max-w-[454px] mx-auto md:max-w-none md:mb-[54px] lg:text-xl xl:text-2xl xl:mb-[64px]",
+              variation === 2 && "hidden"
+            )}
           >
-            Check out what’s trending now and grab your tickets before they sell
-            out!
+            Check out what&apos;s trending now and grab your tickets before they
+            sell out!
           </p>
 
           <div className="items-center justify-center hidden my-8 space-x-10 lg:flex">
@@ -390,22 +427,22 @@ function FeaturedEvents2({ variation, sortcategory }) {
           </div>
         </div>
         {loading ? (
-          <div className="flex items-center justify-center ">
-            <div className="w-full p-4 m-1 mx-auto border border-gray-100 rounded-md">
-              <div className="flex space-x-4 animate-pulse">
-                <div className="rounded-full bg-slate-700 h-[2rem] w-[2rem]"></div>
-                <div className="flex-1 py-1 space-y-6">
-                  <div className="h-[1rem] bg-slate-700 rounded"></div>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="h-[1rem] bg-slate-700 rounded col-span-2"></div>
-                      <div className="h-[1rem] bg-slate-700 rounded col-span-1"></div>
-                    </div>
-                    <div className="h-[1rem] bg-slate-700 rounded"></div>
-                  </div>
+          <div className="grid w-full grid-cols-1 gap-8 px-2 max-w-7xl md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, index) => (
+              <div
+                key={index}
+                className="w-full max-w-md p-4 mx-auto bg-white border border-gray-100 shadow-sm rounded-xl animate-pulse"
+              >
+                <div className="h-40 mb-4 rounded-lg bg-slate-200" />
+                <div className="w-3/4 h-4 mb-2 rounded bg-slate-300" />
+                <div className="w-1/3 h-3 mb-4 rounded bg-slate-300" />
+                <div className="mb-4 space-y-2">
+                  <div className="w-full h-3 rounded bg-slate-200" />
+                  <div className="w-5/6 h-3 rounded bg-slate-200" />
                 </div>
+                <div className="w-24 h-8 rounded bg-slate-300" />
               </div>
-            </div>
+            ))}
           </div>
         ) : currentCards.length == 0 ? (
           <p className="text-center">No Event Found</p>
@@ -424,141 +461,67 @@ function FeaturedEvents2({ variation, sortcategory }) {
                 } w-full grid gap-8 px-2`}
               >
                 {currentCards &&
-                  currentCards.map((card, index) => (
-                    <div key={index}>
-                      {variation !== 2 ? (
-                        <div
-                          className={`bg-white shadow-lg  rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${
-                            theme === "dark" ? "bg-gray-900" : "bg-white"
-                          }`}
-                        >
-                          <img
-                            src={card.image}
-                            alt={card.title}
-                            className="w-full h-[8rem] md:h-[10rem] object-cover"
+                  currentCards.map((card, index) =>
+                    card ? (
+                      <div key={index}>
+                        {variation !== 2 ? (
+                          <FeaturedEventCard
+                            id={card.id}
+                            title={card.title}
+                            image={card.image}
+                            date={formatEventDate(
+                              card.days[0].event_day,
+                              card.days[0].open_door
+                            )}
+                            description={card.description}
+                            location={card.days[0].event_address}
+                            category={"rides"}
                           />
-                          <div
-                            className={`flex flex-col justify-between p-6 py-4 ${
-                              theme === "dark"
-                                ? "text-gray-200"
-                                : "text-gray-700"
-                            }`}
-                          >
-                            <div className="flex items-center">
-                              <span className="flex items-center w-2/5 gap-1 text-xs text-gray-500">
-                                <Calendar size={16} />{" "}
-                                <span>{card?.days[0]?.event_day}</span>
-                              </span>
-                              <span className="w-1/5 text-center text-orange-500">
-                                |
-                              </span>
-                              <span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500">
-                                <MapPin size={16} />{" "}
-                                <span>
-                                  {card.days[0]?.event_type == "virtual"
-                                    ? "Virtual"
-                                    : card.days[0]?.event_address
-                                        .split(", ")
-                                        .slice(-2)
-                                        .join(", ")}
-                                </span>
-                              </span>
-                            </div>
-                            <Link
-                              onClick={() =>
-                                window.scrollTo({
-                                  top: 0,
-                                  behavior: "smooth",
-                                })
-                              }
-                              to={"/event/view/" + card.id}
-                              className="my-2 text-xl font-semibold text-black"
-                            >
-                              {card.title.length > 50
-                                ? `${card.title.substring(0, 50)}...`
-                                : card.title}
-                            </Link>
-                            <span className="text-sm text-gray-500">
-                              {card.description.length > 100
-                                ? `${card.description.substring(0, 100)}...`
-                                : card.description}
-                            </span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div
-                          className={`${
-                            theme === "dark" ? "bg-[#000]" : "bg-white"
-                          } overflow-hidden lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4`}
-                        >
-                          <img
-                            src={card.image}
-                            alt={card.title}
-                            className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
-                          />
+                        ) : (
                           <div
                             className={`${
                               theme === "dark" ? "bg-[#000]" : "bg-white"
-                            } rounded-xl lg:shadow-md   p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4`}
+                            } overflow-hidden lg:bg-transparent p-5 lg:p-0 rounded-xl shadow-md lg:rounded-none lg:shadow-none flex flex-col lg:flex-row lg:gap-5 mb-4`}
                           >
-                            <div className="flex items-start justify-between">
-                              <div className="flex flex-col justify-between flex-grow w-1/3 gap-2 md:px-3 md:gap-4">
-                                <div className="">
-                                  <div className="flex flex-col gap-3 py-1 mb-2 text-sm text-gray-500 rounded-full md:inline-flex md:flex-row md:gap-12 md:items-center md:text-xs md:border md:border-gray-300 md:px-2">
-                                    <div className="flex items-center gap-1 font-semibold">
-                                      <Calendar
-                                        color={`${
-                                          theme === "dark" ? "#fff" : "#040171"
-                                        } `}
-                                        className="w-4 h-4 mr-1 md:w-3 md:h-3"
-                                      />
-                                      <span>{card.days[0]?.event_day}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 font-bold">
-                                      <Clock
-                                        color={`${
-                                          theme === "dark" ? "#fff" : "#040171"
-                                        } `}
-                                        className="w-4 h-4 mr-1 md:w-3 md:h-3"
-                                      />
-                                      <span>{card.days[0]?.open_door}</span>
+                            <img
+                              src={card.image}
+                              alt={card.title}
+                              className="w-full h-[12rem] lg:w-1/4 rounded-xl object-cover"
+                            />
+                            <div
+                              className={`${
+                                theme === "dark" ? "bg-[#000]" : "bg-white"
+                              } rounded-xl lg:shadow-md   p-4 py-[2.5rem] flex flex-col justify-between w-full mt-2 lg:mt-0 lg:w-3/4`}
+                            >
+                              <div className="flex items-start justify-between">
+                                <div className="flex flex-col justify-between flex-grow w-1/3 gap-2 md:px-3 md:gap-4">
+                                  <div className="">
+                                    <div className="flex flex-col gap-3 py-1 mb-2 text-sm text-gray-500 rounded-full md:inline-flex md:flex-row md:gap-12 md:items-center md:text-xs md:border md:border-gray-300 md:px-2">
+                                      <div className="flex items-center gap-1 font-semibold">
+                                        <Calendar
+                                          color={`${
+                                            theme === "dark"
+                                              ? "#fff"
+                                              : "#040171"
+                                          } `}
+                                          className="w-4 h-4 mr-1 md:w-3 md:h-3"
+                                        />
+                                        <span>{card.days[0]?.event_day}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1 font-bold">
+                                        <Clock
+                                          color={`${
+                                            theme === "dark"
+                                              ? "#fff"
+                                              : "#040171"
+                                          } `}
+                                          className="w-4 h-4 mr-1 md:w-3 md:h-3"
+                                        />
+                                        <span>{card.days[0]?.open_door}</span>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                <Link
-                                  onClick={() =>
-                                    window.scrollTo({
-                                      top: 0,
-                                      behavior: "smooth",
-                                    })
-                                  }
-                                  to={"/event/view/" + card.id}
-                                  className={`text-lg my-3 md:my-0 font-semibold ${
-                                    theme === "dark"
-                                      ? "text-[#fff]"
-                                      : "text-[#040171]"
-                                  } `}
-                                >
-                                  {card.title.length > 50
-                                    ? `${card.title.substring(0, 50)}...`
-                                    : card.title}
-                                </Link>
-
-                                <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-gray-600">
-                                  <MapPin
-                                    color={`${
-                                      theme === "dark" ? "#fff" : "#040171"
-                                    } `}
-                                    className="w-4 h-4 mr-1 md:w-3 md:h-3"
-                                  />
-                                  <span>
-                                    {card.days[0]?.event_type == "virtual"
-                                      ? "Virtual"
-                                      : card.days[0]?.event_address}
-                                  </span>
-                                </div>
-                                <div className="flex h-full mt-4 md:hidden ">
                                   <Link
                                     onClick={() =>
                                       window.scrollTo({
@@ -567,42 +530,78 @@ function FeaturedEvents2({ variation, sortcategory }) {
                                       })
                                     }
                                     to={"/event/view/" + card.id}
-                                    className="px-6 py-2 text-lg text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
+                                    className={`text-lg my-3 md:my-0 font-semibold ${
+                                      theme === "dark"
+                                        ? "text-[#fff]"
+                                        : "text-[#040171]"
+                                    } `}
+                                  >
+                                    {card.title.length > 50
+                                      ? `${card.title.substring(0, 50)}...`
+                                      : card.title}
+                                  </Link>
+
+                                  <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-gray-600">
+                                    <MapPin
+                                      color={`${
+                                        theme === "dark" ? "#fff" : "#040171"
+                                      } `}
+                                      className="w-4 h-4 mr-1 md:w-3 md:h-3"
+                                    />
+                                    <span>
+                                      {card.days[0]?.event_type == "virtual"
+                                        ? "Virtual"
+                                        : card.days[0]?.event_address}
+                                    </span>
+                                  </div>
+                                  <div className="flex h-full mt-4 md:hidden ">
+                                    <Link
+                                      onClick={() =>
+                                        window.scrollTo({
+                                          top: 0,
+                                          behavior: "smooth",
+                                        })
+                                      }
+                                      to={"/event/view/" + card.id}
+                                      className="px-6 py-2 text-lg text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
+                                    >
+                                      Buy Tickets
+                                    </Link>
+                                  </div>
+                                </div>
+
+                                <div className="items-center hidden h-full pl-3 md:flex md:border-l">
+                                  <Link
+                                    onClick={() =>
+                                      window.scrollTo({
+                                        top: 0,
+                                        behavior: "smooth",
+                                      })
+                                    }
+                                    to={"/event/view/" + card.id}
+                                    className="px-4 py-2 text-xs text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
                                   >
                                     Buy Tickets
                                   </Link>
                                 </div>
                               </div>
-
-                              <div className="items-center hidden h-full pl-3 md:flex md:border-l">
-                                <Link
-                                  onClick={() =>
-                                    window.scrollTo({
-                                      top: 0,
-                                      behavior: "smooth",
-                                    })
-                                  }
-                                  to={"/event/view/" + card.id}
-                                  className="px-4 py-2 text-xs text-white transition duration-300 bg-orange-500 rounded-full hover:bg-orange-600"
-                                >
-                                  Buy Tickets
-                                </Link>
-                              </div>
                             </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                        )}
+                      </div>
+                    ) : (
+                      null()
+                    )
+                  )}
               </div>
             </div>
 
             {/* Pagination */}
-            <div className="p-4">
+            <div className="p-4 mt-14">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={setCurrentPage}
+                onPageChange={handlePageChange}
               />
             </div>
           </>
@@ -613,3 +612,97 @@ function FeaturedEvents2({ variation, sortcategory }) {
 }
 
 export default FeaturedEvents2;
+
+// <div
+// 	className={`bg-white shadow-lg  rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${
+// 		theme === "dark"
+// 			? "bg-gray-900"
+// 			: "bg-white"
+// 	}`}
+// >
+// 	<img
+// 		src={card.image}
+// 		alt={card.title}
+// 		className="w-full h-[8rem] md:h-[10rem] object-cover"
+// 	/>
+// 	<div
+// 		className={`flex flex-col justify-between p-6 py-4 ${
+// 			theme === "dark"
+// 				? "text-gray-200"
+// 				: "text-gray-700"
+// 		}`}
+// 	>
+// 		<div className="flex items-center">
+// 			<span className="flex items-center w-2/5 gap-1 text-xs text-gray-500">
+// 				<Calendar
+// 					size={16}
+// 				/>{" "}
+// 				<span>
+// 					{
+// 						card
+// 							?.days[0]
+// 							?.event_day
+// 					}
+// 				</span>
+// 			</span>
+// 			<span className="w-1/5 text-center text-orange-500">
+// 				|
+// 			</span>
+// 			<span className="flex items-center justify-end w-2/5 gap-1 text-xs text-gray-500">
+// 				<MapPin
+// 					size={16}
+// 				/>{" "}
+// 				<span>
+// 					{card
+// 						.days[0]
+// 						?.event_type ==
+// 					"virtual"
+// 						? "Virtual"
+// 						: card.days[0]?.event_address
+// 								.split(
+// 									", "
+// 								)
+// 								.slice(
+// 									-2
+// 								)
+// 								.join(
+// 									", "
+// 								)}
+// 				</span>
+// 			</span>
+// 		</div>
+// 		<Link
+// 			onClick={() =>
+// 				window.scrollTo(
+// 					{
+// 						top: 0,
+// 						behavior:
+// 							"smooth",
+// 					}
+// 				)
+// 			}
+// 			to={
+// 				"/event/view/" +
+// 				card.id
+// 			}
+// 			className="my-2 text-xl font-semibold text-black"
+// 		>
+// 			{card.title.length >
+// 			50
+// 				? `${card.title.substring(
+// 						0,
+// 						50
+// 				  )}...`
+// 				: card.title}
+// 		</Link>
+// 		<span className="text-sm text-gray-500">
+// 			{card.description
+// 				.length > 100
+// 				? `${card.description.substring(
+// 						0,
+// 						100
+// 				  )}...`
+// 				: card.description}
+// 		</span>
+// 	</div>
+// </div>

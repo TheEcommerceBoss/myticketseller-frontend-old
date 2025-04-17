@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   LineChart,
@@ -27,7 +28,7 @@ import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Greetings from "../../components/(snippets)/Greetings";
 import { useAuth } from "../../context/AuthContext";
 
-import { eventsApi, dashboardApi } from "../../shared/services/api";
+import { eventsApi, dashboardApi } from "../../shared/services/api.ts";
 import { CircularProgress } from "@mui/material";
 
 const Dashboard = () => {
