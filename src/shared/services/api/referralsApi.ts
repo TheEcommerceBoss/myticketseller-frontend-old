@@ -7,6 +7,7 @@ interface CreateReferral {
   commission_amount: string;
   event_ids: string;
 }
+
 export const referralsApi = {
   createReferral: async function (data: CreateReferral) {
     const res = await newApi.post("/referrals", data);
