@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { paymentsApi } from "../../shared/services/api";
+import { paymentsApi } from "../../shared/services/api/paymentsApi";
 import Swal from "sweetalert2";
 
 const PaymentSuccess = () => {

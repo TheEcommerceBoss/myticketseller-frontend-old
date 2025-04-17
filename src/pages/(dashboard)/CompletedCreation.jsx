@@ -37,7 +37,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import api, { eventsApi } from "../../shared/services/api";
+import { eventsApi } from "../../shared/services/api/eventsApi";
 import axios from "axios";
 
 const CompletedCreation = () => {
@@ -118,9 +118,9 @@ const CompletedCreation = () => {
     >
       <SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
 
-      <div className="flex-1 py-8 px-5 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center  space-x-4">
+      <div className="flex-1 px-5 py-8 lg:px-8">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className={`rounded-lg outline-none p-3 ${
@@ -132,12 +132,12 @@ const CompletedCreation = () => {
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            <h1 className="hidden lg:flex text-2xl font-bold">Add New Event</h1>
+            <h1 className="hidden text-2xl font-bold lg:flex">Add New Event</h1>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5" />
+            <div className="relative hidden md:flex">
+              <Search className="absolute w-5 h-5 text-gray-600 transform -translate-y-1/2 left-3 top-1/2" />
               <input
                 type="text"
                 placeholder="Search"
@@ -181,11 +181,11 @@ const CompletedCreation = () => {
               : "border border-[#040171]"
           } rounded-lg p-6 my-6 shadow-sm`}
         >
-          <div className="w-full mx-auto p-6 space-y-8">
-            <div className="flex flex-col lg:flex-row gap-5 lg:gap-0 justify-between border-b pb-6 items-center">
-              <div className="flex  flex-row items-center gap-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex flex-col items-center justify-center">
-                  <Check className="w-5 font-bold h-5 text-white" />
+          <div className="w-full p-6 mx-auto space-y-8">
+            <div className="flex flex-col items-center justify-between gap-5 pb-6 border-b lg:flex-row lg:gap-0">
+              <div className="flex flex-row items-center gap-3">
+                <div className="flex flex-col items-center justify-center w-8 h-8 bg-green-500 rounded-full">
+                  <Check className="w-5 h-5 font-bold text-white" />
                 </div>
                 <div className="flex flex-col items-center justify-center ">
                   <h1
@@ -198,7 +198,7 @@ const CompletedCreation = () => {
                 </div>
               </div>
 
-              <div className="flex gap-5 items-end">
+              <div className="flex items-end gap-5">
                 <Link
                   to={"/dashboard/event/manage"}
                   className="px-5 py-2 text-sm bg-[#040171] text-white rounded-full hover:bg-[#040171] transition-colors"

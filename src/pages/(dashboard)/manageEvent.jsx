@@ -9,7 +9,7 @@ import DashboardHeader from "../../components/(events)/DashboardHeader";
 import api from "../../api";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-import { eventsApi } from "../../shared/services/api";
+import { eventsApi } from "../../shared/services/api/eventsApi";
 import { CircularProgress } from "@mui/material";
 
 const ManageEvent = () => {
