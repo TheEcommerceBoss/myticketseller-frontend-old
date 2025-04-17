@@ -116,16 +116,12 @@ function FeaturedEvents2({ variation, sortcategory }) {
 		const fetchEvents = async () => {
 			try {
 				const myEvents = await eventsApi.getEvents();
-				console.log(myEvents);
-				// const response = await api.post(
-				//   sortcategory ? "/category_events" : "/events",
-				//   {
-				//     category: sortcategory,
-				//   }
-				// );
+
+				console.log("Empty", myEvents);
+
+				setLoading(false);
+
 				setcards(myEvents);
-				// console.log(response.data.events_list[0].info[0].event_list_choice)
-				// console.log(response.data.events_list);
 			} catch (error) {
 				console.error("Failed to fetch user:", error);
 			} finally {
@@ -150,7 +146,7 @@ function FeaturedEvents2({ variation, sortcategory }) {
 	const endIndex = startIndex + cardsPerPage;
 	const currentCards = filteredCards?.slice(startIndex, endIndex) || [];
 
-	console.log(currentCards);
+	// console.log(currentCards);
 
 	const { theme } = useTheme();
 	const [selectedDate, setSelectedDate] = useState(null); // State for the selected date
