@@ -200,6 +200,18 @@ const DateTime = ({ theme, eventDetails, ticketDetails, day, id }) => {
 		return `${daySuffix(day)} ${month}, ${year}`;
 	};
 
+	const formatTime = (timeStr) => {
+		const [hours, minutes] = timeStr.split(":");
+		const date = new Date();
+		date.setHours(+hours);
+		date.setMinutes(+minutes);
+		return date.toLocaleTimeString([], {
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: true,
+		});
+	};
+
 	return (
 		<div className="mb-8">
 			<h2
@@ -215,9 +227,10 @@ const DateTime = ({ theme, eventDetails, ticketDetails, day, id }) => {
 				}`}
 			>
 				<Calendar className="w-5 h-5" />
-				<span>
-					{day && formatDate(day.event_day)} · {day && day.open_door}{" "}
-					- {day && day.close_door}
+				<span className="uppercase">
+					{day && formatDate(day.event_day)} ·{" "}
+					{day && formatTime(day.open_door)} -{" "}
+					{day && formatTime(day.close_door)}
 				</span>
 			</div>
 		</div>
@@ -417,6 +430,7 @@ function ViewEventComponent({ variation }) {
 		const fetchSingleEventDetails = async () => {
 			try {
 				const event = await eventsApi.getEventById(id);
+				console.log(event);
 
 				if (event) {
 					const { total_events_by_this_user_with_status_1 } = event;
