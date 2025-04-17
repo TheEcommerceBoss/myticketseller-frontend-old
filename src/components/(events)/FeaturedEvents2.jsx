@@ -12,7 +12,7 @@ import DatePicker from "react-datepicker"; // Import the date picker
 import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
 import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { categoriesApi, eventsApi } from "../../shared/services/api.ts";
+import { categoriesApi, eventsApi } from "../../shared/services/api";
 import { useTheme } from "../../context/ThemeContext.jsx"; // Adjust path as necessary
 
 const options = [

@@ -9,13 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import {
-  Home,
   PlusCircle,
-  ListChecks,
-  Ticket,
-  Megaphone,
-  Settings,
-  HelpCircle,
   Menu,
   ChevronLeft,
   ChevronRight,
@@ -23,23 +17,17 @@ import {
   Moon,
   Sun,
   CalendarCogIcon,
-  BellDot,
-  Bell,
   X,
   Eye,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
-import user from "../../assets/(user)/user.png";
-import eventImage from "../../assets/(landing)/event.png";
 import { Link } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Greetings from "../../components/(snippets)/Greetings";
 import { useAuth } from "../../context/AuthContext";
-import Cookies from "js-cookie";
-import api from "../../api";
-import { Button } from "storybook/internal/components";
-import { eventsApi, dashboardApi } from "../../shared/services/api.ts";
+
+import { eventsApi, dashboardApi } from "../../shared/services/api";
 import { CircularProgress } from "@mui/material";
 
 const Dashboard = () => {
