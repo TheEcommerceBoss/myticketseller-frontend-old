@@ -38,6 +38,8 @@ import { Link } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import SideBar from "../../components/(headers)/EventDashboardSidebar";
 import { useTheme } from "../../context/ThemeContext";
+import ComplimentarySection from "../../components/(event dashboard)/ComplimentarySection";
+import AttendeeSection from "../../components/(event dashboard)/AttendeeSection";
 
 const EventDashboard = () => {
 	const { theme, toggleTheme } = useTheme();
@@ -746,6 +748,7 @@ const EventDashboard = () => {
 							</Table>
 						</TableContainer>
 					)}
+					{bottomTabValue === 1 && <AttendeeSection />}
 					{bottomTabValue === 2 && (
 						<TableContainer
 							component={Paper}
@@ -810,6 +813,7 @@ const EventDashboard = () => {
 							</Table>
 						</TableContainer>
 					)}
+					{bottomTabValue === 4 && <ComplimentarySection />}
 				</Box>
 			</div>
 		</div>
