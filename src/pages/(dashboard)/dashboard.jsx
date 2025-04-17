@@ -28,7 +28,7 @@ import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Greetings from "../../components/(snippets)/Greetings";
 import { useAuth } from "../../context/AuthContext";
 
-import { eventsApi, dashboardApi } from "../../shared/services/api.ts";
+import { eventsApi, dashboardApi } from "../../shared/services/api";
 import { CircularProgress } from "@mui/material";
 
 const Dashboard = () => {
