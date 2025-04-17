@@ -7,7 +7,7 @@ import Confetti from "react-confetti";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import Swal from "sweetalert2";
-import { eventsApi } from "../../shared/services/api";
+import { eventsApi } from "../../shared/services/api/eventsApi";
 
 const EventsInfo = () => {
 	let { id } = useParams();

@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import { usersApi } from "../../shared/services/api";
+import { usersApi } from "../../shared/services/api/usersApi";
 
 const WithdrawalModal = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState("");
@@ -54,7 +54,7 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
       ></div>
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-md mx-auto my-6 px-4">
+      <div className="relative w-full max-w-md px-4 mx-auto my-6">
         <div
           className={` ${
             theme === "dark" ? "bg-[#121212]" : "bg-white"
@@ -63,15 +63,15 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
+            className="absolute z-10 text-gray-400 top-4 right-4 hover:text-gray-600"
           >
             <X size={24} />
           </button>
 
           {/* Modal Content */}
-          <div className="p-6 md:p-8 space-y-6">
+          <div className="p-6 space-y-6 md:p-8">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="mb-2 text-2xl font-bold text-gray-900">
                 Request Withdrawal
               </h2>
               <p className="text-sm text-gray-600">
@@ -83,12 +83,12 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
               <div>
                 <label
                   htmlFor="amount"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block mb-2 text-sm font-medium text-gray-700"
                 >
                   Withdrawal Amount
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
                     ₦
                   </span>
                   <input
@@ -96,9 +96,7 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
                     id="amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md shadow-sm
-                      focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                      text-sm"
+                    className="block w-full py-2 pr-3 text-sm border border-gray-300 rounded-md shadow-sm pl-7 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="0.00"
                     required
                   />
@@ -106,7 +104,7 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                <div className="px-4 py-3 text-sm text-red-600 border border-red-200 rounded-md bg-red-50">
                   {error}
                 </div>
               )}
@@ -115,18 +113,14 @@ const WithdrawalModal = ({ isOpen, onClose }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium
-                    text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm
-                    text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700
-                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
-                    disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? "Processing..." : "Withdraw"}
                 </button>

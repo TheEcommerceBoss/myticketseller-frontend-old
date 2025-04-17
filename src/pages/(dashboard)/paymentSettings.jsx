@@ -15,7 +15,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import MapAutocomplete from "../../components/(maps)/Autocomplete";
-import { eventsApi, ticketsApi } from "../../shared/services/api";
+import { eventsApi } from "../../shared/services/api/eventsApi";
+import { ticketsApi } from "../../shared/services/api/index";
 // import { randomUUID } from "crypto";
 
 const PaymentSettings = () => {

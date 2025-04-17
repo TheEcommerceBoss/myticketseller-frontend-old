@@ -11,7 +11,7 @@ import SimpleMap from "../props/Map";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
 
-import { eventsApi } from "../../shared/services/api";
+import { eventsApi } from "../../shared/services/api/eventsApi";
 import { formatDate } from "../../lib/formatDate";
 import { CircularProgress } from "@mui/material";
 
