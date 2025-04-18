@@ -31,8 +31,7 @@ export default function FlutterwaveCheckout({
       description: `Payment for ${ticketDetails.eventName}`,
     },
   };
-
-  console.log(config.public_key);
+  console.log("Flutterwave", config.public_key);
   async function handleFlutterwavePayment(response) {
     if (response.status === "completed" || response.status === "successful") {
       setLoading(true);
