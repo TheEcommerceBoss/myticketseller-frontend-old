@@ -27,7 +27,7 @@ export default function FlutterwaveCheckout({
       name: ticketDetails.attendee_info.full_name,
     },
     customizations: {
-      title: "Event Ticket Payment",
+      title: "Indulge Media and Entertainment",
       description: `Payment for ${ticketDetails.eventName}`,
     },
   };
