@@ -9,7 +9,7 @@ export * from "./authApi";
 export * from "./scanApi";
 
 const newApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
   withCredentials: true,
 });
 
