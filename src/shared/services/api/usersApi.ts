@@ -8,6 +8,10 @@ export const usersApi = {
     const res = await newApi.post("/users/resolve-account", data);
     return res.data;
   },
+  async getMe() {
+    const res = await newApi.get("/users/me");
+    return res.data;
+  },
   updateAccountDetails: async function (data: {
     account_number: string;
     bank_code: string;
