@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	CircularProgress,
 	Container,
 	FormControl,
 	FormControlLabel,
@@ -58,7 +59,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
 export default function AddReferral() {
 	const { id } = useParams();
 	const [errors, setErrors] = useState({});
-	const [referralType, setReferralType] = useState("ticket");
+	const [referralType, setReferralType] = useState("per_ticket");
 	const [code, setCode] = useState("");
 	const [email, setEmail] = useState("");
 	const [linkTitle, setLinkTitle] = useState("");
@@ -66,6 +67,8 @@ export default function AddReferral() {
 	const [percentageAmount, setPercentageAmount] = useState("");
 	const { theme, toggleTheme } = useTheme();
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+	const [createdReferral, setCreatedReferral] = useState({});
+	const [loading, setLoading] = useState(false);
 
 	const handleReferralTypeChange = (event) => {
 		setReferralType(event.target.value);
@@ -99,49 +102,62 @@ export default function AddReferral() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		try {
+			setLoading(true);
 
-		const newErrors = {};
-		if (!code.trim()) newErrors.code = "Code is required";
-		if (!email.trim()) {
-			newErrors.email = "Email is required";
-		} else if (!/\S+@\S+\.\S+/.test(email)) {
-			newErrors.email = "Invalid email address";
+			const newErrors = {};
+			if (!code.trim()) newErrors.code = "Code is required";
+			if (!email.trim()) {
+				newErrors.email = "Email is required";
+			} else if (!/\S+@\S+\.\S+/.test(email)) {
+				newErrors.email = "Invalid email address";
+			}
+			if (!linkTitle.trim())
+				newErrors.linkTitle = "Link title is required";
+			if (
+				referralType === "fixed" &&
+				(!fixedAmount || isNaN(fixedAmount))
+			)
+				newErrors.fixedAmount = "Enter a valid amount";
+			if (
+				referralType === "percentage" &&
+				(!percentageAmount || isNaN(percentageAmount))
+			)
+				newErrors.percentageAmount = "Enter a valid percentage";
+
+			setErrors(newErrors);
+
+			if (Object.keys(newErrors).length > 0) {
+				return; // Don't submit if there are errors
+			}
+
+			// If no errors, proceed with submission
+			const payload = {
+				code,
+				email,
+				linkTitle,
+				referralType,
+				amount:
+					referralType === "fixed" ? fixedAmount : percentageAmount,
+			};
+
+			console.log("Submitting referral:", payload);
+			const referralData = await referralsApi.createReferral({
+				commission_amount:
+					referralType === "fixed" ? fixedAmount : percentageAmount,
+				commission_type: referralType,
+				event_ids: [id],
+				referral_email: email,
+				referral_name: linkTitle,
+				unique_identifier: code,
+			});
+			console.log(referralData);
+			setCreatedReferral(referralData.data);
+		} catch (error) {
+			console.error("MY ERROR", error);
+		} finally {
+			setLoading(false);
 		}
-		if (!linkTitle.trim()) newErrors.linkTitle = "Link title is required";
-		if (referralType === "fixed" && (!fixedAmount || isNaN(fixedAmount)))
-			newErrors.fixedAmount = "Enter a valid amount";
-		if (
-			referralType === "percentage" &&
-			(!percentageAmount || isNaN(percentageAmount))
-		)
-			newErrors.percentageAmount = "Enter a valid percentage";
-
-		setErrors(newErrors);
-
-		if (Object.keys(newErrors).length > 0) {
-			return; // Don't submit if there are errors
-		}
-
-		// If no errors, proceed with submission
-		const payload = {
-			code,
-			email,
-			linkTitle,
-			referralType,
-			amount: referralType === "fixed" ? fixedAmount : percentageAmount,
-		};
-
-		console.log("Submitting referral:", payload);
-		const referral = await referralsApi.createReferral({
-			commission_amount:
-				referralType === "fixed" ? fixedAmount : percentageAmount,
-			commission_type: referralType,
-			event_ids: id,
-			referral_email: email,
-			referral_name: linkTitle,
-			unique_identifier: code,
-		});
-		console.log(referral);
 	};
 
 	return (
@@ -298,7 +314,7 @@ export default function AddReferral() {
 									}}
 								>
 									<FormControlLabel
-										value="ticket"
+										value="per_ticket"
 										control={
 											<Radio
 												sx={{
@@ -312,7 +328,7 @@ export default function AddReferral() {
 										label="Referral per ticket"
 									/>
 									<FormControlLabel
-										value="order"
+										value="per_order"
 										control={
 											<Radio
 												sx={{
@@ -370,8 +386,8 @@ export default function AddReferral() {
 									/>
 								)}
 
-								{(referralType === "ticket" ||
-									referralType === "order") && (
+								{(referralType === "per_ticket" ||
+									referralType === "per_order") && (
 									<TextField
 										placeholder="Percentage"
 										variant="outlined"
@@ -423,7 +439,11 @@ export default function AddReferral() {
 										variant="body2"
 										color="text.secondary"
 									>
-										{`https://myticketseller.com//referrals/ref_events/${id}/slug?ref=${code}`}
+										{loading ? (
+											<CircularProgress />
+										) : (
+											createdReferral?.link
+										)}
 									</Typography>
 								</ReferralLinkBox>
 							</Box>

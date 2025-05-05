@@ -176,7 +176,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 					/>
 					<DropdownNavItem
 						icon={<ListIcon size={20} />}
-						text="Sales Sumary"
+						text="Sales Summary"
 						active={salesExpanded}
 						onClick={() => setSalesExpanded(!salesExpanded)}
 					/>

@@ -40,6 +40,7 @@ import ValidatePayment from "./pages/(payments)/validatePayment";
 import NotFound from "./pages/others/NotFound";
 import ReferralPayoutHistory from "./pages/(event-dashboard)/referral/ReferralPayoutHistory";
 import EditEvent from "./pages/(dashboard)/editEvent";
+import Complimentary from "./pages/(event-dashboard)/sales-summary/Complimentary";
 
 function App() {
 	return (
@@ -209,6 +210,16 @@ function App() {
 						/>
 
 						{/* event dashboard routes */}
+						{/* Sales summary */}
+						<Route
+							path="/dashboard/event/:id/complimentary"
+							element={
+								<ProtectedRoute>
+									<Complimentary />
+								</ProtectedRoute>
+							}
+						/>
+						{/* Referrals */}
 						<Route
 							path="/dashboard/event/:id/add-referral"
 							element={

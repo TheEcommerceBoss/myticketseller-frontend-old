@@ -17,6 +17,7 @@ import {
 	DialogActions,
 	TextField,
 	IconButton,
+	CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Plus, Edit3, Trash2, Copy } from "lucide-react";
@@ -26,6 +27,8 @@ import { useTheme } from "../../../context/ThemeContext";
 import SideBar from "../../../components/(headers)/EventDashboardSidebar";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useReferrals } from "../../../modules/referrals/hooks/useReferrals";
+import { referralsApi } from "../../../shared/services/api";
 
 // Custom styled components
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
@@ -62,13 +65,14 @@ export default function ViewReferral() {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentReferral, setCurrentReferral] = useState({
 		id: "",
-		name: "",
-		email: "",
+		referral_name: "",
+		referral_email: "",
 		link: "",
 	});
 	const [isEditing, setIsEditing] = useState(false);
 	const { theme, toggleTheme } = useTheme();
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+	const { referrals: fetchedReferrals, loading } = useReferrals();
 
 	// const handleReferralTypeChange = (event) => {
 	// 	setReferralType(event.target.value);
@@ -81,8 +85,8 @@ export default function ViewReferral() {
 		} else {
 			setCurrentReferral({
 				id: Math.random().toString(36).substr(2, 9),
-				name: "",
-				email: "",
+				referral_email: "",
+				referral_name: "",
 				link: "",
 			});
 			setIsEditing(false);
@@ -96,11 +100,20 @@ export default function ViewReferral() {
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
+		console.log(name, value);
+
 		setCurrentReferral((prev) => ({
 			...prev,
 			[name]: value,
 		}));
+		console.log(currentReferral);
 	};
+
+	async function handleEditReferral(id, data) {
+		console.log("updating", data);
+		const updated = await referralsApi.updateReferral(id, data);
+		setCurrentReferral(updated);
+	}
 
 	const handleSaveReferral = () => {
 		if (isEditing) {
@@ -115,8 +128,15 @@ export default function ViewReferral() {
 		handleCloseDialog();
 	};
 
-	const handleDeleteReferral = (id) => {
-		setReferrals((prev) => prev.filter((ref) => ref.id !== id));
+	const handleDeleteReferral = async (id) => {
+		try {
+			const deleted = await referralsApi.deleteReferral(id);
+			console.log(deleted);
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setReferrals((prev) => prev.filter((ref) => ref.id !== id));
+		}
 	};
 
 	const handleCopyLink = (link) => {
@@ -173,7 +193,7 @@ export default function ViewReferral() {
 						</button>
 
 						<h1 className="hidden text-2xl font-bold lg:flex">
-							Affiliates
+							Referrals
 						</h1>
 					</div>
 
@@ -227,101 +247,118 @@ export default function ViewReferral() {
 								</TableRow>
 							</StyledTableHead>
 							<TableBody>
-								{referrals.length > 0 ? (
-									referrals.map((referral) => (
-										<TableRow key={referral.id}>
-											<StyledTableCell>
-												{referral.name}
-											</StyledTableCell>
-											<StyledTableCell>
-												{referral.email}
-											</StyledTableCell>
-											<StyledTableCell>
-												<Box
-													sx={{
-														display: "flex",
-														alignItems: "center",
-													}}
+								{loading ? (
+									<CircularProgress />
+								) : (
+									<>
+										{fetchedReferrals.length > 0 ? (
+											fetchedReferrals.map((referral) => (
+												<TableRow key={referral.id}>
+													<StyledTableCell>
+														{referral.referral_name}
+													</StyledTableCell>
+													<StyledTableCell>
+														{
+															referral.referral_email
+														}
+													</StyledTableCell>
+													<StyledTableCell>
+														<Box
+															sx={{
+																display: "flex",
+																alignItems:
+																	"center",
+															}}
+														>
+															<Typography
+																variant="body2"
+																sx={{
+																	maxWidth:
+																		"300px",
+																	overflow:
+																		"hidden",
+																	textOverflow:
+																		"ellipsis",
+																	whiteSpace:
+																		"nowrap",
+																}}
+															>
+																{referral.link}
+															</Typography>
+															<IconButton
+																size="small"
+																onClick={() =>
+																	handleCopyLink(
+																		referral.link
+																	)
+																}
+																sx={{ ml: 1 }}
+															>
+																<Copy
+																	size={20}
+																/>
+															</IconButton>
+														</Box>
+													</StyledTableCell>
+													<StyledTableCell>
+														<Box
+															sx={{
+																display: "flex",
+																gap: 1,
+															}}
+														>
+															<IconButton
+																size="small"
+																onClick={() =>
+																	handleOpenDialog(
+																		true,
+																		referral
+																	)
+																}
+																sx={{
+																	color: "#1976d2",
+																}}
+															>
+																<Edit3
+																	size={20}
+																/>
+															</IconButton>
+															<IconButton
+																size="small"
+																onClick={() =>
+																	handleDeleteReferral(
+																		referral.id
+																	)
+																}
+																sx={{
+																	color: "#d32f2f",
+																}}
+															>
+																<Trash2
+																	size={20}
+																/>
+															</IconButton>
+														</Box>
+													</StyledTableCell>
+												</TableRow>
+											))
+										) : (
+											<TableRow>
+												<StyledTableCell
+													colSpan={4}
+													align="center"
+													sx={{ py: 6 }}
 												>
 													<Typography
-														variant="body2"
-														sx={{
-															maxWidth: "300px",
-															overflow: "hidden",
-															textOverflow:
-																"ellipsis",
-															whiteSpace:
-																"nowrap",
-														}}
+														variant="body1"
+														color="text.secondary"
 													>
-														{referral.link}
+														No referrals found
 													</Typography>
-													<IconButton
-														size="small"
-														onClick={() =>
-															handleCopyLink(
-																referral.link
-															)
-														}
-														sx={{ ml: 1 }}
-													>
-														<Copy size={20} />
-													</IconButton>
-												</Box>
-											</StyledTableCell>
-											<StyledTableCell>
-												<Box
-													sx={{
-														display: "flex",
-														gap: 1,
-													}}
-												>
-													<IconButton
-														size="small"
-														onClick={() =>
-															handleOpenDialog(
-																true,
-																referral
-															)
-														}
-														sx={{
-															color: "#1976d2",
-														}}
-													>
-														<Edit3 size={20} />
-													</IconButton>
-													<IconButton
-														size="small"
-														onClick={() =>
-															handleDeleteReferral(
-																referral.id
-															)
-														}
-														sx={{
-															color: "#d32f2f",
-														}}
-													>
-														<Trash2 size={20} />
-													</IconButton>
-												</Box>
-											</StyledTableCell>
-										</TableRow>
-									))
-								) : (
-									<TableRow>
-										<StyledTableCell
-											colSpan={4}
-											align="center"
-											sx={{ py: 6 }}
-										>
-											<Typography
-												variant="body1"
-												color="text.secondary"
-											>
-												No referrals found
-											</Typography>
-										</StyledTableCell>
-									</TableRow>
+												</StyledTableCell>
+											</TableRow>
+										)}
+									</>
 								)}
 							</TableBody>
 						</Table>
@@ -357,16 +394,16 @@ export default function ViewReferral() {
 								<TextField
 									fullWidth
 									label="Name"
-									name="name"
-									value={currentReferral.name}
+									name="referral_name"
+									value={currentReferral.referral_name}
 									onChange={handleInputChange}
 								/>
 								<TextField
 									fullWidth
 									label="Email"
-									name="email"
+									name="referral_email"
 									type="email"
-									value={currentReferral.email}
+									value={currentReferral.referral_email}
 									onChange={handleInputChange}
 								/>
 								<TextField
@@ -374,6 +411,7 @@ export default function ViewReferral() {
 									label="Link"
 									name="link"
 									value={currentReferral.link}
+									disabled
 									onChange={handleInputChange}
 								/>
 							</Box>
@@ -381,7 +419,16 @@ export default function ViewReferral() {
 						<DialogActions>
 							<Button onClick={handleCloseDialog}>Cancel</Button>
 							<Button
-								onClick={handleSaveReferral}
+								onClick={
+									isEditing
+										? async () => {
+												await handleEditReferral(
+													currentReferral.id,
+													currentReferral
+												);
+										  }
+										: handleSaveReferral
+								}
 								variant="contained"
 								sx={{
 									bgcolor: "#000080",

@@ -25,8 +25,8 @@ export const referralsApi = {
 		const res = await newApi.delete(`/referrals/${referral_id}`);
 		return res.data;
 	},
-	// updateReferral: async function (referral_id: string, data: Partial<IEvent>) {
-	//   const res = await newApi.put(`/referrals/${referral_id}`, data);
-	//   return res.data;
-	// },
+	updateReferral: async function (referral_id: string, data: Partial<any>) {
+		const res = await newApi.put(`/referrals/${referral_id}`, data);
+		return res.data;
+	},
 };

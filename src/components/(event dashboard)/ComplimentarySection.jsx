@@ -3,36 +3,28 @@
 import {
 	Box,
 	Button,
+	CircularProgress,
 	IconButton,
 	Link,
+	MenuItem,
 	Paper,
+	Select,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
-	Tabs,
 	TextField,
 	Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Send, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { eventsApi, ticketsApi } from "../../shared/services/api";
 
 // Custom styled components
-const StyledTabs = styled(Tabs)(({ theme }) => ({
-	borderBottom: "1px solid #e0e0e0",
-	"& .MuiTab-root": {
-		textTransform: "none",
-		minWidth: 120,
-		fontWeight: theme.typography.fontWeightRegular,
-		color: "#555",
-		"&.Mui-selected": {
-			color: theme.palette.primary.main,
-		},
-	},
-}));
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
 	marginTop: theme.spacing(3),
@@ -41,7 +33,7 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
 	boxShadow: "none",
 }));
 
-const StyledTableHead = styled(TableHead)(({ theme }) => ({
+const StyledTableHead = styled(TableHead)(() => ({
 	backgroundColor: "#f9f9f9",
 }));
 
@@ -52,63 +44,73 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 export default function ComplimentarySection() {
-	// const [tabValue, setTabValue] = useState(4); // Complimentary tab is selected (index 4)
 	const [showEmailInput, setShowEmailInput] = useState(false);
 	const [email, setEmail] = useState("");
-	const [complimentaryEmails, setComplimentaryEmails] = useState([]);
+	const [name, setName] = useState("");
+	const [complimentaryTickets, setComplimentaryTickets] = useState([]);
 	const [emailError, setEmailError] = useState("");
-
-	const handleTabChange = (event, newValue) => {
-		setTabValue(newValue);
-	};
+	const [event, setEvent] = useState();
+	const [ticketId, setTicketId] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
+	// const [complimentaryTickets, setComp]
+	const { id } = useParams();
 
 	const handleClickHere = () => {
 		setShowEmailInput(true);
 	};
 
+	useEffect(
+		function () {
+			if (!id) return;
+			async function fetchEvent() {
+				const eventResponse = await eventsApi.getEventById(id);
+				setEvent(eventResponse);
+				setTicketId(eventResponse.tickets[0].id);
+			}
+			async function fetchComplimentaries() {
+				const res = await ticketsApi.fetchEventComplimentaryTickets(id);
+				setComplimentaryTickets(res.data);
+				setIsLoading(false);
+				console.log(res.data);
+			}
+			fetchEvent();
+			fetchComplimentaries();
+		},
+		[id]
+	);
+
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
 		setEmailError("");
 	};
-
-	const validateEmail = (email) => {
-		const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		return re.test(email);
-	};
-
-	const handleAddEmail = () => {
-		if (!email.trim()) {
-			setEmailError("Email is required");
-			return;
-		}
-
-		if (!validateEmail(email)) {
-			setEmailError("Please enter a valid email address");
-			return;
-		}
-
-		// Add email to the list
-		const newEmail = {
-			id: Date.now().toString(),
-			email: email,
-			sentAt: new Date().toISOString(),
-			status: "Sent",
-		};
-
-		setComplimentaryEmails([...complimentaryEmails, newEmail]);
-		setEmail("");
+	const handleNameChange = (e) => {
+		setName(e.target.value);
 		setEmailError("");
 	};
 
+	function handleChangeTicket(e) {
+		setTicketId(e.target.value);
+	}
+
+	async function handleSendTicket() {
+		const res = await ticketsApi.sendComplimentaryTicket({
+			ticket_id: ticketId,
+			event_id: id,
+			recipient_email: email,
+			recipient_name: name,
+		});
+		console.log(res);
+	}
+
 	const handleDeleteEmail = (id) => {
-		setComplimentaryEmails(
-			complimentaryEmails.filter((item) => item.id !== id)
+		setComplimentaryTickets(
+			complimentaryTickets.filter((item) => item.id !== id)
 		);
 	};
 
 	const handleResendEmail = (id) => {
-		setComplimentaryEmails(
-			complimentaryEmails.map((item) =>
+		setComplimentaryTickets(
+			complimentaryTickets.map((item) =>
 				item.id === id
 					? {
 							...item,
@@ -122,158 +124,233 @@ export default function ComplimentarySection() {
 
 	return (
 		<Box sx={{ p: 3 }}>
-			{/* {tabValue === 4 && ( */}
-			<>
-				{!showEmailInput && complimentaryEmails.length === 0 && (
-					<Typography variant="body1" sx={{ py: 2 }}>
-						You have no Complimentary Tickets. Send complimentary
-						ticket{" "}
-						<Link
-							component="button"
-							variant="body1"
-							onClick={handleClickHere}
-							sx={{
-								color: "#000080",
-								textDecoration: "none",
-								fontWeight: "medium",
-							}}
-						>
-							click here!
-						</Link>
-					</Typography>
-				)}
-
-				{(showEmailInput || complimentaryEmails.length > 0) && (
-					<>
-						<Box
-							sx={{
-								display: "flex",
-								alignItems: "flex-start",
-								gap: 2,
-								mt: 2,
-							}}
-						>
-							<TextField
-								label="Email Address"
-								variant="outlined"
-								value={email}
-								onChange={handleEmailChange}
-								error={!!emailError}
-								helperText={emailError}
-								sx={{ flexGrow: 1 }}
-								placeholder="Enter email to send complimentary ticket"
-							/>
-							<Button
-								variant="contained"
-								onClick={handleAddEmail}
+			{isLoading ? (
+				<div className="flex items-center justify-center">
+					<CircularProgress size={50} />
+				</div>
+			) : (
+				<>
+					{!showEmailInput && complimentaryTickets.length === 0 ? (
+						<Typography variant="body1" sx={{ py: 2 }}>
+							You have no Complimentary Tickets. Send
+							complimentary ticket{" "}
+							<Link
+								component="button"
+								variant="body1"
+								onClick={handleClickHere}
 								sx={{
-									bgcolor: "#000080",
-									"&:hover": {
-										bgcolor: "#00006b",
-									},
-									height: 56,
-									px: 3,
+									color: "#000080",
+									textDecoration: "none",
+									fontWeight: "medium",
 								}}
 							>
-								Add
-							</Button>
-						</Box>
-
-						{complimentaryEmails.length > 0 && (
-							<StyledTableContainer component={Paper}>
-								<Table
-									sx={{ minWidth: 650 }}
-									aria-label="complimentary tickets table"
+								click here!
+							</Link>
+						</Typography>
+					) : (
+						<>
+							<Box
+								sx={{
+									display: "flex",
+									alignItems: "flex-start",
+									gap: 2,
+									mt: 2,
+								}}
+							>
+								<TextField
+									label="Name"
+									variant="outlined"
+									value={name}
+									onChange={handleNameChange}
+									error={!!emailError}
+									helperText={emailError}
+									sx={{ flexGrow: 1 }}
+									placeholder="Enter email to send complimentary ticket"
+								/>
+							</Box>
+							<Box
+								sx={{
+									display: "flex",
+									alignItems: "flex-start",
+									gap: 2,
+									mt: 2,
+								}}
+							>
+								<TextField
+									label="Email Address"
+									variant="outlined"
+									value={email}
+									onChange={handleEmailChange}
+									error={!!emailError}
+									helperText={emailError}
+									sx={{ flexGrow: 1 }}
+									placeholder="Enter email to send complimentary ticket"
+								/>
+							</Box>
+							<Box
+								sx={{
+									display: "flex",
+									alignItems: "flex-start",
+									gap: 2,
+									mt: 2,
+								}}
+							>
+								<Select
+									labelId="demo-simple-select-label"
+									id="demo-simple-select"
+									value={ticketId}
+									label="Ticket"
+									onChange={handleChangeTicket}
 								>
-									<StyledTableHead>
-										<TableRow>
-											<StyledTableCell>
-												Email
-											</StyledTableCell>
-											<StyledTableCell>
-												Sent At
-											</StyledTableCell>
-											<StyledTableCell>
-												Status
-											</StyledTableCell>
-											<StyledTableCell>
-												Action
-											</StyledTableCell>
-										</TableRow>
-									</StyledTableHead>
-									<TableBody>
-										{complimentaryEmails.map((item) => (
-											<TableRow key={item.id}>
+									{event?.tickets.map((ticket) => {
+										return (
+											<MenuItem
+												value={ticket.id}
+												key={ticket.id}
+											>
+												{ticket.name}
+											</MenuItem>
+										);
+									})}
+								</Select>
+								<Button
+									variant="contained"
+									onClick={handleSendTicket}
+									sx={{
+										bgcolor: "#000080",
+										"&:hover": {
+											bgcolor: "#00006b",
+										},
+										height: 56,
+										px: 3,
+									}}
+								>
+									Add
+								</Button>
+							</Box>
+							<Box
+								sx={{
+									display: "flex",
+									alignItems: "end",
+									gap: 2,
+									mt: 2,
+								}}
+							></Box>
+
+							{complimentaryTickets.length > 0 && (
+								<StyledTableContainer component={Paper}>
+									<Table
+										sx={{ minWidth: 650 }}
+										aria-label="complimentary tickets table"
+									>
+										<StyledTableHead>
+											<TableRow>
 												<StyledTableCell>
-													{item.email}
+													Name
 												</StyledTableCell>
 												<StyledTableCell>
-													{new Date(
-														item.sentAt
-													).toLocaleString()}
+													Email
 												</StyledTableCell>
 												<StyledTableCell>
-													<Box
-														sx={{
-															display:
-																"inline-block",
-															bgcolor: "#e8f5e9",
-															color: "#2e7d32",
-															px: 1,
-															py: 0.5,
-															borderRadius: 1,
-															fontSize:
-																"0.875rem",
-														}}
-													>
-														{item.status}
-													</Box>
+													Sent At
 												</StyledTableCell>
 												<StyledTableCell>
-													<Box
-														sx={{
-															display: "flex",
-															gap: 1,
-														}}
-													>
-														<IconButton
-															size="small"
-															onClick={() =>
-																handleResendEmail(
-																	item.id
-																)
-															}
-															sx={{
-																color: "#1976d2",
-															}}
-														>
-															<Send size={20} />
-														</IconButton>
-														<IconButton
-															size="small"
-															onClick={() =>
-																handleDeleteEmail(
-																	item.id
-																)
-															}
-															sx={{
-																color: "#d32f2f",
-															}}
-														>
-															<Trash2 size={20} />
-														</IconButton>
-													</Box>
+													Ticket ID
+												</StyledTableCell>
+												<StyledTableCell>
+													Action
 												</StyledTableCell>
 											</TableRow>
-										))}
-									</TableBody>
-								</Table>
-							</StyledTableContainer>
-						)}
-					</>
-				)}
-			</>
-			{/* )} */}
+										</StyledTableHead>
+										<TableBody>
+											{complimentaryTickets.map(
+												(item) => (
+													<TableRow key={item.id}>
+														<StyledTableCell>
+															{item.name}
+														</StyledTableCell>
+														<StyledTableCell>
+															{item.email}
+														</StyledTableCell>
+														<StyledTableCell>
+															{
+																new Date().toLocaleString()
+																// item.sentAt
+															}
+														</StyledTableCell>
+														<StyledTableCell>
+															<Box
+																sx={{
+																	display:
+																		"inline-block",
+																	bgcolor:
+																		"#e8f5e9",
+																	color: "#2e7d32",
+																	px: 1,
+																	py: 0.5,
+																	borderRadius: 1,
+																	fontSize:
+																		"0.875rem",
+																}}
+															>
+																{item.ticket_id}
+															</Box>
+														</StyledTableCell>
+														<StyledTableCell>
+															<Box
+																sx={{
+																	display:
+																		"flex",
+																	gap: 1,
+																}}
+															>
+																<IconButton
+																	size="small"
+																	onClick={() =>
+																		handleResendEmail(
+																			item.id
+																		)
+																	}
+																	sx={{
+																		color: "#1976d2",
+																	}}
+																>
+																	<Send
+																		size={
+																			20
+																		}
+																	/>
+																</IconButton>
+																<IconButton
+																	size="small"
+																	onClick={() =>
+																		handleDeleteEmail(
+																			item.id
+																		)
+																	}
+																	sx={{
+																		color: "#d32f2f",
+																	}}
+																>
+																	<Trash2
+																		size={
+																			20
+																		}
+																	/>
+																</IconButton>
+															</Box>
+														</StyledTableCell>
+													</TableRow>
+												)
+											)}
+										</TableBody>
+									</Table>
+								</StyledTableContainer>
+							)}
+						</>
+					)}
+				</>
+			)}
 		</Box>
 	);
 }
