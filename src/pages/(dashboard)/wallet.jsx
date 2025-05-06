@@ -81,7 +81,7 @@ const WalletDashboard = () => {
 					usersApi.getWithdrawals(),
 					usersApi.getEarnings(),
 				]);
-				console.log(statsResponse, eventsResponse);
+				console.log("responses:", statsResponse, eventsResponse);
 				if (eventsResponse && eventsResponse.data) {
 					if (eventsResponse.code === 200) {
 						setEarnings(eventsResponse.data);
@@ -496,18 +496,18 @@ const WalletDashboard = () => {
 														<div>
 															<div className="text-sm font-medium text-red-500 md:text-base">
 																- ₦
-																{userData
-																	? new Intl.NumberFormat(
-																			"en-US"
-																	  ).format(
+																{transaction?.initial_amount !=
+																	null &&
+																transaction?.amount !=
+																	null
+																	? (
 																			transaction.initial_amount -
-																				transaction.amount
+																			transaction.amount
+																	  ).toFixed(
+																			2
 																	  )
 																	: "0.00"}{" "}
-																{" - "}{" "}
-																{
-																	"(Charge + Tax)"
-																}
+																(Charge + Tax)
 															</div>
 															<div className="text-xs text-gray-500 md:text-sm">
 																{
@@ -527,12 +527,11 @@ const WalletDashboard = () => {
 														</div>
 														<div>
 															<div className="text-sm font-medium text-green-500 md:text-base">
-																₦{" "}
-																{userData
-																	? new Intl.NumberFormat(
-																			"en-US"
-																	  ).format(
-																			transaction.initial_amount
+																₦
+																{transaction?.initial_amount !=
+																null
+																	? transaction.initial_amount.toFixed(
+																			2
 																	  )
 																	: "0.00"}
 															</div>
