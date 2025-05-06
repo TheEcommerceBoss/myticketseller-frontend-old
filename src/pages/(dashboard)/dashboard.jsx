@@ -65,7 +65,6 @@ const Dashboard = () => {
 
 	const { userData } = useAuth();
 	const [userDetails, setUserDetails] = useState({});
-	const [userEarnings, setUserEarnings] = useState({});
 	const [events, setEvents] = useState([]);
 	const [loading, setLoading] = useState(true); // Track loading state
 	const [Stats, setStats] = useState([]);
@@ -76,13 +75,6 @@ const Dashboard = () => {
 			try {
 				const userDetailsResposnse = await usersApi.getMe();
 				setUserDetails(userDetailsResposnse);
-				console.log("me: ", userDetailsResposnse);
-
-				const userEarningsResposnse = await usersApi.getEarnings();
-				setUserEarnings(userEarningsResposnse);
-				console.log("my earnings: ", userEarningsResposnse);
-
-				console.log(userData);
 
 				// Trigger both API requests concurrently
 				const [events, statsResponse] = await Promise.all([
