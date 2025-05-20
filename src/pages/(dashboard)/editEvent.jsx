@@ -30,7 +30,7 @@ import { categoriesApi } from "../../shared/services/api/index";
 import { eventsApi } from "../../shared/services/api/eventsApi";
 
 const EditEvent = ({ manage }) => {
-	let { id } = useParams();
+	let { id: eventId } = useParams();
 	const [eventData, setEventData] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [fetchingdataloading, setfetchingdataLoading] = useState(false);
@@ -54,8 +54,8 @@ const EditEvent = ({ manage }) => {
 	useEffect(() => {
 		const fetchEvents = async () => {
 			try {
-				const event = await eventsApi.getEventById(id);
-				console.log("Evnet Details:", event);
+				const event = await eventsApi.getEventById(eventId);
+				// console.log("Evnet Details:", event);
 				if (event) {
 					const payload = {
 						category: event.category || "",
@@ -75,7 +75,7 @@ const EditEvent = ({ manage }) => {
 
 		// Call the function
 		fetchEvents();
-	}, [id]); // Add `id` as a dependency
+	}, [eventId]); // Add `id` as a dependency
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -118,6 +118,8 @@ const EditEvent = ({ manage }) => {
 			is_public,
 		} = formData;
 
+		console.log(formData);
+
 		if (!event_title || !event_description || !category || !event_image) {
 			Swal.fire({
 				icon: "error",
@@ -138,10 +140,12 @@ const EditEvent = ({ manage }) => {
 			myForm.append("category", category.id); // Send just the ID
 
 			let data;
+			console.log(eventId);
+			console.log(event_image);
 
-			if (id) {
+			if (eventId) {
 				// UPDATE flow
-				data = await eventsApi.updateEvent(id, myForm); // <- make sure this method exists
+				data = await eventsApi.updateEvent(eventId, myForm); // <- make sure this method exists
 			} else {
 				// CREATE flow
 				data = await eventsApi.createEvent(myForm);
@@ -233,7 +237,9 @@ const EditEvent = ({ manage }) => {
 		e.preventDefault();
 	};
 	const handleFileInput = (e) => {
+		// console.log(e.target.files);
 		const selectedFile = e.target.files[0];
+		// console.log("Mu connected", selectedFile);
 
 		if (selectedFile) {
 			// Check if the file size exceeds 5MB (5MB = 5 * 1024 * 1024 bytes)
@@ -241,25 +247,34 @@ const EditEvent = ({ manage }) => {
 				alert("File size exceeds 5MB. Please select a smaller file.");
 				return; // Prevent further processing
 			}
+			let newFormData = { ...formData, event_image: selectedFile };
+			console.log("newly", newFormData);
+			// setFormData((prevState) => ({
+			// 	...prevState,
+			// 	event_image: reader.result || "",
+			// }));
+			setFormData(newFormData);
 
-			setFile(selectedFile);
 			convertToBase64(selectedFile);
+			setFile(selectedFile);
 		}
 	};
-	const convertToBase64 = (file) => {
+	function convertToBase64(file) {
+		console.log("mine", file);
 		const reader = new FileReader();
 		reader.readAsDataURL(file);
 		reader.onload = () => {
-			setFormData((prevState) => ({
-				...prevState,
-				event_image: reader.result,
-			}));
+			console.log("my result", reader.result);
+			console.log(formData);
+
 			setPreview(reader.result); // Set preview for mini image display
+			
+			console.log(formData);
 		};
 		reader.onerror = (error) => {
 			console.error("Error converting file to Base64:", error);
 		};
-	};
+	}
 	return (
 		<div
 			className={`flex min-h-screen  ${

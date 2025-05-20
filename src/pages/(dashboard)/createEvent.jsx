@@ -140,7 +140,7 @@ const CreateEvent = ({ manage }) => {
 
 			Swal.fire({
 				icon: "success",
-				title: "Event Created",
+				title: manage ? "Event Updated":"Event Created",
 				text: manage
 					? "Your event has been updated successfully."
 					: "Your event has been created successfully.",
@@ -235,6 +235,10 @@ const CreateEvent = ({ manage }) => {
 			}
 
 			setFile(selectedFile);
+			setFormData((prevState) => ({
+				...prevState,
+				event_image: selectedFile,
+			}));
 			convertToBase64(selectedFile);
 		}
 	};
@@ -242,10 +246,6 @@ const CreateEvent = ({ manage }) => {
 		const reader = new FileReader();
 		reader.readAsDataURL(file);
 		reader.onload = () => {
-			setFormData((prevState) => ({
-				...prevState,
-				event_image: reader.result,
-			}));
 			setPreview(reader.result); // Set preview for mini image display
 		};
 		reader.onerror = (error) => {
