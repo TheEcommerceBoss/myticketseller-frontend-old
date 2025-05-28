@@ -8,11 +8,31 @@ interface ApiResponse<T> {
 // User model
 interface IUser {
   id: number;
-  full_name: string;
   email: string;
-  password: string; // Note: Typically not returned in API responses
-  phone_number?: string;
-  avatar_url?: string;
+
+  prefix: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  phone_number: string;
+  dob: string | Date;
+  gender: string;
+  avatar_url: string;
+  account_number: string;
+  bank_code: string;
+  bank_name: string;
+  account_name: string;
+  balance: string;
+  instagram: string;
+  tiktok: string;
+  facebook: string;
+  twitter: string;
+  youtube: string;
+
+  events: any[];
+  ticket_transactions: any[];
+  scan_permissions: any[];
+  scanned_records: any[];
 }
 
 // Category model
