@@ -17,6 +17,7 @@
     "@fontsource-variable/gabarito": "^5.1.0",
     "@fontsource/gochi-hand": "^5.1.0",
     "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^5.0.1",
     "@mui/material": "^6.4.11",
     "@mui/x-data-grid": "^7.22.1",
     "@mui/x-date-pickers": "^7.28.3",
@@ -41,6 +42,8 @@
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.10",
     "react-helmet": "^6.1.0",
+    "react-hook-form": "^7.56.4",
+    "react-phone-number-input": "^3.4.12",
     "react-qrcode-reader": "^2.3.15",
     "react-router-dom": "^6.27.0",
     "react-select": "^5.8.1",
@@ -49,7 +52,8 @@
     "swal": "^0.1.0",
     "sweetalert2": "^11.14.5",
     "tailwind-merge": "^3.2.0",
-    "use-places-autocomplete": "^4.0.1"
+    "use-places-autocomplete": "^4.0.1",
+    "zod": "^3.25.36"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.9.0",

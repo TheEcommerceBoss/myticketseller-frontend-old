@@ -41,6 +41,7 @@ import NotFound from "./pages/others/NotFound";
 import ReferralPayoutHistory from "./pages/(event-dashboard)/referral/ReferralPayoutHistory";
 import EditEvent from "./pages/(dashboard)/editEvent";
 import Complimentary from "./pages/(event-dashboard)/sales-summary/Complimentary";
+import ProfilePage from "./pages/(dashboard)/ProfilePage";
 
 function App() {
 	return (
@@ -205,6 +206,14 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<AffiliatesPage />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard/profile"
+							element={
+								<ProtectedRoute>
+									<ProfilePage />
 								</ProtectedRoute>
 							}
 						/>

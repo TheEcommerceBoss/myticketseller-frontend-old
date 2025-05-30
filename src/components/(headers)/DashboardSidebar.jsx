@@ -9,6 +9,7 @@ import {
 	Settings,
 	SquarePen,
 	TextSearch,
+	User,
 	Wallet,
 } from "lucide-react";
 import React from "react";
@@ -159,6 +160,16 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 							"/dashboard/affiliates"
 						)}
 					/>
+
+					<NavItem
+						icon={<User size={24} />}
+						link="/dashboard/profile"
+						text="My Profile"
+						active={location.pathname.startsWith(
+							"/dashboard/profile"
+						)}
+					/>
+
 					<NavItem
 						icon={<Settings size={24} />}
 						link="/dashboard/settings"
