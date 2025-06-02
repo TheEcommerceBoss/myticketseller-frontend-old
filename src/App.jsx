@@ -42,6 +42,7 @@ import ReferralPayoutHistory from "./pages/(event-dashboard)/referral/ReferralPa
 import EditEvent from "./pages/(dashboard)/editEvent";
 import Complimentary from "./pages/(event-dashboard)/sales-summary/Complimentary";
 import ProfilePage from "./pages/(dashboard)/ProfilePage";
+import SpecificReferral from "./pages/(event-dashboard)/referral/SpecificReferral";
 
 function App() {
 	return (
@@ -258,6 +259,14 @@ function App() {
 							element={
 								<ProtectedRoute>
 									<ReferralPayout />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/referrals/:id/"
+							element={
+								<ProtectedRoute>
+									<SpecificReferral />
 								</ProtectedRoute>
 							}
 						/>

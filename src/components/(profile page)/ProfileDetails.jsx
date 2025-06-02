@@ -10,17 +10,23 @@ import {
 } from "lucide-react";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { usersApi } from "../../shared/services/api";
+import { eventsApi, usersApi } from "../../shared/services/api";
 
 const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
 	const [userDetails, setUserDetails] = useState();
-
+	const [eventsCreated, setEventsCreated] = useState(0);
+	const [totalOrders, setTotalOrders] = useState(0);
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const userDetailsResposnse = await usersApi.getMe();
+				const totalOrdersResponse = await usersApi.getTotalOrders();
+				const eventsCreatedResponse = await eventsApi.getMyEvents();
+				setEventsCreated(eventsCreatedResponse.length);
 				setUserDetails(userDetailsResposnse);
-				console.log(userDetailsResposnse);
+				setTotalOrders(totalOrdersResponse);
+				// console.log(userDetailsResposnse);
+				console.log(totalOrdersResponse);
 			} catch (error) {
 				console.error("Failed to fetch data:", error);
 			}
@@ -31,17 +37,26 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
 
 	// calculate age fo user from userDetails.dob
 	const calculateAge = (dob) => {
+		if (!dob) return null;
+
 		const today = new Date();
 		const birthDate = new Date(dob);
+
+		// Check if the date is valid
+		if (isNaN(birthDate.getTime())) return null;
+
 		let age = today.getFullYear() - birthDate.getFullYear();
 		const monthDiff = today.getMonth() - birthDate.getMonth();
+
+		// Adjust age if birthday hasn't occurred this year
 		if (
 			monthDiff < 0 ||
 			(monthDiff === 0 && today.getDate() < birthDate.getDate())
 		) {
 			age--;
-			return age;
 		}
+
+		return age;
 	};
 
 	return (
@@ -183,14 +198,14 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
 								icon={
 									<Calendar className="w-6 h-6 text-[#040171]" />
 								}
-								count="+2"
+								count={eventsCreated}
 								label="Events Created"
 							/>
 							<StatCard
 								icon={
 									<User className="w-6 h-6 text-[#040171]" />
 								}
-								count="+2"
+								count="1"
 								label="All Organizer"
 							/>
 							<StatCard
@@ -225,7 +240,7 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
 								icon={
 									<FileText className="w-6 h-6 text-[#040171]" />
 								}
-								count="+2"
+								count={totalOrders.length}
 								label="Your Total Order"
 							/>
 							<StatCard

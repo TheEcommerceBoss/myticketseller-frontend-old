@@ -95,6 +95,8 @@ const EditProfile = ({ setEditProfile }) => {
 				title: "Profile Updated",
 				text: "Your profile has been updated successfully.",
 			});
+
+			setEditProfile(false);
 		} catch (error) {
 			Swal.fire({
 				icon: "error",

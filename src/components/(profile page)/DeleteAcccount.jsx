@@ -3,19 +3,54 @@
 import { useState } from "react";
 import { usersApi } from "../../shared/services/api";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const DeleteAccount = ({ setDeleteAccount }) => {
 	const [reason, setReason] = useState("");
+	const navigate = useNavigate();
+	const { logout } = useAuth();
 
 	const handleDelete = async () => {
 		// Handle account deletion logic here
 		console.log("Account deletion requested with reason:", reason);
 		try {
 			await usersApi.deleteUser({ reason });
+
+			// Clear all localStorage items
+			localStorage.clear();
+
+			// Clear all sessionStorage items
+			sessionStorage.clear();
+
+			logout();
+
+			// Clear all cookies more thoroughly
+			const cookies = document.cookie.split(";");
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i];
+				const eqPos = cookie.indexOf("=");
+				const name =
+					eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+				document.cookie =
+					name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+				document.cookie =
+					name +
+					"=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" +
+					window.location.hostname;
+				document.cookie =
+					name +
+					"=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=." +
+					window.location.hostname;
+			}
+
 			Swal.fire({
 				icon: "success",
 				title: "Account Deleted",
 				text: "Your account has been deleted successfully.",
+			}).then(() => {
+				// Navigate to home page
+				navigate("/");
 			});
 		} catch (error) {
 			Swal.fire({

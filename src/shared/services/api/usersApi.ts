@@ -48,4 +48,8 @@ export const usersApi = {
 		const res = await newApi.get("/users/earnings");
 		return res.data;
 	},
+	async getTotalOrders() {
+		const res = await newApi.get("/users/total-orders");
+		return res.data;
+	},
 };
