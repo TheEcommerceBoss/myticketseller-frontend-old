@@ -100,12 +100,14 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 					{icon}
 				</div>
 				{isOpen && <span className="transition-opacity">{text}</span>}
-				<div>
-					<ChevronDown
-						size={24}
-						className={active && "rotate-180 text-[#040171]"}
-					/>
-				</div>
+				{isOpen && (
+					<div>
+						<ChevronDown
+							size={24}
+							className={active && "rotate-180 text-[#040171]"}
+						/>
+					</div>
+				)}
 			</div>
 		</button>
 	);

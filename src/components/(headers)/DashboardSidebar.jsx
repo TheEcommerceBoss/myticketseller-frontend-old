@@ -12,7 +12,6 @@ import {
 	User,
 	Wallet,
 } from "lucide-react";
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoDark from "../../assets/(site_assets)/logo-dark.png";
 import logo from "../../assets/(site_assets)/logo.png";
@@ -59,13 +58,13 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 	return (
 		<>
 			<div
-				className={`fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden transition-opacity duration-200
+				className={`fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden transition-opacity duration-200 overflow-y-scroll h-screen
           ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
 				onClick={toggleSidebar}
 			/>
 
 			<div
-				className={`fixed min-h-screen lg:sticky top-0 h-full z-30 transition-all duration-200
+				className={`fixed h-screen lg:sticky top-0 z-30 transition-all duration-200
         ${theme === "dark" ? "bg-[#121212]" : "bg-white"}
         ${
 			isOpen
@@ -105,7 +104,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 					)}
 				</div>
 
-				<nav className="mt-5">
+				<nav className="h-full mt-5 overflow-y-scroll">
 					<NavItem
 						icon={<Home size={24} />}
 						link="/dashboard"
