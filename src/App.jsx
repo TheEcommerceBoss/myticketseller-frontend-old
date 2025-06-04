@@ -11,7 +11,7 @@ import AffiliatesPage from "./pages/(dashboard)/AffiliatesPage";
 import CompletedCreation from "./pages/(dashboard)/CompletedCreation";
 import CreateEvent from "./pages/(dashboard)/createEvent";
 // import Dashboard from "./pages/(dashboard)/Dashboard";
-import Dashboard from "./revamp/pages/Dashboard";
+import Dashboard2 from "./revamp/pages/Dashboard2";
 import EventDashboard from "./pages/(dashboard)/EventDashboard";
 import EventsInfo from "./pages/(dashboard)/Info";
 import ManageEvent from "./pages/(dashboard)/manageEvent";
@@ -45,6 +45,7 @@ import Complimentary from "./pages/(event-dashboard)/sales-summary/Complimentary
 import ProfilePage from "./pages/(dashboard)/ProfilePage";
 import SpecificReferral from "./pages/(event-dashboard)/referral/SpecificReferral";
 import { AppProvider } from "./context/AppContext";
+import Dashboard from "./pages/(dashboard)/dashboard";
 
 function App() {
 	return (
@@ -84,6 +85,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<Dashboard />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard2"
+								element={
+									<ProtectedRoute>
+										<Dashboard2 />
 									</ProtectedRoute>
 								}
 							/>

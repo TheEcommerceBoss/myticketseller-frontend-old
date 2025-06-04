@@ -1,13 +1,28 @@
-import { LogOut, Settings } from "lucide-react";
+/* eslint-disable no-unused-vars */
+import { ChevronDown, LogOut, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
-import user from "../../assets/(user)/user.png";
-
 import { Link } from "react-router-dom";
+import user from "../../assets/(user)/user.png";
 import { useTheme } from "../../context/ThemeContext";
+import { usersApi } from "../../shared/services/api";
+
 function DashboardHeader() {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const { theme, toggleTheme } = useTheme();
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+	const [userDetails, setUserDetails] = useState();
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const userDetailsResposnse = await usersApi.getMe();
+				setUserDetails(userDetailsResposnse);
+			} catch (error) {
+				console.error("Error fetching user details:", error);
+			}
+		};
+		fetchData();
+	}, []);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -37,17 +52,30 @@ function DashboardHeader() {
 
 	return (
 		<div className="relative">
-			<button
+			<div
 				onClick={toggleDropdown}
-				className="focus:outline-none"
-				aria-label="Open profile menu"
+				className="flex items-center gap-3 focus:outline-none"
 			>
 				<img
-					src={user}
+					src={userDetails?.avatar_url ?? user}
 					alt="Profile"
-					className="w-10 h-10 rounded-full ring-2 ring-gray-200 hover:ring-gray-300"
+					className="object-cover w-10 h-10 border-2 border-white rounded-full"
 				/>
-			</button>
+				<div className="hidden md:block">
+					<p
+						className={`font-medium text-neutral-900 ${
+							theme != "dark" ? "text-[#040171]" : "text-white"
+						}`}
+					>
+						{userDetails?.full_name}
+					</p>
+					<p className="text-xs text-neutral-500">Admin</p>
+				</div>
+				<ChevronDown
+					size={16}
+					className="hidden md:block text-neutral-400"
+				/>
+			</div>
 
 			{isDropdownOpen && (
 				<div

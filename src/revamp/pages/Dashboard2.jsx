@@ -9,7 +9,7 @@ import UpcomingEvents from "../components/dashboard/UpcomingEvents";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 
-const Dashboard = () => {
+const Dashboard2 = () => {
 	const { isMenuOpen } = useAppContext();
 
 	return (
@@ -42,4 +42,4 @@ const Dashboard = () => {
 	);
 };
 
-export default Dashboard;
+export default Dashboard2;

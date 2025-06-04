@@ -1,9 +1,11 @@
 import { Search, Bell, Menu, ChevronDown } from "lucide-react";
 import { motion } from "motion/react";
 import { useAppContext } from "../../../context/AppContext";
+import { getGreeting } from "../../../lib/helper";
 
 const Header = () => {
 	const { toggleMenu } = useAppContext();
+	const greeting = getGreeting();
 
 	return (
 		<header className="flex items-center justify-between px-6 py-4 bg-white border-b border-neutral-200">
@@ -11,14 +13,19 @@ const Header = () => {
 				<button className="lg:hidden" onClick={toggleMenu}>
 					<Menu size={20} />
 				</button>
-				<motion.h1
-					className="text-xl font-semibold text-neutral-900"
-					initial={{ opacity: 0, y: -10 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.3 }}
-				>
-					Dashboard
-				</motion.h1>
+				<div className="hidden lg:block">
+					<motion.h1
+						className="text-xl font-semibold lg:text-2xl text-neutral-900"
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.3 }}
+					>
+						Dashboard
+					</motion.h1>
+					<span className="text-[#040171]">
+						{greeting}, Ebuka Ejiofor
+					</span>
+				</div>
 			</div>
 
 			<div className="flex items-center gap-4">
