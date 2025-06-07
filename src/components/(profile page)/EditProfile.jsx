@@ -1,12 +1,13 @@
+/* eslint-disable react/prop-types */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Calendar, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import Swal from "sweetalert2";
 import { z } from "zod";
 import { usersApi } from "../../shared/services/api";
-import Swal from "sweetalert2";
 
 // Define Zod schema
 const schema = z.object({
@@ -40,7 +41,6 @@ const EditProfile = ({ setEditProfile }) => {
 
 	const [profileImage, setProfileImage] = useState(null);
 	const [previewUrl, setPreviewUrl] = useState(null);
-	const [avatarUrl, setAvatarUrl] = useState(""); // final image URL to submit
 	const [userDetails, setUserDetails] = useState();
 
 	useEffect(() => {
@@ -77,6 +77,28 @@ const EditProfile = ({ setEditProfile }) => {
 		fetchData();
 	}, [reset]);
 
+	const calculateProfileCompletion = () => {
+		if (!userDetails) return 0;
+
+		const fields = [
+			userDetails.avatar_url,
+			userDetails.email,
+			userDetails.prefix,
+			userDetails.first_name,
+			userDetails.last_name,
+			userDetails.phone_number,
+			userDetails.dob,
+		];
+
+		const filledFields = fields.filter(
+			(field) => field !== null && field !== ""
+		).length;
+		const totalFields = fields.length;
+		return Math.round((filledFields / totalFields) * 100);
+	};
+
+	const profileCompletionPercentage = calculateProfileCompletion();
+
 	const onSubmit = async (data) => {
 		try {
 			const formData = new FormData();
@@ -89,6 +111,7 @@ const EditProfile = ({ setEditProfile }) => {
 			if (profileImage) {
 				formData.append("avatar", profileImage); // Add the file
 			}
+			// eslint-disable-next-line no-unused-vars
 			const response = await usersApi.updateUser(formData);
 			Swal.fire({
 				icon: "success",
@@ -155,11 +178,28 @@ const EditProfile = ({ setEditProfile }) => {
 							</h1>
 
 							<div className="mb-6">
-								<p className="mb-2 font-medium">
-									Profile Status
-								</p>
-								<div className="w-full h-2 bg-gray-200 rounded-full">
-									<div className="h-full w-[65%] bg-[#0a0a80] rounded-full"></div>
+								<div className="flex justify-between mb-1">
+									<p className="font-medium">
+										Profile Status
+									</p>
+								</div>
+								<div className="relative w-full h-2 bg-gray-200 rounded-full">
+									<div
+										className="h-full bg-[#040171] rounded-full"
+										style={{
+											width: `${profileCompletionPercentage}%`,
+										}}
+									></div>
+									<div
+										className="bg-[#040171] text-white px-2 py-0.5 rounded text-sm absolute -top-9"
+										style={{
+											left: `${profileCompletionPercentage}%`,
+											transform: "translateX(-50%)",
+										}}
+									>
+										{profileCompletionPercentage}%
+										<div className="absolute w-3 h-3 bg-[#040171] rotate-45 -bottom-1 left-1/2 -translate-x-1/2"></div>
+									</div>
 								</div>
 							</div>
 
