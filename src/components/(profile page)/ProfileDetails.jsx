@@ -261,7 +261,7 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
 									<User className="w-6 h-6 text-[#040171]" />
 								}
 								count="1"
-								label="All Organizer"
+								label="All Organizers"
 							/>
 							<StatCard
 								icon={

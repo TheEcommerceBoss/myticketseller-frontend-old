@@ -142,6 +142,43 @@ export const sidebarData = {
 			active: false,
 		},
 	],
+	profile: [
+		{
+			text: "My Profile",
+			link: "/dashboard/profile",
+			active: false,
+		},
+		{
+			text: "Change Password",
+			link: "/dashboard/profile/change-password",
+			active: false,
+		},
+		{
+			text: "My Earnings",
+			link: "/dashboard/my-earnings",
+			active: false,
+		},
+		{
+			text: "My Following",
+			link: "/dashboard/my-following",
+			active: false,
+		},
+		{
+			text: "Organizer Profile",
+			link: "/dashboard/organizer-profile",
+			active: false,
+		},
+		{
+			text: "Multi-User Access",
+			link: "/dashboard/multi-user-access",
+			active: false,
+		},
+		{
+			text: "Facebook / Google Analytics Details",
+			link: "/dashboard/analytics-details",
+			active: false,
+		},
+	],
 };
 
 export const howItWorksSteps = [
