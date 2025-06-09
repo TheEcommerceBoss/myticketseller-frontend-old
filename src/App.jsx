@@ -42,10 +42,13 @@ import NotFound from "./pages/others/NotFound";
 import ReferralPayoutHistory from "./pages/(event-dashboard)/referral/ReferralPayoutHistory";
 import EditEvent from "./pages/(dashboard)/editEvent";
 import Complimentary from "./pages/(event-dashboard)/sales-summary/Complimentary";
-import ProfilePage from "./pages/(dashboard)/ProfilePage";
+
 import SpecificReferral from "./pages/(event-dashboard)/referral/SpecificReferral";
 import { AppProvider } from "./context/AppContext";
 import Dashboard from "./pages/(dashboard)/dashboard";
+import ProfilePage from "./pages/(dashboard)/ProfilePage";
+import ChangePassword from "./pages/(dashboard)/ChangePassword";
+import MyEarnings from "./pages/(dashboard)/MyEarnings";
 
 function App() {
 	return (
@@ -230,6 +233,22 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<ProfilePage />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/profile/change-password"
+								element={
+									<ProtectedRoute>
+										<ChangePassword />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/my-earnings"
+								element={
+									<ProtectedRoute>
+										<MyEarnings />
 									</ProtectedRoute>
 								}
 							/>

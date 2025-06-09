@@ -50,6 +50,8 @@ const EditProfile = ({ setEditProfile }) => {
 
 				const user = userDetailsResponse;
 
+				console.log("User Details Response:", userDetailsResponse);
+
 				// Use reset to populate the form
 				const formatUserData = (user) => ({
 					email: user?.email ?? "",
@@ -134,7 +136,7 @@ const EditProfile = ({ setEditProfile }) => {
 		<div className="mx-auto max-w-7xl">
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className="overflow-hidden border border-b-0 border-gray-200 rounded-lg shadow-sm"
+				className="overflow-hidden rounded-lg"
 			>
 				{/* Profile Header */}
 				<div className="bg-[#0a0a80] text-white p-4">
