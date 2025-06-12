@@ -73,6 +73,7 @@ const EditProfile = ({ setEditProfile }) => {
 					"Fetch error:",
 					error?.response?.data || error.message
 				);
+				Swal.fire(error.message, "", "error");
 			}
 		};
 

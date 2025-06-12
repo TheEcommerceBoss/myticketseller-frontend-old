@@ -11,6 +11,7 @@ import {
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { eventsApi, usersApi } from "../../shared/services/api";
+import Swal from "sweetalert2";
 
 const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
 	const [userDetails, setUserDetails] = useState();
@@ -29,6 +30,7 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
 				setUserDetails(userDetailsResponse);
 				setTotalOrders(totalOrdersResponse);
 			} catch (error) {
+				Swal.fire(error.message, "", "error");
 				console.error("Failed to fetch data:", error);
 			} finally {
 				setLoading(false);

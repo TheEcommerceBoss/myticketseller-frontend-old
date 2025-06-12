@@ -9,35 +9,18 @@ import Swal from "sweetalert2";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import SideBar from "../../components/(headers)/DashboardSidebar";
 import { useTheme } from "../../context/ThemeContext";
-import { usersApi } from "../../shared/services/api"; // Adjust path as needed
 
 // Zod schema for form validation
-const formSchema = z
-	.object({
-		oldPassword: z
-			.string()
-			.min(6, "Old password must be at least 6 characters"),
-		newPassword: z
-			.string()
-			.min(6, "New password must be at least 6 characters")
-			.regex(
-				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-				"Password must contain at least one uppercase letter, one lowercase letter, and one number"
-			),
-		confirmPassword: z.string().min(6, "Please confirm your new password"),
-	})
-	.refine((data) => data.newPassword === data.confirmPassword, {
-		message: "Passwords do not match",
-		path: ["confirmPassword"],
-	});
-
-const ChangePassword = () => {
+const formSchema = z.object({
+	googleAnalytics: z.string().min(1, "Google Analytics ID is required"),
+	facebookPixel: z.string().min(1, "Facebook Pixel ID is required"),
+});
+const UpdateAnalytics = () => {
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
 	const [isSidebarOpen, setIsSidebarOpen] = useState(
 		window.innerWidth >= 1024
 	);
-
 	const {
 		register,
 		handleSubmit,
@@ -46,9 +29,8 @@ const ChangePassword = () => {
 	} = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			oldPassword: "",
-			newPassword: "",
-			confirmPassword: "",
+			googleAnalytics: "",
+			facebookPixel: "",
 		},
 	});
 
@@ -62,29 +44,31 @@ const ChangePassword = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		try {
-			// Assuming usersApi.updatePassword accepts oldPassword and newPassword
-			await usersApi.updatePassword({
-				oldPassword: data.oldPassword,
-				newPassword: data.newPassword,
-			});
-			Swal.fire({
-				icon: "success",
-				title: "Password Updated",
-				text: "Your password has been updated successfully.",
-			});
-			reset();
-		} catch (error) {
-			Swal.fire({
-				icon: "error",
-				title: "Error",
-				text:
-					error?.response?.data?.message ||
-					"Failed to update password.",
-			});
-		} finally {
-			setLoading(false);
-		}
+		console.log(data);
+		// setLoading(true);
+		// try {
+		// 	// Assuming analyticsApi.updateAnalytics accepts googleAnalytics and facebookPixel
+		// 	await analyticsApi.updateAnalytics({
+		// 		googleAnalytics: data.googleAnalytics,
+		// 		facebookPixel: data.facebookPixel,
+		// 	});
+		// 	Swal.fire({
+		// 		icon: "success",
+		// 		title: "Analytics Updated",
+		// 		text: "Your analytics details have been updated successfully.",
+		// 	});
+		// 	reset();
+		// } catch (error) {
+		// 	Swal.fire({
+		// 		icon: "error",
+		// 		title: "Error",
+		// 		text:
+		// 			error?.response?.data?.message ||
+		// 			"Failed to update analytics.",
+		// 	});
+		// } finally {
+		// 	setLoading(false);
+		// }
 	};
 
 	return (
@@ -117,8 +101,8 @@ const ChangePassword = () => {
 								<Menu size={24} />
 							)}
 						</button>
-						<h1 className="hidden text-2xl font-bold lg:flex">
-							Change Password
+						<h1 className="hidden text-2xl font-bold text-[#0a0a80] lg:flex">
+							Facebook / Google Analytics Details
 						</h1>
 					</div>
 					<div className="flex items-center space-x-4">
@@ -168,82 +152,55 @@ const ChangePassword = () => {
 							<div className="grid grid-cols-1 gap-6 p-4 bg-white md:p-8">
 								<div>
 									<label
-										htmlFor="oldPassword"
+										htmlFor="google"
 										className="block mb-2 font-medium"
 									>
-										Old Password
+										Google Analytics
 									</label>
 									<input
-										id="oldPassword"
-										type="password"
-										{...register("oldPassword")}
+										id="google"
+										type="text"
+										{...register("googleAnalytics")}
 										className={`w-full max-w-lg p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0a0a80] ${
 											theme === "dark"
 												? "bg-[#333] text-white border-gray-600"
 												: "bg-white border-gray-300"
 										} ${
-											errors.oldPassword
+											errors.googleAnalytics
 												? "border-red-500"
 												: ""
 										}`}
 									/>
-									{errors.oldPassword && (
+									{errors.googleAnalytics && (
 										<p className="mt-1 text-red-500">
-											{errors.oldPassword.message}
+											{errors.googleAnalytics.message}
 										</p>
 									)}
 								</div>
 								<div>
 									<label
-										htmlFor="newPassword"
+										htmlFor="facebook"
 										className="block mb-2 font-medium"
 									>
-										New Password
+										Facebook Pixel
 									</label>
 									<input
-										id="newPassword"
+										id="facebook"
 										type="password"
-										{...register("newPassword")}
+										{...register("facebookPixel")}
 										className={`w-full max-w-lg p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0a0a80] ${
 											theme === "dark"
 												? "bg-[#333] text-white border-gray-600"
 												: "bg-white border-gray-300"
 										} ${
-											errors.newPassword
+											errors.facebookPixel
 												? "border-red-500"
 												: ""
 										}`}
 									/>
-									{errors.newPassword && (
+									{errors.facebookPixel && (
 										<p className="mt-1 text-red-500">
-											{errors.newPassword.message}
-										</p>
-									)}
-								</div>
-								<div>
-									<label
-										htmlFor="confirmPassword"
-										className="block mb-2 font-medium"
-									>
-										Confirm Password
-									</label>
-									<input
-										id="confirmPassword"
-										type="password"
-										{...register("confirmPassword")}
-										className={`w-full max-w-lg p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#0a0a80] ${
-											theme === "dark"
-												? "bg-[#333] text-white border-gray-600"
-												: "bg-white border-gray-300"
-										} ${
-											errors.confirmPassword
-												? "border-red-500"
-												: ""
-										}`}
-									/>
-									{errors.confirmPassword && (
-										<p className="mt-1 text-red-500">
-											{errors.confirmPassword.message}
+											{errors.facebookPixel.message}
 										</p>
 									)}
 								</div>
@@ -270,4 +227,4 @@ const ChangePassword = () => {
 	);
 };
 
-export default ChangePassword;
+export default UpdateAnalytics;

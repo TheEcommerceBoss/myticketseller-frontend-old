@@ -49,6 +49,7 @@ import Dashboard from "./pages/(dashboard)/dashboard";
 import ProfilePage from "./pages/(dashboard)/ProfilePage";
 import ChangePassword from "./pages/(dashboard)/ChangePassword";
 import MyEarnings from "./pages/(dashboard)/MyEarnings";
+import UpdateAnalytics from "./pages/(dashboard)/UpdateAnalytics";
 
 function App() {
 	return (
@@ -249,6 +250,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<MyEarnings />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/analytics-details"
+								element={
+									<ProtectedRoute>
+										<UpdateAnalytics />
 									</ProtectedRoute>
 								}
 							/>
