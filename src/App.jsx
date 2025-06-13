@@ -50,6 +50,7 @@ import ProfilePage from "./pages/(dashboard)/ProfilePage";
 import ChangePassword from "./pages/(dashboard)/ChangePassword";
 import MyEarnings from "./pages/(dashboard)/MyEarnings";
 import UpdateAnalytics from "./pages/(dashboard)/UpdateAnalytics";
+import OrganizerProfile from "./pages/(dashboard)/OrganizerProfile";
 
 function App() {
 	return (
@@ -258,6 +259,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<UpdateAnalytics />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/organizer-profile"
+								element={
+									<ProtectedRoute>
+										<OrganizerProfile />
 									</ProtectedRoute>
 								}
 							/>
