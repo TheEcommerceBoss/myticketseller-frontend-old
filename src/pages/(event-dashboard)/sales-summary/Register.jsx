@@ -1,3 +1,10 @@
+import { DataGrid } from "@mui/x-data-grid";
+import { Menu, Moon, PlusCircle, Search, Sun, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import DashboardHeader from "../../../components/(events)/DashboardHeader";
+import SideBar from "../../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../../context/ThemeContext";
 import {
 	Box,
 	Button,
@@ -5,68 +12,26 @@ import {
 	InputAdornment,
 	TextField,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import {
-	Menu,
-	Moon,
-	PlusCircle,
-	Search,
-	Send,
-	Sun,
-	Trash2,
-	X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import DashboardHeader from "../../../components/(events)/DashboardHeader";
-import SideBar from "../../../components/(headers)/EventDashboardSidebar";
-import { useTheme } from "../../../context/ThemeContext";
-import { ticketsApi } from "../../../shared/services/api";
 
-export default function Complimentary() {
+export default function Register() {
 	const { id } = useParams();
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
-	const [complimentaryTickets, setComplimentaryTickets] = useState([]);
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
-	useEffect(
-		function () {
-			if (!id) return;
-			async function fetchComplimentaries() {
-				const res = await ticketsApi.fetchComplimentaryTickets();
-				setComplimentaryTickets(res.data);
-				setLoading(false);
-				console.log(res.data);
-			}
-			fetchComplimentaries();
-		},
-		[id]
-	);
-
-	const handleDeleteEmail = (id) => {
-		setComplimentaryTickets(
-			complimentaryTickets.filter((item) => item.id !== id)
-		);
-		Swal.fire({
-			icon: "success",
-			title: "Deleted",
-			text: "The complimentary ticket has been deleted.",
-			timer: 2000,
-			showConfirmButton: false,
-		});
-	};
-
-	const handleResendEmail = () => {
-		Swal.fire({
-			icon: "success",
-			title: "Email Sent",
-			text: "The complimentary ticket email has been resent.",
-			timer: 2000,
-			showConfirmButton: false,
-		});
-	};
+	// useEffect(
+	// 	function () {
+	// 		if (!id) return;
+	// 		async function fetchComplimentaries() {
+	// 			const res = await ticketsApi.fetchComplimentaryTickets();
+	// 			setComplimentaryTickets(res.data);
+	// 			setIsLoading(false);
+	// 			console.log(res.data);
+	// 		}
+	// 		fetchComplimentaries();
+	// 	},
+	// 	[id]
+	// );
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -95,41 +60,71 @@ export default function Complimentary() {
 	};
 
 	const columns = [
-		{ field: "name", headerName: "Name", width: 250 },
-		{
-			field: "email",
-			headerName: "Email",
-			width: 300,
-		},
-		{
-			field: "ticket_id",
-			headerName: "Ticket ID",
-			width: 200,
-		},
-		{
-			field: "id",
-			headerName: "Actions",
-			width: 200,
-			renderCell: (params) => (
-				<div className="flex gap-3 mt-2">
-					<button
-						onClick={() => handleResendEmail(params.value)}
-						title="view"
-						className="p-2 text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200"
-					>
-						<Send size={16} />
-					</button>
-					<button
-						onClick={() => handleDeleteEmail(params.value)}
-						title="Delete"
-						className="p-2 text-red-600 bg-red-100 rounded-lg hover:bg-red-200"
-					>
-						<Trash2 size={16} />
-					</button>
-				</div>
-			),
-		},
+		{ field: "order", headerName: "Order", flex: 1, minWidth: 140 },
+		{ field: "name", headerName: "Name", flex: 1, minWidth: 160 },
+		{ field: "email", headerName: "Email", flex: 1, minWidth: 200 },
+		{ field: "dob", headerName: "DOB", flex: 1, minWidth: 120 },
+		{ field: "contact", headerName: "Contact", flex: 1, minWidth: 140 },
+		{ field: "date", headerName: "Date", flex: 1, minWidth: 120 },
 	];
+
+	const [rows, setRows] = useState([]);
+
+	// Simulate fetching data
+	useEffect(() => {
+		setLoading(true);
+		// Replace this with your actual API call
+		setTimeout(() => {
+			setRows([
+				{
+					id: 1,
+					order: "ORD-1001",
+					name: "John Doe",
+					email: "john.doe@example.com",
+					dob: "1990-01-01",
+					contact: "+1234567890",
+					date: "2024-06-01",
+				},
+				{
+					id: 2,
+					order: "ORD-1002",
+					name: "Jane Smith",
+					email: "jane.smith@example.com",
+					dob: "1988-05-12",
+					contact: "+1987654321",
+					date: "2024-06-02",
+				},
+				{
+					id: 3,
+					order: "ORD-1003",
+					name: "Alice Johnson",
+					email: "alice.johnson@example.com",
+					dob: "1995-09-23",
+					contact: "+1122334455",
+					date: "2024-06-03",
+				},
+				{
+					id: 4,
+					order: "ORD-1004",
+					name: "Bob Lee",
+					email: "bob.lee@example.com",
+					dob: "1992-03-15",
+					contact: "+1223344556",
+					date: "2024-06-04",
+				},
+				{
+					id: 5,
+					order: "ORD-1005",
+					name: "Emily Clark",
+					email: "emily.clark@example.com",
+					dob: "1998-07-30",
+					contact: "+1334455667",
+					date: "2024-06-05",
+				},
+			]);
+			setLoading(false);
+		}, 1000);
+	}, []);
 
 	return (
 		<div
@@ -154,7 +149,7 @@ export default function Complimentary() {
 						</button>
 
 						<h1 className="hidden text-2xl font-bold lg:flex">
-							Complimentary
+							Register
 						</h1>
 					</div>
 
@@ -294,13 +289,13 @@ export default function Complimentary() {
 								<div className="flex items-center justify-center h-24">
 									<CircularProgress size={40} />
 								</div>
-							) : complimentaryTickets.length === 0 ? (
+							) : rows.length === 0 ? (
 								<div className="flex items-center justify-center h-96">
 									<span>No events found</span>
 								</div>
 							) : (
 								<DataGrid
-									rows={complimentaryTickets}
+									rows={rows}
 									columns={columns}
 									pageSize={25}
 									rowsPerPageOptions={[5]}

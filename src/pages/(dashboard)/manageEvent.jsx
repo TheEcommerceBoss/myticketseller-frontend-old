@@ -121,6 +121,28 @@ const ManageEvent = () => {
 	}));
 
 	const columns = [
+		{ field: "title", headerName: "Event Title", width: 250 },
+		{
+			field: "is_listed",
+			headerName: "Visibility",
+			width: 100,
+			renderCell: (params) => (
+				<div>{params.value === 0 ? "Private" : "Public"}</div>
+			),
+		},
+
+		{
+			field: "status",
+			headerName: "Status",
+			width: 100,
+			renderCell: (params) => (
+				<div className="flex items-center gap-2">
+					<span>{params.value === 0 ? "Draft" : "Live"}</span>
+				</div>
+			),
+		},
+		{ field: "category_id", headerName: "Category", width: 100 },
+		{ field: "description", headerName: "Description", width: 300 },
 		{
 			field: "id",
 			headerName: "Actions",
@@ -159,28 +181,6 @@ const ManageEvent = () => {
 				</div>
 			),
 		},
-		{ field: "title", headerName: "Event Title", width: 250 },
-		{
-			field: "is_listed",
-			headerName: "Visibility",
-			width: 150,
-			renderCell: (params) => (
-				<div>{params.value === 0 ? "Private" : "Public"}</div>
-			),
-		},
-
-		{
-			field: "status",
-			headerName: "Status",
-			width: 150,
-			renderCell: (params) => (
-				<div className="flex items-center gap-2">
-					<span>{params.value === 0 ? "Draft" : "Live"}</span>
-				</div>
-			),
-		},
-		{ field: "category_id", headerName: "Category", width: 150 },
-		{ field: "description", headerName: "Description", width: 300 },
 	];
 
 	return (

@@ -51,6 +51,14 @@ import ChangePassword from "./pages/(dashboard)/ChangePassword";
 import MyEarnings from "./pages/(dashboard)/MyEarnings";
 import UpdateAnalytics from "./pages/(dashboard)/UpdateAnalytics";
 import OrganizerProfile from "./pages/(dashboard)/OrganizerProfile";
+import AddNewOrganizer from "./pages/(dashboard)/AddNewOrganizer";
+import EventQRCode from "./pages/(event-dashboard)/EventQRCode";
+import OrderListing from "./pages/(event-dashboard)/sales-summary/OrderListing";
+import Attendees from "./pages/(event-dashboard)/sales-summary/Attendees";
+import Checkins from "./pages/(event-dashboard)/sales-summary/Checkins";
+import Refunds from "./pages/(event-dashboard)/sales-summary/Refunds";
+import Register from "./pages/(event-dashboard)/sales-summary/Register";
+import Request from "./pages/(event-dashboard)/sales-summary/Request";
 
 function App() {
 	return (
@@ -270,9 +278,74 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
+							<Route
+								path="/dashboard/add-new-organizer"
+								element={
+									<ProtectedRoute>
+										<AddNewOrganizer />
+									</ProtectedRoute>
+								}
+							/>
 
 							{/* event dashboard routes */}
+							<Route
+								path="/dashboard/event/:id/qr-code"
+								element={
+									<ProtectedRoute>
+										<EventQRCode />
+									</ProtectedRoute>
+								}
+							/>
+
 							{/* Sales summary */}
+							<Route
+								path="/dashboard/event/:id/orders"
+								element={
+									<ProtectedRoute>
+										<OrderListing />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/attendees"
+								element={
+									<ProtectedRoute>
+										<Attendees />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/checkins"
+								element={
+									<ProtectedRoute>
+										<Checkins />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/refunds"
+								element={
+									<ProtectedRoute>
+										<Refunds />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/register"
+								element={
+									<ProtectedRoute>
+										<Register />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/request"
+								element={
+									<ProtectedRoute>
+										<Request />
+									</ProtectedRoute>
+								}
+							/>
 							<Route
 								path="/dashboard/event/:id/complimentary"
 								element={

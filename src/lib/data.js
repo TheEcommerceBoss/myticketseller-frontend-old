@@ -38,16 +38,6 @@ export const sidebarData = {
 			active: false,
 		},
 		{
-			text: "Guest List",
-			link: "/dashboard/event/:id/guest-list",
-			active: false,
-		},
-		{
-			text: "Bottle Service",
-			link: "/dashboard/event/:id/bottle-service",
-			active: false,
-		},
-		{
 			text: "Request",
 			link: "/dashboard/event/:id/request",
 			active: false,
