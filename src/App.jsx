@@ -59,6 +59,10 @@ import Checkins from "./pages/(event-dashboard)/sales-summary/Checkins";
 import Refunds from "./pages/(event-dashboard)/sales-summary/Refunds";
 import Register from "./pages/(event-dashboard)/sales-summary/Register";
 import Request from "./pages/(event-dashboard)/sales-summary/Request";
+import GuestList from "./pages/(event-dashboard)/GuestList";
+import SetupScan from "./pages/(event-dashboard)/scanning/SetupScan";
+import ManualScanning from "./pages/(event-dashboard)/scanning/ManualScanning";
+import ScanningReport from "./pages/(event-dashboard)/scanning/ScanningReport";
 
 function App() {
 	return (
@@ -354,6 +358,33 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
+
+							{/* scanning */}
+							<Route
+								path="/dashboard/event/:id/setup-scan-online"
+								element={
+									<ProtectedRoute>
+										<SetupScan />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/manually-scanning"
+								element={
+									<ProtectedRoute>
+										<ManualScanning />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/scanning-report"
+								element={
+									<ProtectedRoute>
+										<ScanningReport />
+									</ProtectedRoute>
+								}
+							/>
+
 							{/* Referrals */}
 							<Route
 								path="/dashboard/event/:id/add-referral"
@@ -400,6 +431,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<ReferralPayoutHistory />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/guest-list"
+								element={
+									<ProtectedRoute>
+										<GuestList />
 									</ProtectedRoute>
 								}
 							/>

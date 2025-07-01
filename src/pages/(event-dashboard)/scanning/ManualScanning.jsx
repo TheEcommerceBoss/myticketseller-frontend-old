@@ -2,22 +2,24 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Menu, Moon, PlusCircle, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import DashboardHeader from "../../../components/(events)/DashboardHeader";
+import SideBar from "../../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../../context/ThemeContext";
 import {
 	Box,
 	Button,
 	CircularProgress,
 	InputAdornment,
+	Tab,
+	Tabs,
 	TextField,
 } from "@mui/material";
-import DashboardHeader from "../../components/(events)/DashboardHeader";
-import SideBar from "../../components/(headers)/EventDashboardSidebar";
-import { useTheme } from "../../context/ThemeContext";
 
-export default function GuestList() {
+export default function ManualScanning() {
 	const { id } = useParams();
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
+	const [tabValue, setTabValue] = useState(0);
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
 	// useEffect(
@@ -33,6 +35,10 @@ export default function GuestList() {
 	// 	},
 	// 	[id]
 	// );
+
+	const handleTabChange = (event, newValue) => {
+		setTabValue(newValue);
+	};
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -61,12 +67,44 @@ export default function GuestList() {
 	};
 
 	const columns = [
-		{ field: "first_name", headerName: "First Name", width: 180 },
-		{ field: "last_name", headerName: "Last Name", width: 180 },
-		{ field: "email", headerName: "Email", width: 220 },
-		{ field: "contact_no", headerName: "Contact No", width: 180 },
-		{ field: "no_of_guest", headerName: "No of Guest", width: 150 },
-		{ field: "date", headerName: "Date", width: 200 },
+		{ field: "order", headerName: "Order", flex: 1, minWidth: 120 },
+		{ field: "barcode", headerName: "Bar code", flex: 1, minWidth: 150 },
+		{
+			field: "ticket_buyer",
+			headerName: "Ticket Buyer",
+			flex: 1,
+			minWidth: 150,
+		},
+		{ field: "email", headerName: "Email", flex: 1.2, minWidth: 180 },
+		{
+			field: "ticket_type",
+			headerName: "Ticket Type",
+			flex: 1,
+			minWidth: 130,
+		},
+		{
+			field: "action",
+			headerName: "Action",
+			flex: 0.7,
+			minWidth: 100,
+			renderCell: () => (
+				<Button
+					variant="contained"
+					size="small"
+					sx={{
+						bgcolor: "#000080",
+						textTransform: "none",
+						"&:hover": {
+							bgcolor: "#000066",
+						},
+					}}
+				>
+					Scan
+				</Button>
+			),
+			sortable: false,
+			filterable: false,
+		},
 	];
 
 	const [rows, setRows] = useState([]);
@@ -79,48 +117,43 @@ export default function GuestList() {
 			setRows([
 				{
 					id: 1,
-					first_name: "John",
-					last_name: "Doe",
+					order: "ORD-1001",
+					barcode: "ABC123456",
+					ticket_buyer: "John Doe",
 					email: "john.doe@example.com",
-					contact_no: "+1234567890",
-					no_of_guest: 2,
-					date: "2024-06-01 10:15 AM",
+					ticket_type: "VIP",
 				},
 				{
 					id: 2,
-					first_name: "Jane",
-					last_name: "Smith",
+					order: "ORD-1002",
+					barcode: "DEF654321",
+					ticket_buyer: "Jane Smith",
 					email: "jane.smith@example.com",
-					contact_no: "+1987654321",
-					no_of_guest: 1,
-					date: "2024-06-02 02:30 PM",
+					ticket_type: "Regular",
 				},
 				{
 					id: 3,
-					first_name: "Alice",
-					last_name: "Johnson",
+					order: "ORD-1003",
+					barcode: "GHI789012",
+					ticket_buyer: "Alice Johnson",
 					email: "alice.johnson@example.com",
-					contact_no: "+1122334455",
-					no_of_guest: 3,
-					date: "2024-06-03 09:45 AM",
+					ticket_type: "Student",
 				},
 				{
 					id: 4,
-					first_name: "Bob",
-					last_name: "Lee",
+					order: "ORD-1004",
+					barcode: "JKL345678",
+					ticket_buyer: "Bob Lee",
 					email: "bob.lee@example.com",
-					contact_no: "+1222333444",
-					no_of_guest: 2,
-					date: "2024-06-04 11:00 AM",
+					ticket_type: "VIP",
 				},
 				{
 					id: 5,
-					first_name: "Emily",
-					last_name: "Clark",
+					order: "ORD-1005",
+					barcode: "MNO901234",
+					ticket_buyer: "Emily Clark",
 					email: "emily.clark@example.com",
-					contact_no: "+1333444555",
-					no_of_guest: 4,
-					date: "2024-06-05 03:20 PM",
+					ticket_type: "Regular",
 				},
 			]);
 			setLoading(false);
@@ -150,7 +183,7 @@ export default function GuestList() {
 						</button>
 
 						<h1 className="hidden text-2xl font-bold lg:flex">
-							Event Guest List
+							Manual Scanning
 						</h1>
 					</div>
 
@@ -189,12 +222,32 @@ export default function GuestList() {
 					</div>
 				</div>
 
+				{/* Navigation Tabs */}
+				<Box
+					sx={{
+						mt: 4,
+						borderBottom: 1,
+						borderColor: "divider",
+						bgcolor: "white",
+					}}
+				>
+					<Tabs
+						value={tabValue}
+						onChange={handleTabChange}
+						aria-label="order tabs"
+					>
+						<Tab label="Manually Scanning" />
+						<Tab label="Complimentary Ticket Scanning" />
+						<Tab label="Hard Tickets Scanning" />
+					</Tabs>
+				</Box>
+
 				<div>
 					<Box
 						sx={{
 							mt: 2,
 						}}
-						className="flex flex-col-reverse flex-wrap justify-between gap-4 md:flex-row md:items-center "
+						className="flex flex-col-reverse flex-wrap justify-between gap-4 md:flex-row md:items-center"
 					>
 						<Box sx={{ display: "flex", gap: 1 }}>
 							<Button

@@ -1,20 +1,19 @@
+import {
+    Box,
+    Button,
+    CircularProgress,
+    InputAdornment,
+    TextField,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { Menu, Moon, PlusCircle, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import DashboardHeader from "../../../components/(events)/DashboardHeader";
+import SideBar from "../../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../../context/ThemeContext";
 
-import {
-	Box,
-	Button,
-	CircularProgress,
-	InputAdornment,
-	TextField,
-} from "@mui/material";
-import DashboardHeader from "../../components/(events)/DashboardHeader";
-import SideBar from "../../components/(headers)/EventDashboardSidebar";
-import { useTheme } from "../../context/ThemeContext";
-
-export default function GuestList() {
+export default function ScanningReport() {
 	const { id } = useParams();
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
@@ -61,12 +60,47 @@ export default function GuestList() {
 	};
 
 	const columns = [
-		{ field: "first_name", headerName: "First Name", width: 180 },
-		{ field: "last_name", headerName: "Last Name", width: 180 },
-		{ field: "email", headerName: "Email", width: 220 },
-		{ field: "contact_no", headerName: "Contact No", width: 180 },
-		{ field: "no_of_guest", headerName: "No of Guest", width: 150 },
-		{ field: "date", headerName: "Date", width: 200 },
+		{ field: "barcode", headerName: "Barcode", width: 180 },
+		{ field: "date", headerName: "Checkin Time", width: 180 },
+		{ field: "order", headerName: "Order", width: 140 },
+		{
+			field: "label",
+			headerName: "Label",
+			width: 140,
+		}, // Example static label
+		{ field: "namer", headerName: "Name on Tix", width: 180 },
+		{
+			field: "operator",
+			headerName: "Operator",
+			width: 160,
+		}, // Example static operator
+		{
+			field: "status",
+			headerName: "Status",
+			width: 120,
+			valueGetter: (params) =>
+				params.value === "No" ? "Checked In" : "Refunded",
+		},
+		{
+			field: "details",
+			headerName: "Details",
+			width: 120,
+			renderCell: () => (
+				<Button
+					variant="contained"
+					size="small"
+					sx={{
+						bgcolor: "#000080",
+						textTransform: "none",
+						"&:hover": {
+							bgcolor: "#000066",
+						},
+					}}
+				>
+					View
+				</Button>
+			),
+		},
 	];
 
 	const [rows, setRows] = useState([]);
@@ -79,48 +113,58 @@ export default function GuestList() {
 			setRows([
 				{
 					id: 1,
-					first_name: "John",
-					last_name: "Doe",
-					email: "john.doe@example.com",
-					contact_no: "+1234567890",
-					no_of_guest: 2,
+					barcode: "TIX-0001-ABC",
 					date: "2024-06-01 10:15 AM",
+					order: "ORD-1001",
+					label: "General",
+					namer: "John Doe",
+					operator: "System",
+					status: "Checked In",
+					refund: "No",
 				},
 				{
 					id: 2,
-					first_name: "Jane",
-					last_name: "Smith",
-					email: "jane.smith@example.com",
-					contact_no: "+1987654321",
-					no_of_guest: 1,
+					barcode: "TIX-0002-XYZ",
 					date: "2024-06-02 02:30 PM",
+					order: "ORD-1002",
+					label: "VIP",
+					namer: "Jane Smith",
+					operator: "System",
+					status: "Refunded",
+					refund: "Yes",
 				},
 				{
 					id: 3,
-					first_name: "Alice",
-					last_name: "Johnson",
-					email: "alice.johnson@example.com",
-					contact_no: "+1122334455",
-					no_of_guest: 3,
+					barcode: "TIX-0003-QWE",
 					date: "2024-06-03 09:45 AM",
+					order: "ORD-1003",
+					label: "General",
+					namer: "Alice Johnson",
+					operator: "System",
+					status: "Checked In",
+					refund: "No",
 				},
 				{
 					id: 4,
-					first_name: "Bob",
-					last_name: "Lee",
-					email: "bob.lee@example.com",
-					contact_no: "+1222333444",
-					no_of_guest: 2,
+					barcode: "TIX-0004-RTY",
 					date: "2024-06-04 11:00 AM",
+					order: "ORD-1004",
+					label: "General",
+					namer: "Bob Lee",
+					operator: "System",
+					status: "Checked In",
+					refund: "No",
 				},
 				{
 					id: 5,
-					first_name: "Emily",
-					last_name: "Clark",
-					email: "emily.clark@example.com",
-					contact_no: "+1333444555",
-					no_of_guest: 4,
+					barcode: "TIX-0005-UIO",
 					date: "2024-06-05 03:20 PM",
+					order: "ORD-1005",
+					label: "VIP",
+					namer: "Emily Clark",
+					operator: "System",
+					status: "Refunded",
+					refund: "Yes",
 				},
 			]);
 			setLoading(false);
@@ -150,7 +194,7 @@ export default function GuestList() {
 						</button>
 
 						<h1 className="hidden text-2xl font-bold lg:flex">
-							Event Guest List
+							Scanning Report
 						</h1>
 					</div>
 

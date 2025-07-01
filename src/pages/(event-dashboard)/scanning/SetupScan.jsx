@@ -1,20 +1,13 @@
+import { Button, CircularProgress } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { Menu, Moon, PlusCircle, Search, Sun, X } from "lucide-react";
+import { Menu, Moon, PlusCircle, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import DashboardHeader from "../../../components/(events)/DashboardHeader";
+import SideBar from "../../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../../context/ThemeContext";
 
-import {
-	Box,
-	Button,
-	CircularProgress,
-	InputAdornment,
-	TextField,
-} from "@mui/material";
-import DashboardHeader from "../../components/(events)/DashboardHeader";
-import SideBar from "../../components/(headers)/EventDashboardSidebar";
-import { useTheme } from "../../context/ThemeContext";
-
-export default function GuestList() {
+export default function SetupScan() {
 	const { id } = useParams();
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
@@ -61,12 +54,47 @@ export default function GuestList() {
 	};
 
 	const columns = [
-		{ field: "first_name", headerName: "First Name", width: 180 },
-		{ field: "last_name", headerName: "Last Name", width: 180 },
-		{ field: "email", headerName: "Email", width: 220 },
-		{ field: "contact_no", headerName: "Contact No", width: 180 },
-		{ field: "no_of_guest", headerName: "No of Guest", width: 150 },
-		{ field: "date", headerName: "Date", width: 200 },
+		{
+			field: "action",
+			headerName: "Setup Scan",
+			flex: 1,
+			minWidth: 200,
+			renderCell: () => (
+				<Button
+					variant="contained"
+					size="medium"
+					sx={{
+						bgcolor: "#000080",
+						textTransform: "none",
+						"&:hover": {
+							bgcolor: "#000066",
+						},
+					}}
+				>
+					Change Pin
+				</Button>
+			),
+		},
+		{
+			field: "pin_scan",
+			headerName: "Pin Scan",
+			flex: 1,
+			minWidth: 140,
+			renderCell: () => (
+				<div className="flex items-center h-full">
+					<span className="relative flex size-4">
+						<span className="absolute inline-flex w-full h-full bg-green-500 rounded-full opacity-75 animate-ping"></span>
+						<span className="relative inline-flex bg-green-600 rounded-full size-4"></span>
+					</span>
+				</div>
+			),
+		},
+		{
+			field: "scan_pin",
+			headerName: "Scan Pin",
+			flex: 1,
+			minWidth: 160,
+		},
 	];
 
 	const [rows, setRows] = useState([]);
@@ -79,48 +107,7 @@ export default function GuestList() {
 			setRows([
 				{
 					id: 1,
-					first_name: "John",
-					last_name: "Doe",
-					email: "john.doe@example.com",
-					contact_no: "+1234567890",
-					no_of_guest: 2,
-					date: "2024-06-01 10:15 AM",
-				},
-				{
-					id: 2,
-					first_name: "Jane",
-					last_name: "Smith",
-					email: "jane.smith@example.com",
-					contact_no: "+1987654321",
-					no_of_guest: 1,
-					date: "2024-06-02 02:30 PM",
-				},
-				{
-					id: 3,
-					first_name: "Alice",
-					last_name: "Johnson",
-					email: "alice.johnson@example.com",
-					contact_no: "+1122334455",
-					no_of_guest: 3,
-					date: "2024-06-03 09:45 AM",
-				},
-				{
-					id: 4,
-					first_name: "Bob",
-					last_name: "Lee",
-					email: "bob.lee@example.com",
-					contact_no: "+1222333444",
-					no_of_guest: 2,
-					date: "2024-06-04 11:00 AM",
-				},
-				{
-					id: 5,
-					first_name: "Emily",
-					last_name: "Clark",
-					email: "emily.clark@example.com",
-					contact_no: "+1333444555",
-					no_of_guest: 4,
-					date: "2024-06-05 03:20 PM",
+					scan_pin: "s35600",
 				},
 			]);
 			setLoading(false);
@@ -148,10 +135,6 @@ export default function GuestList() {
 						>
 							{isOpen ? <X size={24} /> : <Menu size={24} />}
 						</button>
-
-						<h1 className="hidden text-2xl font-bold lg:flex">
-							Event Guest List
-						</h1>
 					</div>
 
 					<div className="flex items-center space-x-4">
@@ -189,94 +172,6 @@ export default function GuestList() {
 					</div>
 				</div>
 
-				<div>
-					<Box
-						sx={{
-							mt: 2,
-						}}
-						className="flex flex-col-reverse flex-wrap justify-between gap-4 md:flex-row md:items-center "
-					>
-						<Box sx={{ display: "flex", gap: 1 }}>
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{
-									color: "#666",
-									borderColor: "#ccc",
-									bgcolor: "#f0f0f0",
-									textTransform: "none",
-									"&:hover": {
-										bgcolor: "#e0e0e0",
-										borderColor: "#bbb",
-									},
-								}}
-							>
-								Excel
-							</Button>
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{
-									color: "#666",
-									borderColor: "#ccc",
-									bgcolor: "#f0f0f0",
-									textTransform: "none",
-									"&:hover": {
-										bgcolor: "#e0e0e0",
-										borderColor: "#bbb",
-									},
-								}}
-							>
-								CSV
-							</Button>
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{
-									color: "#666",
-									borderColor: "#ccc",
-									bgcolor: "#f0f0f0",
-									textTransform: "none",
-									"&:hover": {
-										bgcolor: "#e0e0e0",
-										borderColor: "#bbb",
-									},
-								}}
-							>
-								PDF
-							</Button>
-							<Button
-								variant="outlined"
-								size="small"
-								sx={{
-									color: "#666",
-									borderColor: "#ccc",
-									bgcolor: "#f0f0f0",
-									textTransform: "none",
-									"&:hover": {
-										bgcolor: "#e0e0e0",
-										borderColor: "#bbb",
-									},
-								}}
-							>
-								Copy
-							</Button>
-						</Box>
-						<TextField
-							placeholder="Search by email or name"
-							size="small"
-							InputProps={{
-								startAdornment: (
-									<InputAdornment position="start">
-										<Search size={20} />
-									</InputAdornment>
-								),
-							}}
-							sx={{ width: "250px" }}
-						/>
-					</Box>
-				</div>
-
 				<div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-3">
 					<div
 						className={`md:col-span-3 p-2 ${
@@ -302,6 +197,7 @@ export default function GuestList() {
 									rowsPerPageOptions={[5]}
 									checkboxSelection={false}
 									disableSelectionOnClick
+									hideFooter
 									sx={{
 										"& .MuiDataGrid-columnHeaders": {
 											backgroundColor:

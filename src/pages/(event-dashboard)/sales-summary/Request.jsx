@@ -86,8 +86,18 @@ export default function Request() {
 			headerName: "Action",
 			flex: 1,
 			minWidth: 120,
-			renderCell: (params) => (
-				<Button variant="contained" size="small">
+			renderCell: () => (
+				<Button
+					variant="contained"
+					size="small"
+					sx={{
+						bgcolor: "#000080",
+						textTransform: "none",
+						"&:hover": {
+							bgcolor: "#000066",
+						},
+					}}
+				>
 					View
 				</Button>
 			),
@@ -101,53 +111,53 @@ export default function Request() {
 		setLoading(true);
 		// Replace this with your actual API call
 		setTimeout(() => {
-            setRows([
-                {
-                    id: 1,
-                    requestId: "REQ-1001",
-                    userEmail: "john.doe@example.com",
-                    userName: "John Doe",
-                    committeeMember: "Alice Johnson",
-                    quantity: 2,
-                    status: "Pending",
-                },
-                {
-                    id: 2,
-                    requestId: "REQ-1002",
-                    userEmail: "jane.smith@example.com",
-                    userName: "Jane Smith",
-                    committeeMember: "Bob Lee",
-                    quantity: 1,
-                    status: "Approved",
-                },
-                {
-                    id: 3,
-                    requestId: "REQ-1003",
-                    userEmail: "alice.johnson@example.com",
-                    userName: "Alice Johnson",
-                    committeeMember: "Emily Clark",
-                    quantity: 3,
-                    status: "Rejected",
-                },
-                {
-                    id: 4,
-                    requestId: "REQ-1004",
-                    userEmail: "bob.lee@example.com",
-                    userName: "Bob Lee",
-                    committeeMember: "John Doe",
-                    quantity: 4,
-                    status: "Pending",
-                },
-                {
-                    id: 5,
-                    requestId: "REQ-1005",
-                    userEmail: "emily.clark@example.com",
-                    userName: "Emily Clark",
-                    committeeMember: "Jane Smith",
-                    quantity: 2,
-                    status: "Approved",
-                },
-            ]);
+			setRows([
+				{
+					id: 1,
+					requestId: "REQ-1001",
+					userEmail: "john.doe@example.com",
+					userName: "John Doe",
+					committeeMember: "Alice Johnson",
+					quantity: 2,
+					status: "Pending",
+				},
+				{
+					id: 2,
+					requestId: "REQ-1002",
+					userEmail: "jane.smith@example.com",
+					userName: "Jane Smith",
+					committeeMember: "Bob Lee",
+					quantity: 1,
+					status: "Approved",
+				},
+				{
+					id: 3,
+					requestId: "REQ-1003",
+					userEmail: "alice.johnson@example.com",
+					userName: "Alice Johnson",
+					committeeMember: "Emily Clark",
+					quantity: 3,
+					status: "Rejected",
+				},
+				{
+					id: 4,
+					requestId: "REQ-1004",
+					userEmail: "bob.lee@example.com",
+					userName: "Bob Lee",
+					committeeMember: "John Doe",
+					quantity: 4,
+					status: "Pending",
+				},
+				{
+					id: 5,
+					requestId: "REQ-1005",
+					userEmail: "emily.clark@example.com",
+					userName: "Emily Clark",
+					committeeMember: "Jane Smith",
+					quantity: 2,
+					status: "Approved",
+				},
+			]);
 			setLoading(false);
 		}, 1000);
 	}, []);

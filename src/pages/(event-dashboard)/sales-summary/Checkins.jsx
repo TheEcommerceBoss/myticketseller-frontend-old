@@ -86,7 +86,19 @@ export default function Checkins() {
 			headerName: "Details",
 			width: 120,
 			renderCell: () => (
-				<span className="text-blue-600 cursor-pointer">View</span>
+				<Button
+					variant="contained"
+					size="small"
+					sx={{
+						bgcolor: "#000080",
+						textTransform: "none",
+						"&:hover": {
+							bgcolor: "#000066",
+						},
+					}}
+				>
+					View
+				</Button>
 			),
 		},
 	];
