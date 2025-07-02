@@ -1,92 +1,80 @@
-import Cookies from "js-cookie";
 import {
+	Facebook,
+	Instagram,
 	Menu,
 	Moon,
 	PlusCircle,
 	Sun,
-	X,
-	Facebook,
 	Twitter,
-	Instagram,
+	X,
 	Youtube,
-	ChevronsUpDown,
-	Check,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import api from "../../api";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import { useTheme } from "../../context/ThemeContext";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import SideBar from "../../components/(headers)/DashboardSidebar";
-import { useAuth } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
 
-// Country data with flags, codes and dial codes
-const countries = [
-	{ code: "NG", flag: "🇳🇬", name: "Nigeria", dialCode: "+234" },
-	{ code: "US", flag: "🇺🇸", name: "United States", dialCode: "+1" },
-	{ code: "GB", flag: "🇬🇧", name: "United Kingdom", dialCode: "+44" },
-	{ code: "CA", flag: "🇨🇦", name: "Canada", dialCode: "+1" },
-	{ code: "AU", flag: "🇦🇺", name: "Australia", dialCode: "+61" },
-	{ code: "DE", flag: "🇩🇪", name: "Germany", dialCode: "+49" },
-	{ code: "FR", flag: "🇫🇷", name: "France", dialCode: "+33" },
-	{ code: "IN", flag: "🇮🇳", name: "India", dialCode: "+91" },
-	{ code: "JP", flag: "🇯🇵", name: "Japan", dialCode: "+81" },
-	{ code: "BR", flag: "🇧🇷", name: "Brazil", dialCode: "+55" },
-	{ code: "ZA", flag: "🇿🇦", name: "South Africa", dialCode: "+27" },
-	{ code: "CN", flag: "🇨🇳", name: "China", dialCode: "+86" },
-	{ code: "MX", flag: "🇲🇽", name: "Mexico", dialCode: "+52" },
-	{ code: "IT", flag: "🇮🇹", name: "Italy", dialCode: "+39" },
-	{ code: "ES", flag: "🇪🇸", name: "Spain", dialCode: "+34" },
-];
+// Zod schema for form validation
+const formSchema = z.object({
+	firstName: z
+		.string()
+		.min(2, "First name must be at least 2 characters")
+		.max(50),
+	lastName: z
+		.string()
+		.min(2, "Last name must be at least 2 characters")
+		.max(50),
+	email: z.string().email("Invalid email address"),
+	phone: z.string().min(5, "Phone number is required"),
+	country: z.string().min(2, "Country is required"),
+	state: z.string().min(2, "State is required"),
+	city: z.string().min(2, "City is required"),
+	zipCode: z.string().min(3, "Zip code is required"),
+	facebook: z.string().url("Invalid URL").optional().or(z.literal("")),
+	instagram: z.string().url("Invalid URL").optional().or(z.literal("")),
+	twitter: z.string().url("Invalid URL").optional().or(z.literal("")),
+	youtube: z.string().url("Invalid URL").optional().or(z.literal("")),
+});
 
 const AffiliatesPage = () => {
-	const { userData } = useAuth();
-	const [loading, setLoading] = useState(false); // Track loading state
-	const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-	const [phoneNumber, setPhoneNumber] = useState("912-413-6316");
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-	const handleCountryChange = (country) => {
-		setSelectedCountry(country);
-		setIsDropdownOpen(false);
-	};
-
-	const handlePhoneChange = (e) => {
-		setPhoneNumber(
-			e.target.value.replace(selectedCountry.dialCode, "").trim()
-		);
-	};
-
-	const [formData, setFormData] = useState({
-		email: "",
-		fullname: "",
-		instagram: "",
-		tiktok: "",
-		twitter: "",
-	});
-
-	// Load user data into formData on component mount or when userData updates
-	useEffect(() => {
-		if (userData) {
-			setFormData({
-				email: userData.user.email || "",
-				fullname: userData.user.fullname || "",
-				instagram: userData.user.instagram || "",
-				tiktok: userData.user.tiktok || "",
-				twitter: userData.user.twitter || "",
-			});
-			setLoading(false);
-		}
-	}, [userData]);
-
+	const [loading, setLoading] = useState(false);
 	const { theme, toggleTheme } = useTheme();
+	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		setValue,
+		watch,
+	} = useForm({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			firstName: "",
+			lastName: "",
+			email: "",
+			phone: "",
+			country: "",
+			state: "",
+			city: "",
+			zipCode: "",
+			facebook: "",
+			instagram: "",
+			twitter: "",
+			youtube: "",
+		},
+	});
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, []);
-
-	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -98,45 +86,43 @@ const AffiliatesPage = () => {
 		};
 
 		handleResize();
-
 		window.addEventListener("resize", handleResize);
-
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
+		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
 	const toggleSidebar = () => {
 		setIsOpen(!isOpen);
 	};
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prevState) => ({
-			...prevState,
-			[name]: value,
-		}));
-	};
-
-	const handleUpdateProfile = async () => {
+	const onSubmit = async (data) => {
+		setLoading(true);
 		try {
-			setLoading(true);
-			const token = Cookies.get("auth_token");
-			await api.post("/update_details", formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			// Simulate async action
+			await new Promise((resolve) => setTimeout(resolve, 800));
+			console.log("Payload:", data);
 			Swal.fire({
 				icon: "success",
-				title: "Profile Updated",
-				text: "Your profile has been updated successfully.",
+				title: "Success",
+				text: "Form submitted successfully!",
 			});
+			// Reset form
+			setValue("firstName", "");
+			setValue("lastName", "");
+			setValue("email", "");
+			setValue("phone", "");
+			setValue("country", "");
+			setValue("state", "");
+			setValue("city", "");
+			setValue("zipCode", "");
+			setValue("facebook", "");
+			setValue("instagram", "");
+			setValue("twitter", "");
+			setValue("youtube", "");
 		} catch (error) {
 			Swal.fire({
 				icon: "error",
 				title: "Error",
-				text: "Failed to update profile.",
+				text: "Something went wrong!",
 			});
 		} finally {
 			setLoading(false);
@@ -164,7 +150,6 @@ const AffiliatesPage = () => {
 						>
 							{isOpen ? <X size={24} /> : <Menu size={24} />}
 						</button>
-
 						<h1 className="hidden text-2xl font-bold lg:flex">
 							Affiliates
 						</h1>
@@ -173,12 +158,11 @@ const AffiliatesPage = () => {
 					<div className="flex items-center space-x-4">
 						<Link
 							to={"/dashboard/event/create"}
-							className={`rounded-full outline-none  p-3 ${
+							className={`rounded-full outline-none p-3 ${
 								theme === "light"
-									? "bg-gray-200  hover:bg-gray-100"
+									? "bg-gray-200 hover:bg-gray-100"
 									: "hover:bg-[#111] bg-[#121212]"
 							}`}
-							aria-label="Toggle theme"
 						>
 							<PlusCircle
 								color={theme === "light" ? "#040171" : "white"}
@@ -192,7 +176,6 @@ const AffiliatesPage = () => {
 									? "bg-gray-200 hover:bg-gray-100"
 									: "hover:bg-[#111] bg-[#121212]"
 							}`}
-							aria-label="Toggle theme"
 						>
 							{theme === "light" ? (
 								<Moon size={20} />
@@ -200,18 +183,24 @@ const AffiliatesPage = () => {
 								<Sun size={20} />
 							)}
 						</button>
-
 						<DashboardHeader />
 					</div>
 				</div>
 
-				<div className="p-6 pt-8 pb-10 mx-auto bg-white max-w-7xl rounded-xl lg:pt-14 lg:px-8 lg:pb-20">
+				<div
+					className={`p-6 pt-8 pb-10 mx-auto max-w-7xl rounded-xl lg:pt-14 lg:px-8 lg:pb-20 ${
+						theme === "dark" ? "bg-[#121212]" : "bg-white"
+					}`}
+				>
 					<h1 className="mb-10 text-2xl font-bold text-center md:text-3xl">
 						Affiliate Registration
 					</h1>
 
-					<form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 lg:gap-x-10 lg:gap-y-10">
-						{/* First Name and Last Name */}
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 lg:gap-x-10 lg:gap-y-10"
+					>
+						{/* First Name */}
 						<div className="space-y-2">
 							<label
 								htmlFor="firstName"
@@ -220,11 +209,21 @@ const AffiliatesPage = () => {
 								First Name
 							</label>
 							<input
-								id="firstName"
-								className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								{...register("firstName")}
+								className={`w-full h-12 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${errors.firstName ? "border-red-500" : ""}`}
 							/>
+							{errors.firstName && (
+								<p className="text-sm text-red-500">
+									{errors.firstName.message}
+								</p>
+							)}
 						</div>
 
+						{/* Last Name */}
 						<div className="space-y-2">
 							<label
 								htmlFor="lastName"
@@ -233,12 +232,21 @@ const AffiliatesPage = () => {
 								Last Name
 							</label>
 							<input
-								id="lastName"
-								className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								{...register("lastName")}
+								className={`w-full h-12 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${errors.lastName ? "border-red-500" : ""}`}
 							/>
+							{errors.lastName && (
+								<p className="text-sm text-red-500">
+									{errors.lastName.message}
+								</p>
+							)}
 						</div>
 
-						{/* Email and Phone */}
+						{/* Email */}
 						<div className="space-y-2">
 							<label
 								htmlFor="email"
@@ -247,12 +255,22 @@ const AffiliatesPage = () => {
 								Email Address
 							</label>
 							<input
-								id="email"
+								{...register("email")}
 								type="email"
-								className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								className={`w-full h-12 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${errors.email ? "border-red-500" : ""}`}
 							/>
+							{errors.email && (
+								<p className="text-sm text-red-500">
+									{errors.email.message}
+								</p>
+							)}
 						</div>
 
+						{/* Phone */}
 						<div className="space-y-2">
 							<label
 								htmlFor="phone"
@@ -260,64 +278,30 @@ const AffiliatesPage = () => {
 							>
 								Phone Number
 							</label>
-							<div className="flex">
-								<div className="relative">
-									<button
-										type="button"
-										onClick={() =>
-											setIsDropdownOpen(!isDropdownOpen)
-										}
-										className="flex items-center h-12 gap-1 px-3 border border-r-0 border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-									>
-										<span className="text-2xl">
-											{selectedCountry.flag}
-										</span>
-										<ChevronsUpDown className="w-4 h-4 text-gray-500" />
-									</button>
-
-									{isDropdownOpen && (
-										<div className="absolute z-10 mt-1 w-[220px] bg-white border border-gray-300 rounded-md shadow-lg">
-											<div className="max-h-[300px] overflow-y-auto">
-												{countries.map((country) => (
-													<div
-														key={country.code}
-														onClick={() =>
-															handleCountryChange(
-																country
-															)
-														}
-														className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
-													>
-														<span className="text-xl">
-															{country.flag}
-														</span>
-														<span>
-															{country.name}
-														</span>
-														<span className="ml-auto text-gray-500">
-															{country.dialCode}
-														</span>
-														{selectedCountry.code ===
-															country.code && (
-															<Check className="w-4 h-4 ml-2" />
-														)}
-													</div>
-												))}
-											</div>
-										</div>
-									)}
-								</div>
-								<input
-									id="phone"
-									type="tel"
-									value={`${selectedCountry.dialCode} ${phoneNumber}`}
-									onChange={handlePhoneChange}
-									className="w-full h-12 px-3 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-								/>
-							</div>
+							<PhoneInput
+								international
+								defaultCountry="NG"
+								value={watch("phone")}
+								onChange={(value) => setValue("phone", value)}
+								placeholder="Enter phone number"
+								className={`h-12 [&>.PhoneInputCountry]:px-3 rounded-md [&>input]:bg-transparent [&>input]:h-full [&>input]:px-3 [&>input]:rounded-r-md border [&>input]:border-l ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600 [&>input]:border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${
+									errors.phone
+										? "border-red-500 [&>input]:border-red-500"
+										: ""
+								}`}
+							/>
+							{errors.phone && (
+								<p className="text-sm text-red-500">
+									{errors.phone.message}
+								</p>
+							)}
 						</div>
 
-						{/* Country and State */}
+						{/* Country */}
 						<div className="space-y-2">
 							<label
 								htmlFor="country"
@@ -326,11 +310,21 @@ const AffiliatesPage = () => {
 								Country
 							</label>
 							<input
-								id="country"
-								className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								{...register("country")}
+								className={`w-full h-12 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${errors.country ? "border-red-500" : ""}`}
 							/>
+							{errors.country && (
+								<p className="text-sm text-red-500">
+									{errors.country.message}
+								</p>
+							)}
 						</div>
 
+						{/* State */}
 						<div className="space-y-2">
 							<label
 								htmlFor="state"
@@ -339,12 +333,21 @@ const AffiliatesPage = () => {
 								State
 							</label>
 							<input
-								id="state"
-								className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								{...register("state")}
+								className={`w-full h-12 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${errors.state ? "border-red-500" : ""}`}
 							/>
+							{errors.state && (
+								<p className="text-sm text-red-500">
+									{errors.state.message}
+								</p>
+							)}
 						</div>
 
-						{/* City and Zip */}
+						{/* City */}
 						<div className="space-y-2">
 							<label
 								htmlFor="city"
@@ -353,11 +356,21 @@ const AffiliatesPage = () => {
 								City
 							</label>
 							<input
-								id="city"
-								className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								{...register("city")}
+								className={`w-full h-12 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${errors.city ? "border-red-500" : ""}`}
 							/>
+							{errors.city && (
+								<p className="text-sm text-red-500">
+									{errors.city.message}
+								</p>
+							)}
 						</div>
 
+						{/* Zip Code */}
 						<div className="space-y-2">
 							<label
 								htmlFor="zipCode"
@@ -366,12 +379,21 @@ const AffiliatesPage = () => {
 								Zip Code
 							</label>
 							<input
-								id="zipCode"
-								className="w-full h-12 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+								{...register("zipCode")}
+								className={`w-full h-12 px-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+									theme === "dark"
+										? "bg-[#222] text-white border-gray-600"
+										: "bg-white text-gray-800 border-gray-300"
+								} ${errors.zipCode ? "border-red-500" : ""}`}
 							/>
+							{errors.zipCode && (
+								<p className="text-sm text-red-500">
+									{errors.zipCode.message}
+								</p>
+							)}
 						</div>
 
-						{/* Social Media */}
+						{/* Facebook */}
 						<div className="space-y-2">
 							<label
 								htmlFor="facebook"
@@ -384,13 +406,25 @@ const AffiliatesPage = () => {
 									<Facebook className="w-5 h-5" />
 								</div>
 								<input
-									id="facebook"
-									className="w-full h-12 px-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-									placeholder="Facebook.com/"
+									{...register("facebook")}
+									className={`w-full h-12 px-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										theme === "dark"
+											? "bg-[#222] text-white border-gray-600"
+											: "bg-white text-gray-800 border-gray-300"
+									} ${
+										errors.facebook ? "border-red-500" : ""
+									}`}
+									placeholder="facebook.com/"
 								/>
 							</div>
+							{errors.facebook && (
+								<p className="text-sm text-red-500">
+									{errors.facebook.message}
+								</p>
+							)}
 						</div>
 
+						{/* Instagram */}
 						<div className="space-y-2">
 							<label
 								htmlFor="instagram"
@@ -403,13 +437,25 @@ const AffiliatesPage = () => {
 									<Instagram className="w-5 h-5" />
 								</div>
 								<input
-									id="instagram"
-									className="w-full h-12 px-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-									placeholder="Instagram.com/"
+									{...register("instagram")}
+									className={`w-full h-12 px-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										theme === "dark"
+											? "bg-[#222] text-white border-gray-600"
+											: "bg-white text-gray-800 border-gray-300"
+									} ${
+										errors.instagram ? "border-red-500" : ""
+									}`}
+									placeholder="instagram.com/"
 								/>
 							</div>
+							{errors.instagram && (
+								<p className="text-sm text-red-500">
+									{errors.instagram.message}
+								</p>
+							)}
 						</div>
 
+						{/* Twitter */}
 						<div className="space-y-2">
 							<label
 								htmlFor="twitter"
@@ -422,13 +468,25 @@ const AffiliatesPage = () => {
 									<Twitter className="w-5 h-5" />
 								</div>
 								<input
-									id="twitter"
-									className="w-full h-12 px-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-									placeholder="Twitter.com/"
+									{...register("twitter")}
+									className={`w-full h-12 px-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										theme === "dark"
+											? "bg-[#222] text-white border-gray-600"
+											: "bg-white text-gray-800 border-gray-300"
+									} ${
+										errors.twitter ? "border-red-500" : ""
+									}`}
+									placeholder="twitter.com/"
 								/>
 							</div>
+							{errors.twitter && (
+								<p className="text-sm text-red-500">
+									{errors.twitter.message}
+								</p>
+							)}
 						</div>
 
+						{/* YouTube */}
 						<div className="space-y-2">
 							<label
 								htmlFor="youtube"
@@ -441,28 +499,40 @@ const AffiliatesPage = () => {
 									<Youtube className="w-6 h-6" />
 								</div>
 								<input
-									id="youtube"
-									className="w-full h-12 px-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-									placeholder="Youtube.com/"
+									{...register("youtube")}
+									className={`w-full h-12 px-3 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										theme === "dark"
+											? "bg-[#222] text-white border-gray-600"
+											: "bg-white text-gray-800 border-gray-300"
+									} ${
+										errors.youtube ? "border-red-500" : ""
+									}`}
+									placeholder="youtube.com/"
 								/>
 							</div>
+							{errors.youtube && (
+								<p className="text-sm text-red-500">
+									{errors.youtube.message}
+								</p>
+							)}
+						</div>
+
+						<div className="flex flex-col items-center mt-10 text-center md:col-span-2 lg:items-end">
+							<button
+								type="submit"
+								disabled={loading}
+								className={`w-[12rem] bg-[#040171] ${
+									theme === "dark"
+										? "border-[#DBDAFF20]"
+										: "border-[#DBDAFF50]"
+								} ${
+									loading ? "bg-opacity-50 cursor-wait" : ""
+								} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
+							>
+								{loading ? "Loading..." : "Submit"}
+							</button>
 						</div>
 					</form>
-				</div>
-				<div className="flex flex-col items-center mt-10 text-center lg:items-end">
-					<button
-						onClick={() => handleUpdateProfile()}
-						disabled={loading}
-						className={`w-[12rem] bg-[#040171] ${
-							theme === "dark"
-								? "border-[#DBDAFF20]"
-								: "border-[#DBDAFF50]"
-						} ${
-							loading ? "bg-opacity-50 cursor-wait " : ""
-						} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
-					>
-						{!loading ? "Submit" : "loading..."}
-					</button>
 				</div>
 			</div>
 		</div>

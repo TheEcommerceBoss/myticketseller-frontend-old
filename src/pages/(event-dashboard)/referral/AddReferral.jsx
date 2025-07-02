@@ -435,16 +435,20 @@ export default function AddReferral() {
 									Referral Link for Promotion
 								</Typography>
 								<ReferralLinkBox>
-									<Typography
-										variant="body2"
-										color="text.secondary"
+									<Link
+										to={`/referrals/${createdReferral?.id}`}
 									>
-										{loading ? (
-											<CircularProgress />
-										) : (
-											createdReferral?.link
-										)}
-									</Typography>
+										<Typography
+											variant="body2"
+											color="text.secondary"
+										>
+											{loading ? (
+												<CircularProgress />
+											) : (
+												createdReferral?.link
+											)}
+										</Typography>
+									</Link>
 								</ReferralLinkBox>
 							</Box>
 						</Box>

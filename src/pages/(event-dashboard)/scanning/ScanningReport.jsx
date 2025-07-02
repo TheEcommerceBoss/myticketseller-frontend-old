@@ -1,72 +1,37 @@
 import {
-	Box,
-	Button,
-	CircularProgress,
-	InputAdornment,
-	TextField,
+    Box,
+    Button,
+    CircularProgress,
+    InputAdornment,
+    TextField,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-	Menu,
-	Moon,
-	PlusCircle,
-	Search,
-	Send,
-	Sun,
-	Trash2,
-	X,
-} from "lucide-react";
+import { Menu, Moon, PlusCircle, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
 import DashboardHeader from "../../../components/(events)/DashboardHeader";
 import SideBar from "../../../components/(headers)/EventDashboardSidebar";
 import { useTheme } from "../../../context/ThemeContext";
-import { ticketsApi } from "../../../shared/services/api";
 
-export default function Complimentary() {
+export default function ScanningReport() {
 	const { id } = useParams();
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
-	const [complimentaryTickets, setComplimentaryTickets] = useState([]);
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
-	useEffect(
-		function () {
-			if (!id) return;
-			async function fetchComplimentaries() {
-				const res = await ticketsApi.fetchComplimentaryTickets();
-				setComplimentaryTickets(res.data);
-				setLoading(false);
-				console.log(res.data);
-			}
-			fetchComplimentaries();
-		},
-		[id]
-	);
-
-	const handleDeleteEmail = (id) => {
-		setComplimentaryTickets(
-			complimentaryTickets.filter((item) => item.id !== id)
-		);
-		Swal.fire({
-			icon: "success",
-			title: "Deleted",
-			text: "The complimentary ticket has been deleted.",
-			timer: 2000,
-			showConfirmButton: false,
-		});
-	};
-
-	const handleResendEmail = () => {
-		Swal.fire({
-			icon: "success",
-			title: "Email Sent",
-			text: "The complimentary ticket email has been resent.",
-			timer: 2000,
-			showConfirmButton: false,
-		});
-	};
+	// useEffect(
+	// 	function () {
+	// 		if (!id) return;
+	// 		async function fetchComplimentaries() {
+	// 			const res = await ticketsApi.fetchComplimentaryTickets();
+	// 			setComplimentaryTickets(res.data);
+	// 			setIsLoading(false);
+	// 			console.log(res.data);
+	// 		}
+	// 		fetchComplimentaries();
+	// 	},
+	// 	[id]
+	// );
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -95,41 +60,116 @@ export default function Complimentary() {
 	};
 
 	const columns = [
-		{ field: "name", headerName: "Name", width: 250 },
+		{ field: "barcode", headerName: "Barcode", width: 180 },
+		{ field: "date", headerName: "Checkin Time", width: 180 },
+		{ field: "order", headerName: "Order", width: 140 },
 		{
-			field: "email",
-			headerName: "Email",
-			width: 300,
+			field: "label",
+			headerName: "Label",
+			width: 140,
+		}, // Example static label
+		{ field: "namer", headerName: "Name on Tix", width: 180 },
+		{
+			field: "operator",
+			headerName: "Operator",
+			width: 160,
+		}, // Example static operator
+		{
+			field: "status",
+			headerName: "Status",
+			width: 120,
+			valueGetter: (params) =>
+				params.value === "No" ? "Checked In" : "Refunded",
 		},
 		{
-			field: "ticket_id",
-			headerName: "Ticket ID",
-			width: 200,
-		},
-		{
-			field: "id",
-			headerName: "Actions",
-			width: 200,
-			renderCell: (params) => (
-				<div className="flex gap-3 mt-2">
-					<button
-						onClick={() => handleResendEmail(params.value)}
-						title="view"
-						className="p-2 text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200"
-					>
-						<Send size={16} />
-					</button>
-					<button
-						onClick={() => handleDeleteEmail(params.value)}
-						title="Delete"
-						className="p-2 text-red-600 bg-red-100 rounded-lg hover:bg-red-200"
-					>
-						<Trash2 size={16} />
-					</button>
-				</div>
+			field: "details",
+			headerName: "Details",
+			width: 120,
+			renderCell: () => (
+				<Button
+					variant="contained"
+					size="small"
+					sx={{
+						bgcolor: "#000080",
+						textTransform: "none",
+						"&:hover": {
+							bgcolor: "#000066",
+						},
+					}}
+				>
+					View
+				</Button>
 			),
 		},
 	];
+
+	const [rows, setRows] = useState([]);
+
+	// Simulate fetching data
+	useEffect(() => {
+		setLoading(true);
+		// Replace this with your actual API call
+		setTimeout(() => {
+			setRows([
+				{
+					id: 1,
+					barcode: "TIX-0001-ABC",
+					date: "2024-06-01 10:15 AM",
+					order: "ORD-1001",
+					label: "General",
+					namer: "John Doe",
+					operator: "System",
+					status: "Checked In",
+					refund: "No",
+				},
+				{
+					id: 2,
+					barcode: "TIX-0002-XYZ",
+					date: "2024-06-02 02:30 PM",
+					order: "ORD-1002",
+					label: "VIP",
+					namer: "Jane Smith",
+					operator: "System",
+					status: "Refunded",
+					refund: "Yes",
+				},
+				{
+					id: 3,
+					barcode: "TIX-0003-QWE",
+					date: "2024-06-03 09:45 AM",
+					order: "ORD-1003",
+					label: "General",
+					namer: "Alice Johnson",
+					operator: "System",
+					status: "Checked In",
+					refund: "No",
+				},
+				{
+					id: 4,
+					barcode: "TIX-0004-RTY",
+					date: "2024-06-04 11:00 AM",
+					order: "ORD-1004",
+					label: "General",
+					namer: "Bob Lee",
+					operator: "System",
+					status: "Checked In",
+					refund: "No",
+				},
+				{
+					id: 5,
+					barcode: "TIX-0005-UIO",
+					date: "2024-06-05 03:20 PM",
+					order: "ORD-1005",
+					label: "VIP",
+					namer: "Emily Clark",
+					operator: "System",
+					status: "Refunded",
+					refund: "Yes",
+				},
+			]);
+			setLoading(false);
+		}, 1000);
+	}, []);
 
 	return (
 		<div
@@ -154,7 +194,7 @@ export default function Complimentary() {
 						</button>
 
 						<h1 className="hidden text-2xl font-bold lg:flex">
-							Complimentary
+							Scanning Report
 						</h1>
 					</div>
 
@@ -294,13 +334,13 @@ export default function Complimentary() {
 								<div className="flex items-center justify-center h-24">
 									<CircularProgress size={40} />
 								</div>
-							) : complimentaryTickets.length === 0 ? (
+							) : rows.length === 0 ? (
 								<div className="flex items-center justify-center h-96">
 									<span>No events found</span>
 								</div>
 							) : (
 								<DataGrid
-									rows={complimentaryTickets}
+									rows={rows}
 									columns={columns}
 									pageSize={25}
 									rowsPerPageOptions={[5]}

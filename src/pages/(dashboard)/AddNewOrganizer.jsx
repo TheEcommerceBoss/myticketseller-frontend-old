@@ -1,0 +1,561 @@
+import { Menu, Moon, Plus, PlusCircle, Sun, Trash2, X } from "lucide-react";
+
+import {
+	Box,
+	Button,
+	Card,
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	FormLabel,
+	Radio,
+	RadioGroup,
+	TextField,
+	Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import DashboardHeader from "../../components/(events)/DashboardHeader";
+import SideBar from "../../components/(headers)/DashboardSidebar";
+import { useTheme } from "../../context/ThemeContext";
+
+const AddNewOrganizer = () => {
+	const { theme, toggleTheme } = useTheme();
+	const [isSidebarOpen, setIsSidebarOpen] = useState(
+		window.innerWidth >= 1024
+	);
+
+	const [selectedButtonSize, setSelectedButtonSize] = useState("large");
+	const [eventDisplay, setEventDisplay] = useState("organizers-only");
+	const [showWebsite, setShowWebsite] = useState(false);
+	const [showEventsHeld, setShowEventsHeld] = useState(false);
+	const [facebookLink, setFacebookLink] = useState(false);
+	const [twitterLink, setTwitterLink] = useState(false);
+	const [instagramLink, setInstagramLink] = useState(false);
+	const [facebookLink2, setFacebookLink2] = useState(true);
+	const [twitterLink2, setTwitterLink2] = useState(false);
+	const [instagramLink2, setInstagramLink2] = useState(false);
+	const [previewUrl, setPreviewUrl] = useState("");
+	const [profileImage, setProfileImage] = useState(null);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsSidebarOpen(window.innerWidth >= 1024);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	return (
+		<div
+			className={`flex min-h-screen ${
+				theme === "dark" ? "bg-[#222]" : "bg-gray-100"
+			}`}
+		>
+			<SideBar
+				isOpen={isSidebarOpen}
+				toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+			/>
+			<div className="flex-1 px-5 py-8 mx-auto lg:px-8 max-w-7xl">
+				<div className="flex items-center justify-between mb-8">
+					<div className="flex items-center space-x-4">
+						<button
+							onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+							aria-label={
+								isSidebarOpen ? "Close sidebar" : "Open sidebar"
+							}
+							className={`rounded-lg p-3 ${
+								theme === "dark"
+									? "bg-[#121212] hover:bg-[#111]"
+									: "bg-gray-200 hover:bg-gray-100"
+							}`}
+						>
+							{isSidebarOpen ? (
+								<X size={24} />
+							) : (
+								<Menu size={24} />
+							)}
+						</button>
+						<h1 className="hidden text-2xl font-bold lg:flex">
+							Add New Organizer
+						</h1>
+					</div>
+					<div className="flex items-center space-x-4">
+						<Link
+							to="/dashboard/event/create"
+							aria-label="Create new event"
+							className={`rounded-full p-3 ${
+								theme === "dark"
+									? "bg-[#121212] hover:bg-[#111]"
+									: "bg-gray-200 hover:bg-gray-100"
+							}`}
+						>
+							<PlusCircle
+								color={theme === "dark" ? "white" : "#040171"}
+								size={20}
+							/>
+						</Link>
+						<button
+							onClick={toggleTheme}
+							aria-label={
+								theme === "dark"
+									? "Switch to light theme"
+									: "Switch to dark theme"
+							}
+							className={`rounded-full p-3 ${
+								theme === "dark"
+									? "bg-[#121212] hover:bg-[#111]"
+									: "bg-gray-200 hover:bg-gray-100"
+							}`}
+						>
+							{theme === "dark" ? (
+								<Sun size={20} />
+							) : (
+								<Moon size={20} />
+							)}
+						</button>
+						<DashboardHeader />
+					</div>
+				</div>
+
+				<div className="container mx-auto lg:px-0">
+					<form>
+						{/* About the organizer */}
+						<div>
+							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+								<h2 className="text-xl font-medium">
+									About the organizer
+								</h2>
+							</div>
+
+							<div className="p-8 space-y-6 bg-white">
+								<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+									<div>
+										<label
+											htmlFor="organizerName"
+											className="block mb-2 font-medium"
+										>
+											Organizer Name
+										</label>
+										<input
+											type="text"
+											id="organizerName"
+											name="organizerName"
+											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+										/>
+									</div>
+									<div>
+										<label
+											htmlFor="seoTitle"
+											className="block mb-2 font-medium"
+										>
+											SEO Title
+										</label>
+										<input
+											type="text"
+											id="seoTitle"
+											name="seoTitle"
+											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+										/>
+									</div>
+								</div>
+								<div>
+									<label
+										htmlFor="description"
+										className="block mb-2 font-medium"
+									>
+										Description
+									</label>
+									<textarea
+										id="description"
+										name="description"
+										rows={4}
+										className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+									></textarea>
+								</div>
+								{/* Upload Profile Image */}
+								<div>
+									<label
+										htmlFor="profileImage"
+										className="block mb-2 font-medium"
+									>
+										Upload Profile Image
+									</label>
+									<div className="relative flex flex-col items-center justify-center w-40 h-40 p-4 overflow-hidden text-center transition-colors border-2 border-gray-300 border-dashed rounded-full hover:bg-black/10">
+										{previewUrl ? (
+											<img
+												src={previewUrl}
+												alt="Profile Preview"
+												className="object-cover w-full h-full rounded-full"
+											/>
+										) : (
+											<p className="text-[#0a0a80] font-bold text-center">
+												ADD A PROFILE IMAGE
+											</p>
+										)}
+										<input
+											type="file"
+											accept="image/*"
+											onChange={(e) => {
+												const file = e.target.files[0];
+												if (file) {
+													setProfileImage(file);
+													setPreviewUrl(
+														URL.createObjectURL(
+															file
+														)
+													);
+												}
+											}}
+											className="absolute inset-0 opacity-0 cursor-pointer"
+										/>
+									</div>
+									<button
+										type="button"
+										className="bg-[#0a0a80] text-white px-6 py-3 rounded-full shadow-md hover:bg-[#09096e] transition-colors mt-10"
+									>
+										Add Gallery Images
+									</button>
+								</div>
+							</div>
+						</div>
+
+						{/* Add Banner Images */}
+						<div className="mt-6">
+							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+								<h2 className="text-xl font-medium">
+									Add Banner Images
+								</h2>
+							</div>
+							<div className="p-8 bg-white">
+								<p>
+									Image size should be 1300x360 and less than
+									512 kb.
+								</p>
+
+								<Box className="pt-4 space-y-4">
+									<div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
+										<Button
+											variant="outlined"
+											className="text-gray-500 w-fit"
+										>
+											Choose File
+										</Button>
+										<input
+											type="text"
+											id="seoTitle"
+											name="seoTitle"
+											placeholder="Start Date"
+											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
+										/>
+										<input
+											type="text"
+											id="seoTitle"
+											name="seoTitle"
+											placeholder="Ebd Date"
+											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
+										/>
+										<div className="flex gap-4">
+											<button className="block p-2 text-green-600 bg-green-100 rounded-lg hover:bg-green-200 h-fit">
+												<Plus size={16} />
+											</button>
+											<button
+												title="Delete"
+												className="block p-2 text-red-600 bg-red-100 rounded-lg hover:bg-red-200 h-fit"
+											>
+												<Trash2 size={16} />
+											</button>
+										</div>
+									</div>
+								</Box>
+							</div>
+						</div>
+
+						{/* Optional Settings */}
+						<div className="mt-6">
+							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+								<h2 className="text-xl font-medium">
+									Optional Settings
+								</h2>
+							</div>
+							<div className="p-8 bg-white">
+								<div>
+									<Box className="space-y-6">
+										<Box className="flex flex-wrap gap-6">
+											<FormControlLabel
+												control={
+													<Checkbox
+														checked={showWebsite}
+														onChange={(e) =>
+															setShowWebsite(
+																e.target.checked
+															)
+														}
+													/>
+												}
+												label="Show my website"
+											/>
+											<FormControlLabel
+												control={
+													<Checkbox
+														checked={showEventsHeld}
+														onChange={(e) =>
+															setShowEventsHeld(
+																e.target.checked
+															)
+														}
+													/>
+												}
+												label="Show number of events held"
+											/>
+										</Box>
+
+										<FormControl component="fieldset">
+											<FormLabel component="legend">
+												Event Information
+											</FormLabel>
+											<RadioGroup
+												value={eventDisplay}
+												onChange={(e) =>
+													setEventDisplay(
+														e.target.value
+													)
+												}
+											>
+												<FormControlLabel
+													value="organizers-only"
+													control={<Radio />}
+													label="Display Only Events by Organizers"
+												/>
+												<FormControlLabel
+													value="all-events"
+													control={<Radio />}
+													label="Display all of my Events"
+												/>
+											</RadioGroup>
+										</FormControl>
+
+										<input
+											type="text"
+											id="seoTitle"
+											name="seoTitle"
+											placeholder="Organizer URL Name"
+											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
+										/>
+									</Box>
+								</div>
+							</div>
+						</div>
+
+						{/* Promote Your Profile */}
+						<div className="mt-6">
+							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+								<h2 className="text-xl font-medium">
+									Promote Your Profile
+								</h2>
+							</div>
+
+							<Card>
+								<div className="p-8">
+									<Box className="space-y-6">
+										<FormControl component="fieldset">
+											<FormLabel component="legend">
+												Button Size
+											</FormLabel>
+											<RadioGroup
+												value={selectedButtonSize}
+												onChange={(e) =>
+													setSelectedButtonSize(
+														e.target.value
+													)
+												}
+											>
+												<FormControlLabel
+													value="large"
+													control={<Radio />}
+													label="Large (64px)"
+												/>
+												<FormControlLabel
+													value="medium"
+													control={<Radio />}
+													label="Medium (34px)"
+												/>
+												<FormControlLabel
+													value="small"
+													control={<Radio />}
+													label="Small (24px)"
+												/>
+											</RadioGroup>
+										</FormControl>
+
+										<Box>
+											<Typography
+												variant="body2"
+												className="mb-2 font-medium"
+											>
+												Code
+											</Typography>
+											<TextField
+												multiline
+												rows={3}
+												fullWidth
+												variant="outlined"
+												sx={{
+													fontFamily: "monospace",
+													fontSize: "0.75rem",
+												}}
+											/>
+											<Typography
+												variant="caption"
+												className="block mt-1 text-gray-500"
+											>
+												Copy and paste this code for use
+												on your websites code to website
+											</Typography>
+										</Box>
+									</Box>
+								</div>
+							</Card>
+						</div>
+
+						{/* Add Social Networks */}
+						<div className="mt-6">
+							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+								<h2 className="text-xl font-medium">
+									Add Social Networks
+								</h2>
+							</div>
+							<div className="p-6 bg-white">
+								<Box className="flex flex-wrap gap-6">
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={facebookLink}
+												onChange={(e) =>
+													setFacebookLink(
+														e.target.checked
+													)
+												}
+											/>
+										}
+										label="Add my Facebook page link"
+									/>
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={twitterLink}
+												onChange={(e) =>
+													setTwitterLink(
+														e.target.checked
+													)
+												}
+											/>
+										}
+										label="Add Twitter to my page"
+									/>
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={instagramLink}
+												onChange={(e) =>
+													setInstagramLink(
+														e.target.checked
+													)
+												}
+											/>
+										}
+										label="Add Instagram to my page"
+									/>
+								</Box>
+							</div>
+						</div>
+
+						{/* Add Social Networks (Second Section) */}
+						<div className="mt-6">
+							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+								<h2 className="text-xl font-medium">
+									Add Social Networks
+								</h2>
+							</div>
+
+							<div className="p-8 bg-white">
+								<Box className="space-y-4">
+									<Box className="flex flex-wrap gap-6">
+										<FormControlLabel
+											control={
+												<Checkbox
+													checked={facebookLink2}
+													onChange={(e) =>
+														setFacebookLink2(
+															e.target.checked
+														)
+													}
+												/>
+											}
+											label="Add my Facebook page link"
+										/>
+										<FormControlLabel
+											control={
+												<Checkbox
+													checked={twitterLink2}
+													onChange={(e) =>
+														setTwitterLink2(
+															e.target.checked
+														)
+													}
+												/>
+											}
+											label="Add Twitter to my page"
+										/>
+										<FormControlLabel
+											control={
+												<Checkbox
+													checked={instagramLink2}
+													onChange={(e) =>
+														setInstagramLink2(
+															e.target.checked
+														)
+													}
+												/>
+											}
+											label="Add Instagram to my page"
+										/>
+									</Box>
+
+									<Box>
+										<Typography
+											variant="body2"
+											className="mb-2"
+										>
+											https://facebook.com/
+										</Typography>
+										<TextField
+											placeholder="Username"
+											variant="outlined"
+											fullWidth
+											size="small"
+										/>
+									</Box>
+								</Box>
+							</div>
+						</div>
+
+						<div className="flex justify-center mt-8">
+							<button
+								type="submit"
+								// disabled={isSubmitting}
+								className="bg-[#0a0a80] text-white px-8 py-3 rounded-full shadow-lg hover:bg-[#09096e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+							>
+								{/* {isSubmitting ? "Saving..." : "Save"} */}
+								Save
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default AddNewOrganizer;

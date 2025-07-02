@@ -38,16 +38,6 @@ export const sidebarData = {
 			active: false,
 		},
 		{
-			text: "Guest List",
-			link: "/dashboard/event/:id/guest-list",
-			active: false,
-		},
-		{
-			text: "Bottle Service",
-			link: "/dashboard/event/:id/bottle-service",
-			active: false,
-		},
-		{
 			text: "Request",
 			link: "/dashboard/event/:id/request",
 			active: false,
@@ -139,6 +129,43 @@ export const sidebarData = {
 		{
 			text: "View Subscriber",
 			link: "/dashboard/event/:id/subscriber-emails",
+			active: false,
+		},
+	],
+	profile: [
+		{
+			text: "My Profile",
+			link: "/dashboard/profile",
+			active: false,
+		},
+		{
+			text: "Change Password",
+			link: "/dashboard/profile/change-password",
+			active: false,
+		},
+		{
+			text: "My Earnings",
+			link: "/dashboard/my-earnings",
+			active: false,
+		},
+		{
+			text: "My Following",
+			link: "/dashboard/my-following",
+			active: false,
+		},
+		{
+			text: "Organizer Profile",
+			link: "/dashboard/organizer-profile",
+			active: false,
+		},
+		{
+			text: "Multi-User Access",
+			link: "/dashboard/multi-user-access",
+			active: false,
+		},
+		{
+			text: "Facebook / Google Analytics Details",
+			link: "/dashboard/analytics-details",
 			active: false,
 		},
 	],

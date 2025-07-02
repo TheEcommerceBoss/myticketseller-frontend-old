@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
@@ -20,6 +21,8 @@ import {
 	CalendarCogIcon,
 	X,
 	Eye,
+	Ticket,
+	CalendarPlus,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
@@ -305,7 +308,7 @@ const Dashboard = () => {
 							theme != "dark" ? "text-[#121212]" : "text-white"
 						}
 						cardColor="bg-blue-300"
-						iconColor="text-blue-700"
+						icon={<Ticket className="text-blue-500" />}
 					/>
 					<StatCard
 						title="Events Created"
@@ -315,7 +318,7 @@ const Dashboard = () => {
 							theme != "dark" ? "text-[#121212]" : "text-white"
 						}
 						cardColor="bg-orange-300"
-						iconColor="text-orange-700"
+						icon={<CalendarPlus className="text-orange-500" />}
 					/>
 				</div>
 
@@ -494,7 +497,7 @@ const Dashboard = () => {
 					</div>
 
 					<div
-						className={`fw-96 p-6 mt-5 lg:mt-0 rounded-xl ${
+						className={`fw-96 p-6 mt-5 lg:mt-0 rounded-xl h-fit ${
 							theme === "dark" ? "bg-[#121212]" : "bg-white"
 						}`}
 					>
@@ -507,8 +510,7 @@ const Dashboard = () => {
 };
 
 // Helper Components
-
-const StatCard = ({ title, value, color, textColor, cardColor, iconColor }) => {
+const StatCard = ({ title, value, color, textColor, cardColor, icon }) => {
 	const [Balance_hidden, setBalance_hidden] = useState(true);
 	// console.log(Balance_hidden);
 
@@ -541,7 +543,8 @@ const StatCard = ({ title, value, color, textColor, cardColor, iconColor }) => {
 						/>
 					</button>
 				) : (
-					<CalendarCogIcon className={`${iconColor}`} />
+					// <CalendarCogIcon className={`${iconColor}`} />
+					icon
 				)}
 			</div>
 		</div>
@@ -658,7 +661,7 @@ const Calendar = ({ theme, Stats }) => {
 						return (
 							<div
 								key={date}
-								className={`text-center py-2 text-sm rounded-full hover:bg-gray-500 cursor-pointer
+								className={`text-center py-1 px-1 text-sm rounded-full hover:bg-gray-500 cursor-pointer
                 ${
 					date === today
 						? "bg-blue-600 text-white hover:bg-blue-700"

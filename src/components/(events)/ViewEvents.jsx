@@ -424,6 +424,7 @@ function ViewEventComponent({ variation }) {
 		event_id: "",
 		days: [],
 		tickets: [],
+		referral_code: "",
 	});
 
 	useEffect(() => {

@@ -1,71 +1,43 @@
+import { DataGrid } from "@mui/x-data-grid";
+import { Menu, Moon, PlusCircle, Search, Sun, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import DashboardHeader from "../../../components/(events)/DashboardHeader";
+import SideBar from "../../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../../context/ThemeContext";
 import {
 	Box,
 	Button,
 	CircularProgress,
 	InputAdornment,
+	Tab,
+	Tabs,
 	TextField,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import {
-	Menu,
-	Moon,
-	PlusCircle,
-	Search,
-	Send,
-	Sun,
-	Trash2,
-	X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import DashboardHeader from "../../../components/(events)/DashboardHeader";
-import SideBar from "../../../components/(headers)/EventDashboardSidebar";
-import { useTheme } from "../../../context/ThemeContext";
-import { ticketsApi } from "../../../shared/services/api";
 
-export default function Complimentary() {
+export default function ManualScanning() {
 	const { id } = useParams();
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
-	const [complimentaryTickets, setComplimentaryTickets] = useState([]);
+	const [tabValue, setTabValue] = useState(0);
 	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
 
-	useEffect(
-		function () {
-			if (!id) return;
-			async function fetchComplimentaries() {
-				const res = await ticketsApi.fetchComplimentaryTickets();
-				setComplimentaryTickets(res.data);
-				setLoading(false);
-				console.log(res.data);
-			}
-			fetchComplimentaries();
-		},
-		[id]
-	);
+	// useEffect(
+	// 	function () {
+	// 		if (!id) return;
+	// 		async function fetchComplimentaries() {
+	// 			const res = await ticketsApi.fetchComplimentaryTickets();
+	// 			setComplimentaryTickets(res.data);
+	// 			setIsLoading(false);
+	// 			console.log(res.data);
+	// 		}
+	// 		fetchComplimentaries();
+	// 	},
+	// 	[id]
+	// );
 
-	const handleDeleteEmail = (id) => {
-		setComplimentaryTickets(
-			complimentaryTickets.filter((item) => item.id !== id)
-		);
-		Swal.fire({
-			icon: "success",
-			title: "Deleted",
-			text: "The complimentary ticket has been deleted.",
-			timer: 2000,
-			showConfirmButton: false,
-		});
-	};
-
-	const handleResendEmail = () => {
-		Swal.fire({
-			icon: "success",
-			title: "Email Sent",
-			text: "The complimentary ticket email has been resent.",
-			timer: 2000,
-			showConfirmButton: false,
-		});
+	const handleTabChange = (event, newValue) => {
+		setTabValue(newValue);
 	};
 
 	useEffect(() => {
@@ -95,41 +67,98 @@ export default function Complimentary() {
 	};
 
 	const columns = [
-		{ field: "name", headerName: "Name", width: 250 },
+		{ field: "order", headerName: "Order", flex: 1, minWidth: 120 },
+		{ field: "barcode", headerName: "Bar code", flex: 1, minWidth: 150 },
 		{
-			field: "email",
-			headerName: "Email",
-			width: 300,
+			field: "ticket_buyer",
+			headerName: "Ticket Buyer",
+			flex: 1,
+			minWidth: 150,
+		},
+		{ field: "email", headerName: "Email", flex: 1.2, minWidth: 180 },
+		{
+			field: "ticket_type",
+			headerName: "Ticket Type",
+			flex: 1,
+			minWidth: 130,
 		},
 		{
-			field: "ticket_id",
-			headerName: "Ticket ID",
-			width: 200,
-		},
-		{
-			field: "id",
-			headerName: "Actions",
-			width: 200,
-			renderCell: (params) => (
-				<div className="flex gap-3 mt-2">
-					<button
-						onClick={() => handleResendEmail(params.value)}
-						title="view"
-						className="p-2 text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200"
-					>
-						<Send size={16} />
-					</button>
-					<button
-						onClick={() => handleDeleteEmail(params.value)}
-						title="Delete"
-						className="p-2 text-red-600 bg-red-100 rounded-lg hover:bg-red-200"
-					>
-						<Trash2 size={16} />
-					</button>
-				</div>
+			field: "action",
+			headerName: "Action",
+			flex: 0.7,
+			minWidth: 100,
+			renderCell: () => (
+				<Button
+					variant="contained"
+					size="small"
+					sx={{
+						bgcolor: "#000080",
+						textTransform: "none",
+						"&:hover": {
+							bgcolor: "#000066",
+						},
+					}}
+				>
+					Scan
+				</Button>
 			),
+			sortable: false,
+			filterable: false,
 		},
 	];
+
+	const [rows, setRows] = useState([]);
+
+	// Simulate fetching data
+	useEffect(() => {
+		setLoading(true);
+		// Replace this with your actual API call
+		setTimeout(() => {
+			setRows([
+				{
+					id: 1,
+					order: "ORD-1001",
+					barcode: "ABC123456",
+					ticket_buyer: "John Doe",
+					email: "john.doe@example.com",
+					ticket_type: "VIP",
+				},
+				{
+					id: 2,
+					order: "ORD-1002",
+					barcode: "DEF654321",
+					ticket_buyer: "Jane Smith",
+					email: "jane.smith@example.com",
+					ticket_type: "Regular",
+				},
+				{
+					id: 3,
+					order: "ORD-1003",
+					barcode: "GHI789012",
+					ticket_buyer: "Alice Johnson",
+					email: "alice.johnson@example.com",
+					ticket_type: "Student",
+				},
+				{
+					id: 4,
+					order: "ORD-1004",
+					barcode: "JKL345678",
+					ticket_buyer: "Bob Lee",
+					email: "bob.lee@example.com",
+					ticket_type: "VIP",
+				},
+				{
+					id: 5,
+					order: "ORD-1005",
+					barcode: "MNO901234",
+					ticket_buyer: "Emily Clark",
+					email: "emily.clark@example.com",
+					ticket_type: "Regular",
+				},
+			]);
+			setLoading(false);
+		}, 1000);
+	}, []);
 
 	return (
 		<div
@@ -154,7 +183,7 @@ export default function Complimentary() {
 						</button>
 
 						<h1 className="hidden text-2xl font-bold lg:flex">
-							Complimentary
+							Manual Scanning
 						</h1>
 					</div>
 
@@ -193,12 +222,32 @@ export default function Complimentary() {
 					</div>
 				</div>
 
+				{/* Navigation Tabs */}
+				<Box
+					sx={{
+						mt: 4,
+						borderBottom: 1,
+						borderColor: "divider",
+						bgcolor: "white",
+					}}
+				>
+					<Tabs
+						value={tabValue}
+						onChange={handleTabChange}
+						aria-label="order tabs"
+					>
+						<Tab label="Manually Scanning" />
+						<Tab label="Complimentary Ticket Scanning" />
+						<Tab label="Hard Tickets Scanning" />
+					</Tabs>
+				</Box>
+
 				<div>
 					<Box
 						sx={{
 							mt: 2,
 						}}
-						className="flex flex-col-reverse flex-wrap justify-between gap-4 md:flex-row md:items-center "
+						className="flex flex-col-reverse flex-wrap justify-between gap-4 md:flex-row md:items-center"
 					>
 						<Box sx={{ display: "flex", gap: 1 }}>
 							<Button
@@ -294,13 +343,13 @@ export default function Complimentary() {
 								<div className="flex items-center justify-center h-24">
 									<CircularProgress size={40} />
 								</div>
-							) : complimentaryTickets.length === 0 ? (
+							) : rows.length === 0 ? (
 								<div className="flex items-center justify-center h-96">
 									<span>No events found</span>
 								</div>
 							) : (
 								<DataGrid
-									rows={complimentaryTickets}
+									rows={rows}
 									columns={columns}
 									pageSize={25}
 									rowsPerPageOptions={[5]}

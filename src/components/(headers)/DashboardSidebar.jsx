@@ -1,5 +1,8 @@
+/* eslint-disable react/prop-types */
+import { Collapse, List, ListItem, ListItemText } from "@mui/material";
 import {
 	BookMarked,
+	ChevronDown,
 	ChevronLeft,
 	ChevronRight,
 	HelpCircle,
@@ -9,17 +12,20 @@ import {
 	Settings,
 	SquarePen,
 	TextSearch,
+	User,
 	Wallet,
 } from "lucide-react";
-import React from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logoDark from "../../assets/(site_assets)/logo-dark.png";
 import logo from "../../assets/(site_assets)/logo.png";
 import { useTheme } from "../../context/ThemeContext";
+import { sidebarData } from "../../lib/data";
 
 const SideBar = ({ isOpen, toggleSidebar }) => {
 	const { theme } = useTheme();
 	const location = useLocation();
+	const [profileExpanded, setProfileExpanded] = useState(false);
 
 	const NavItem = ({ icon, text, link, active }) => (
 		<Link to={link}>
@@ -55,16 +61,56 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 		</Link>
 	);
 
+	const DropdownNavItem = ({ icon, text, active, onClick }) => (
+		<button className="block w-full" onClick={onClick}>
+			<div
+				className={`flex items-center space-x-3 pl-[.2rem] pr-4 py-1 cursor-pointer transition-colors duration-200 w-full
+			  ${
+					active
+						? theme === "dark"
+							? "bg-[#222]"
+							: "bg-opacity-10 text-[#040171] font-semibold"
+						: theme === "dark"
+						? "text-white hover:bg-[#222]"
+						: "text-gray-600 hover:bg-gray-100"
+				}
+			  ${!isOpen ? "justify-center" : ""}`}
+			>
+				<div
+					className={`w-[.5rem] h-[2.8rem] mr-4 rounded-r-[5rem] bg-transparent`}
+				></div>
+				<div
+					className={`${
+						!isOpen
+							? "w-8 h-8 flex items-center justify-center"
+							: ""
+					}`}
+				>
+					{icon}
+				</div>
+				{isOpen && <span className="transition-opacity">{text}</span>}
+				{isOpen && (
+					<div>
+						<ChevronDown
+							size={24}
+							className={active && "rotate-180 text-[#040171]"}
+						/>
+					</div>
+				)}
+			</div>
+		</button>
+	);
+
 	return (
 		<>
 			<div
-				className={`fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden transition-opacity duration-200
+				className={`fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden transition-opacity duration-200 min-h-screen
           ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
 				onClick={toggleSidebar}
 			/>
 
 			<div
-				className={`fixed min-h-screen lg:sticky top-0 h-full z-30 transition-all duration-200
+				className={`fixed min-h-screen lg:sticky top-0 z-30 transition-all duration-200
         ${theme === "dark" ? "bg-[#121212]" : "bg-white"}
         ${
 			isOpen
@@ -104,7 +150,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 					)}
 				</div>
 
-				<nav className="mt-5">
+				<nav className="h-auto mt-5">
 					<NavItem
 						icon={<Home size={24} />}
 						link="/dashboard"
@@ -159,6 +205,50 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 							"/dashboard/affiliates"
 						)}
 					/>
+
+					{/* <NavItem
+						icon={<User size={24} />}
+						link="/dashboard/profile"
+						text="My Profile"
+						active={location.pathname.startsWith(
+							"/dashboard/profile"
+						)}
+					/> */}
+					<DropdownNavItem
+						icon={<User size={24} />}
+						// link="/dashboard/profile"
+						text="My Profile"
+						// active={
+						// 	location.pathname.startsWith(
+						// 		"/dashboard/profile"
+						// 	)
+						// }
+						active={profileExpanded}
+						onClick={() => setProfileExpanded(!profileExpanded)}
+					/>
+					<Collapse in={profileExpanded} timeout="auto" unmountOnExit>
+						<List component="div" disablePadding>
+							{sidebarData.profile.map((item, index) => (
+								<ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+									<ListItemText
+										sx={{
+											py: 0.5,
+											pr: 2,
+											transition: "background-color 0.2s",
+											":hover": { bgcolor: "#f3f4f6" },
+										}}
+									>
+										<Link
+											to={item.link.replace(":id", 1)}
+											className="block ml-8 text-[0.85rem]"
+										>
+											{item.text}
+										</Link>
+									</ListItemText>
+								</ListItem>
+							))}
+						</List>
+					</Collapse>
 					<NavItem
 						icon={<Settings size={24} />}
 						link="/dashboard/settings"
