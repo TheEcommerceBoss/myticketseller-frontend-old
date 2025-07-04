@@ -192,7 +192,7 @@ export default function ReferralEarn() {
 							</div>
 						) : referralRows.length === 0 ? (
 							<div className="flex items-center justify-center h-40">
-								<span>No events found</span>
+								<span>No referral earnings found</span>
 							</div>
 						) : (
 							<DataGrid
@@ -250,7 +250,7 @@ export default function ReferralEarn() {
 								</div>
 							) : withdrawRows.length === 0 ? (
 								<div className="flex items-center justify-center h-40">
-									<span>No events found</span>
+									<span>No withdrawal details found</span>
 								</div>
 							) : (
 								<DataGrid

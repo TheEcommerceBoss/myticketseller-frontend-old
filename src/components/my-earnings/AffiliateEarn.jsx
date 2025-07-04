@@ -4,11 +4,14 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import Swal from "sweetalert2";
+import { earningsApi } from "../../shared/services/api";
 
 export default function AffiliateEarn() {
 	const { theme } = useTheme();
-	const [affiliateRows, setAffiliateRows] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [affiliateRows, setAffiliateRows] = useState([]);
+	const [affiliateEarnings, setAffiliateEarnings] = useState([]);
 
 	const affiliateColumns = [
 		{
@@ -46,46 +49,65 @@ export default function AffiliateEarn() {
 		},
 	];
 
-	// Simulate fetching data
 	useEffect(() => {
-		setLoading(true);
-		// Replace this with your actual API call
-		setTimeout(() => {
-			setAffiliateRows([
-				{
-					id: 1,
-					eventName: "VIP Concert",
-					amount: 200,
-					date: "2024-06-01 10:15 AM",
-				},
-				{
-					id: 2,
-					eventName: "Regular Show",
-					amount: 50,
-					date: "2024-06-02 02:30 PM",
-				},
-				{
-					id: 3,
-					eventName: "Early Bird Festival",
-					amount: 90,
-					date: "2024-06-03 09:45 AM",
-				},
-				{
-					id: 4,
-					eventName: "VIP Gala",
-					amount: 200,
-					date: "2024-06-04 11:00 AM",
-				},
-				{
-					id: 5,
-					eventName: "Regular Meetup",
-					amount: 200,
-					date: "2024-06-05 03:20 PM",
-				},
-			]);
-			setLoading(false);
-		}, 1000);
+		const fetchData = async () => {
+			try {
+				setLoading(true);
+				const affiliateEarningsResponse =
+					await earningsApi.getAffiliateEarnings();
+				setAffiliateEarnings(affiliateEarningsResponse);
+				console.log(affiliateEarningsResponse);
+			} catch (error) {
+				Swal.fire(error.message, "", "error");
+				console.error("Failed to fetch data:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
 	}, []);
+
+	// Simulate fetching data
+	// useEffect(() => {
+	// 	setLoading(true);
+	// 	// Replace this with your actual API call
+	// 	setTimeout(() => {
+	// 		setAffiliateRows([
+	// 			{
+	// 				id: 1,
+	// 				eventName: "VIP Concert",
+	// 				amount: 200,
+	// 				date: "2024-06-01 10:15 AM",
+	// 			},
+	// 			{
+	// 				id: 2,
+	// 				eventName: "Regular Show",
+	// 				amount: 50,
+	// 				date: "2024-06-02 02:30 PM",
+	// 			},
+	// 			{
+	// 				id: 3,
+	// 				eventName: "Early Bird Festival",
+	// 				amount: 90,
+	// 				date: "2024-06-03 09:45 AM",
+	// 			},
+	// 			{
+	// 				id: 4,
+	// 				eventName: "VIP Gala",
+	// 				amount: 200,
+	// 				date: "2024-06-04 11:00 AM",
+	// 			},
+	// 			{
+	// 				id: 5,
+	// 				eventName: "Regular Meetup",
+	// 				amount: 200,
+	// 				date: "2024-06-05 03:20 PM",
+	// 			},
+	// 		]);
+	// 		setLoading(false);
+	// 	}, 1000);
+	// }, []);
 
 	return (
 		<div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-3">
@@ -104,13 +126,13 @@ export default function AffiliateEarn() {
 						<div className="flex items-center justify-center h-24">
 							<CircularProgress size={40} />
 						</div>
-					) : affiliateRows.length === 0 ? (
-						<div className="flex items-center justify-center h-96">
+					) : affiliateEarnings.length === 0 ? (
+						<div className="flex items-center justify-center h-40">
 							<span>No affiliate earnings found</span>
 						</div>
 					) : (
 						<DataGrid
-							rows={affiliateRows}
+							rows={affiliateEarnings}
 							columns={affiliateColumns}
 							pageSize={25}
 							rowsPerPageOptions={[5]}
