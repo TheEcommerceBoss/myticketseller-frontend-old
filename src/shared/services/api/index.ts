@@ -7,7 +7,8 @@ export * from "./usersApi";
 export * from "./paymentsApi";
 export * from "./authApi";
 export * from "./scanApi";
-export * from './ticketsApi'
+export * from "./ticketsApi";
+export * from "./earningsApi";
 
 const newApi = axios.create({
 	baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
@@ -68,8 +69,6 @@ export const dashboardApi = {
 		return res.data;
 	},
 };
-
-
 
 export const categoriesApi = {
 	getCategories: async () => {

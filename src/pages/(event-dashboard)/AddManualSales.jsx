@@ -3,9 +3,7 @@ import { Menu, Moon, PlusCircle, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import {
-    CircularProgress
-} from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import SideBar from "../../components/(headers)/EventDashboardSidebar";
 import { useTheme } from "../../context/ThemeContext";
@@ -199,7 +197,7 @@ export default function AddManualSales() {
 							</h2>
 						</div>
 
-						<div className="space-y-6">
+						<div className="p-4 pt-3 space-y-6 bg-[#f9f9f9] md:p-6 md:pt-2">
 							<div className="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-3">
 								<div
 									className={`md:col-span-3 p-2 ${
