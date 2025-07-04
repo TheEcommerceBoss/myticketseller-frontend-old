@@ -314,7 +314,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 							`/dashboard/event/${id}/refund-requests`
 						}
 					/>
-					<NavItem
+					{/* <NavItem
 						icon={<Star size={20} />}
 						link={`/dashboard/event/${id}/refund-requests`}
 						text="Customer Review"
@@ -322,7 +322,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 							location.pathname ===
 							`/dashboard/event/${id}/refund-requests`
 						}
-					/>
+					/> */}
 					<DropdownNavItem
 						icon={<DollarSign size={20} />}
 						text="Payment Details"

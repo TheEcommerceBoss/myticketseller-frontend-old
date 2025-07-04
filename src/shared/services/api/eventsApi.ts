@@ -17,6 +17,26 @@ export const eventsApi = {
 		const res = await newApi.get(`/events/${event_id}/transactions`);
 		return res.data;
 	},
+	async getEventCheckins(event_id: string) {
+		const res = await newApi.get(`/events/${event_id}/checkins`);
+		return res.data;
+	},
+	async getEventAttendees(event_id: string) {
+		const res = await newApi.get(`/events/${event_id}/attendees`);
+		return res.data;
+	},
+	async getEventGuestList(event_id: string) {
+		const res = await newApi.get(`/events/${event_id}/guest-list`);
+		return res.data;
+	},
+	async getEventComplimentaries(event_id: string) {
+		const res = await newApi.get(`/events/${event_id}/complimentary`);
+		return res.data;
+	},
+	async getEventTicketScans(event_id: string) {
+		const res = await newApi.get(`/events/${event_id}/ticket-scans`);
+		return res.data;
+	},
 	getEvents: async function () {
 		const res = await newApi.get(`/events`);
 		return res.data;

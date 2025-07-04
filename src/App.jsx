@@ -63,6 +63,11 @@ import GuestList from "./pages/(event-dashboard)/GuestList";
 import SetupScan from "./pages/(event-dashboard)/scanning/SetupScan";
 import ManualScanning from "./pages/(event-dashboard)/scanning/ManualScanning";
 import ScanningReport from "./pages/(event-dashboard)/scanning/ScanningReport";
+import TicketHistogram from "./pages/(event-dashboard)/TicketHistogram";
+import AddManualSales from "./pages/(event-dashboard)/AddManualSales";
+import TicketOrders from "./pages/(event-dashboard)/TicketOrders";
+import RefundRequestLit from "./pages/(event-dashboard)/RefundRequestList";
+import Payout from "./pages/(event-dashboard)/payment-details/Payout";
 
 function App() {
 	return (
@@ -381,6 +386,56 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<ScanningReport />
+									</ProtectedRoute>
+								}
+							/>
+
+							{/* graphical view */}
+							<Route
+								path="/dashboard/event/:id/histogram-view"
+								element={
+									<ProtectedRoute>
+										<TicketHistogram />
+									</ProtectedRoute>
+								}
+							/>
+
+							{/* manual sales */}
+							<Route
+								path="/dashboard/event/:id/add-manual-sales"
+								element={
+									<ProtectedRoute>
+										<AddManualSales />
+									</ProtectedRoute>
+								}
+							/>
+
+							{/* ticket display order */}
+							<Route
+								path="/dashboard/event/:id/ticket-orders"
+								element={
+									<ProtectedRoute>
+										<TicketOrders />
+									</ProtectedRoute>
+								}
+							/>
+
+							{/* refund request */}
+							<Route
+								path="/dashboard/event/:id/refund-requests"
+								element={
+									<ProtectedRoute>
+										<RefundRequestLit />
+									</ProtectedRoute>
+								}
+							/>
+
+							{/* payment details */}
+							<Route
+								path="/dashboard/event/:id/payout"
+								element={
+									<ProtectedRoute>
+										<Payout />
 									</ProtectedRoute>
 								}
 							/>
