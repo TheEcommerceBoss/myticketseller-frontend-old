@@ -68,6 +68,7 @@ import AddManualSales from "./pages/(event-dashboard)/AddManualSales";
 import TicketOrders from "./pages/(event-dashboard)/TicketOrders";
 import RefundRequestLit from "./pages/(event-dashboard)/RefundRequestList";
 import Payout from "./pages/(event-dashboard)/payment-details/Payout";
+import MyFollowing from "./pages/(dashboard)/MyFollowing";
 
 function App() {
 	return (
@@ -260,6 +261,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<ChangePassword />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/profile/my-following"
+								element={
+									<ProtectedRoute>
+										<MyFollowing />
 									</ProtectedRoute>
 								}
 							/>

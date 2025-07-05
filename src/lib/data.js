@@ -150,7 +150,7 @@ export const sidebarData = {
 		},
 		{
 			text: "My Following",
-			link: "/dashboard/my-following",
+			link: "/dashboard/profile/my-following",
 			active: false,
 		},
 		{
