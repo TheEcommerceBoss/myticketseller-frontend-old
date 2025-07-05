@@ -26,16 +26,18 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
         const [
           userDetailsResponse,
           totalOrdersResponse,
+          userFollowersResponse,
+
           eventsCreatedResponse,
         ] = await Promise.all([
           usersApi.getMe(),
           usersApi.getTotalOrders(),
-          usersApi.getFollowers(),
+          usersApi.getUserFollowers(),
           eventsApi.getMyEvents(),
         ]);
 
         setEventsCreated(eventsCreatedResponse.length);
-        console.log(totalOrdersResponse.total_orders);
+        console.log(userFollowersResponse);
         setUserDetails(userDetailsResponse);
         setTotalOrders(totalOrdersResponse.total_orders);
       } catch (error) {
