@@ -159,7 +159,7 @@ const ChangePassword = () => {
 					</div>
 				</div>
 
-				<div className="mt-8 overflow-hidden rounded-lg ">
+				<div className="mt-8 overflow-hidden rounded-lg">
 					<div className="bg-[#0a0a80] text-white p-4">
 						<h2 className="text-xl font-medium">Change Password</h2>
 					</div>
