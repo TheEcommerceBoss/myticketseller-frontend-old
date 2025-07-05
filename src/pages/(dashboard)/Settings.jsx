@@ -1,123 +1,37 @@
-import React, { useState, useEffect } from "react";
-import {
-	Home,
-	PlusCircle,
-	ListChecks,
-	Ticket,
-	Megaphone,
-	HelpCircle,
-	Settings,
-	Menu,
-	ChevronLeft,
-	ChevronRight,
-	Search,
-	Moon,
-	Sun,
-	CalendarCogIcon,
-	BellDot,
-	Bell,
-	X,
-} from "lucide-react";
-import { useTheme } from "../../context/ThemeContext";
-import SideBar from "../../components/(headers)/DashboardSidebar";
-import user from "../../assets/(user)/user.png";
-import eventImage from "../../assets/(landing)/event.png";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Menu, Moon, PlusCircle, Sun, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import "react-phone-number-input/style.css";
+import { Link } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
-import Cookies from "js-cookie";
-import Swal from "sweetalert2";
-import api from "../../api";
-import { useAuth } from "../../context/AuthContext";
+import SideBar from "../../components/(headers)/DashboardSidebar";
+import { useTheme } from "../../context/ThemeContext";
 
-const SettingsPage = () => {
-	const { userData } = useAuth();
-	const [loading, setLoading] = useState(true); // Track loading state
-
-	const [formData, setFormData] = useState({
-		email: "",
-		fullname: "",
-		instagram: "",
-		tiktok: "",
-		twitter: "",
-	});
-
-	// Load user data into formData on component mount or when userData updates
-	useEffect(() => {
-		if (userData) {
-			setFormData({
-				email: userData.user.email || "",
-				fullname: userData.user.fullname || "",
-				instagram: userData.user.instagram || "",
-				tiktok: userData.user.tiktok || "",
-				twitter: userData.user.twitter || "",
-			});
-			setLoading(false);
-		}
-	}, [userData]);
-
+const EmailPreferences = () => {
+	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
-	const navigate = useNavigate();
+	const [activeTab, setActiveTab] = useState("customer");
+	const [isSidebarOpen, setIsSidebarOpen] = useState(
+		window.innerWidth >= 1024
+	);
 
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, []);
+	const [preferences, setPreferences] = useState(customerPreferences);
 
-	const [isOpen, setIsOpen] = useState(window.innerWidth >= 1024);
+	const togglePreference = (id) => {
+		setPreferences((prev) =>
+			prev.map((pref) =>
+				pref.id === id ? { ...pref, enabled: !pref.enabled } : pref
+			)
+		);
+	};
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (window.innerWidth >= 1024) {
-				setIsOpen(true);
-			} else {
-				setIsOpen(false);
-			}
+			setIsSidebarOpen(window.innerWidth >= 1024);
 		};
-
-		handleResize();
 
 		window.addEventListener("resize", handleResize);
-
-		return () => {
-			window.removeEventListener("resize", handleResize);
-		};
+		return () => window.removeEventListener("resize", handleResize);
 	}, []);
-
-	const toggleSidebar = () => {
-		setIsOpen(!isOpen);
-	};
-
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prevState) => ({
-			...prevState,
-			[name]: value,
-		}));
-	};
-
-	const handleUpdateProfile = async () => {
-		try {
-			setLoading(true);
-			const token = Cookies.get("auth_token");
-			await api.post("/update_details", formData, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			Swal.fire({
-				icon: "success",
-				title: "Profile Updated",
-				text: "Your profile has been updated successfully.",
-			});
-		} catch (error) {
-			Swal.fire({
-				icon: "error",
-				title: "Error",
-				text: "Failed to update profile.",
-			});
-		} finally {
-			setLoading(false);
-		}
-	};
 
 	return (
 		<div
@@ -125,184 +39,290 @@ const SettingsPage = () => {
 				theme === "dark" ? "bg-[#222]" : "bg-gray-100"
 			}`}
 		>
-			<SideBar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-
-			<div className="flex-1 px-5 py-8 lg:px-8">
+			<SideBar
+				isOpen={isSidebarOpen}
+				toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+			/>
+			<div className="flex-1 px-5 py-8 mx-auto lg:px-8 max-w-7xl">
 				<div className="flex items-center justify-between mb-8">
 					<div className="flex items-center space-x-4">
 						<button
-							onClick={toggleSidebar}
-							className={`rounded-lg outline-none p-3 ${
-								theme === "light"
-									? "bg-gray-200 hover:bg-gray-100"
-									: "bg-[#121212]"
+							onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+							aria-label={
+								isSidebarOpen ? "Close sidebar" : "Open sidebar"
+							}
+							className={`rounded-lg p-3 ${
+								theme === "dark"
+									? "bg-[#121212] hover:bg-[#111]"
+									: "bg-gray-200 hover:bg-gray-100"
 							}`}
 						>
-							{isOpen ? <X size={24} /> : <Menu size={24} />}
+							{isSidebarOpen ? (
+								<X size={24} />
+							) : (
+								<Menu size={24} />
+							)}
 						</button>
-
 						<h1 className="hidden text-2xl font-bold lg:flex">
-							Support
+							Email Preferences
 						</h1>
 					</div>
-
 					<div className="flex items-center space-x-4">
 						<Link
-							to={"/dashboard/event/create"}
-							className={`rounded-full outline-none  p-3 ${
-								theme === "light"
-									? "bg-gray-200  hover:bg-gray-100"
-									: "hover:bg-[#111] bg-[#121212]"
+							to="/dashboard/event/create"
+							aria-label="Create new event"
+							className={`rounded-full p-3 ${
+								theme === "dark"
+									? "bg-[#121212] hover:bg-[#111]"
+									: "bg-gray-200 hover:bg-gray-100"
 							}`}
-							aria-label="Toggle theme"
 						>
 							<PlusCircle
-								color={theme === "light" ? "#040171" : "white"}
+								color={theme === "dark" ? "white" : "#040171"}
 								size={20}
 							/>
 						</Link>
 						<button
 							onClick={toggleTheme}
-							className={`rounded-full outline-none p-3 ${
-								theme === "light"
-									? "bg-gray-200 hover:bg-gray-100"
-									: "hover:bg-[#111] bg-[#121212]"
+							aria-label={
+								theme === "dark"
+									? "Switch to light theme"
+									: "Switch to dark theme"
+							}
+							className={`rounded-full p-3 ${
+								theme === "dark"
+									? "bg-[#121212] hover:bg-[#111]"
+									: "bg-gray-200 hover:bg-gray-100"
 							}`}
-							aria-label="Toggle theme"
 						>
-							{theme === "light" ? (
-								<Moon size={20} />
-							) : (
+							{theme === "dark" ? (
 								<Sun size={20} />
+							) : (
+								<Moon size={20} />
 							)}
 						</button>
-
 						<DashboardHeader />
 					</div>
 				</div>
 
-				<div
-					className={`${
-						theme === "dark"
-							? "bg-[#121212]"
-							: "border border-[#040171]"
-					} rounded-lg p-6 my-6 shadow-sm`}
-				>
-					<div className="flex flex-col justify-center mb-8 text-center">
-						<div className="flex mb-4">
-							<label
-								className={`text-l font-normal mt-1 ${
-									theme === "dark"
-										? "text-white"
-										: "text-[#000]"
-								}`}
-							>
-								Full Name
-							</label>
-						</div>
-						<input
-							type="text"
-							name="fullname"
-							value={formData.fullname}
-							onChange={handleChange}
-							className={`w-full p-3 border border-gray-300 ${
-								theme === "dark" ? "text-white" : "text-[#000]"
-							} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-							placeholder="Enter Full Name"
-						/>
+				<div className="mt-8 overflow-hidden">
+					{/* Tab Navigation */}
+					<div className="flex gap-2 mb-6">
+						<button
+							onClick={() => {
+								setActiveTab("customer");
+								setPreferences(customerPreferences);
+							}}
+							className={`px-6 py-3 rounded-full font-medium transition-colors ${
+								activeTab === "customer"
+									? "bg-[#0a0a80] text-white"
+									: "bg-gray-200 text-gray-600 hover:bg-gray-300"
+							}`}
+						>
+							Customer/ Ticket Buyer
+						</button>
+						<button
+							onClick={() => {
+								setActiveTab("promoter");
+								setPreferences(promoterPreferences);
+							}}
+							className={`px-6 py-3 rounded-full font-medium transition-colors ${
+								activeTab === "promoter"
+									? "bg-[#0a0a80] text-white"
+									: "bg-gray-200 text-gray-600 hover:bg-gray-300"
+							}`}
+						>
+							Promoter/ Organizer
+						</button>
 					</div>
-
-					<div className="flex flex-col justify-center mb-8 text-center">
-						<div className="flex mb-4">
-							<label
-								className={`text-l font-normal mt-1 ${
-									theme === "dark"
-										? "text-white"
-										: "text-[#000]"
-								}`}
-							>
-								Instagram
-							</label>
-						</div>
-						<input
-							type="text"
-							name="instagram"
-							value={formData.instagram}
-							onChange={handleChange}
-							className={`w-full p-3 border border-gray-300 ${
-								theme === "dark" ? "text-white" : "text-[#000]"
-							} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-							placeholder="Enter Instagram Handle"
-						/>
+					<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+						<h2 className="text-xl font-medium">
+							Manage your Email preference
+						</h2>
 					</div>
+					<div className="p-4 bg-white md:p-8">
+						{/* Subheading */}
+						<h2 className="mb-8 text-lg font-medium text-[#040171]">
+							Choose emails you would like to recieve from
+							MyTicketseller
+						</h2>
 
-					<div className="flex flex-col justify-center mb-8 text-center">
-						<div className="flex mb-4">
-							<label
-								className={`text-l font-normal mt-1 ${
-									theme === "dark"
-										? "text-white"
-										: "text-[#000]"
-								}`}
-							>
-								TikTok
-							</label>
+						{/* Email Preferences List */}
+						<div className="space-y-6">
+							{preferences.map((preference) => (
+								<div
+									key={preference.id}
+									className="py-4 border-b border-[#D5D5D5]"
+								>
+									<div className="flex items-center justify-between max-w-[590px]">
+										<div className="flex-1">
+											<h3 className="mb-1 text-base font-medium text-gray-900 lg:text-lg">
+												{preference.title}
+											</h3>
+											<p className="text-sm text-gray-600 lg:text-base">
+												{preference.description}
+											</p>
+										</div>
+
+										{/* Toggle Switch */}
+										<button
+											onClick={() =>
+												togglePreference(preference.id)
+											}
+											className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+												preference.enabled
+													? "bg-[#040171]"
+													: "bg-gray-200"
+											}`}
+										>
+											<span
+												className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+													preference.enabled
+														? "translate-x-6"
+														: "translate-x-1"
+												}`}
+											/>
+										</button>
+									</div>
+								</div>
+							))}
 						</div>
-						<input
-							type="text"
-							name="tiktok"
-							value={formData.tiktok}
-							onChange={handleChange}
-							className={`w-full p-3 border border-gray-300 ${
-								theme === "dark" ? "text-white" : "text-[#000]"
-							} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-							placeholder="Enter TikTok Handle"
-						/>
 					</div>
-
-					<div className="flex flex-col justify-center mb-8 text-center">
-						<div className="flex mb-4">
-							<label
-								className={`text-l font-normal mt-1 ${
-									theme === "dark"
-										? "text-white"
-										: "text-[#000]"
-								}`}
-							>
-								Twitter
-							</label>
-						</div>
-						<input
-							type="text"
-							name="twitter"
-							value={formData.twitter}
-							onChange={handleChange}
-							className={`w-full p-3 border border-gray-300 ${
-								theme === "dark" ? "text-white" : "text-[#000]"
-							} font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
-							placeholder="Enter Twitter Handle"
-						/>
+					<div className="flex justify-end mt-8">
+						<button
+							type="submit"
+							// disabled={isSubmitting}
+							aria-label="Save new password"
+							className={`px-8 py-3 rounded-full shadow-lg transition-colors ${
+								theme === "dark"
+									? "bg-[#0a0a80] text-white hover:bg-[#09096e] disabled:bg-[#0a0a80]/50"
+									: "bg-[#0a0a80] text-white hover:bg-[#09096e] disabled:bg-[#0a0a80]/50"
+							} disabled:opacity-50 disabled:cursor-not-allowed`}
+						>
+							{/* {isSubmitting ? "Saving..." : "Save"} */}
+							Save
+						</button>
 					</div>
-				</div>
-
-				<div className="flex flex-col items-end text-center">
-					<button
-						onClick={() => handleUpdateProfile()}
-						disabled={loading}
-						className={`w-[12rem] 	 bg-[#040171] ${
-							theme === "dark"
-								? "border-[#DBDAFF20]"
-								: "border-[#DBDAFF50]"
-						} ${
-							loading ? "bg-opacity-50 cursor-wait " : ""
-						} border-4 text-white py-3 px-4 rounded-full transition duration-200 hover:bg-blue-800`}
-					>
-						{!loading ? "Save Settings" : "loading..."}
-					</button>
 				</div>
 			</div>
 		</div>
 	);
 };
 
-export default SettingsPage;
+export default EmailPreferences;
+
+const customerPreferences = [
+	{
+		id: "event-updates",
+		title: "Event updates",
+		description: "Get All notification for Your Event updates",
+		enabled: true,
+	},
+	{
+		id: "purchase-notification",
+		title: "Purchase notification email",
+		description: "You will recieve all the emails for purchase",
+		enabled: true,
+	},
+	{
+		id: "promotional-email",
+		title: "X Promotional email from MTS",
+		description: "You will recieve all the emails for purchase",
+		enabled: true,
+	},
+	{
+		id: "event-review",
+		title: "Event review notification email",
+		description:
+			"You will recieve all important updates from MyTicketseller",
+		enabled: true,
+	},
+	{
+		id: "organizer-email",
+		title: "X Email from organizer",
+		description: "You will recieve review email for events",
+		enabled: true,
+	},
+	{
+		id: "newsletter",
+		title: "Newsletter Emails",
+		description: "You will recieve email for newsletter",
+		enabled: true,
+	},
+	{
+		id: "followed-organizers",
+		title: "X Followed organizers",
+		description:
+			"You will recieve email when your favorite organizers create new events",
+		enabled: true,
+	},
+];
+
+const promoterPreferences = [
+	{
+		id: "event-updates",
+		title: "Event updates",
+		description: "Get All notification for Your Event updates",
+		enabled: true,
+	},
+	{
+		id: "contact-emails",
+		title: "X Contact emails",
+		description:
+			"You will get notified when customers contact you from Ticketgateway",
+		enabled: true,
+	},
+	{
+		id: "purchase-notification",
+		title: "Purchase notification email",
+		description:
+			"You will recieve all the emails for purchase of your Event",
+		enabled: true,
+	},
+	{
+		id: "payment-notification",
+		title: "Payment notification",
+		description:
+			"You will get reminder email to set up payment information on Ticketgateway",
+		enabled: true,
+	},
+	{
+		id: "attendee-notification",
+		title: "X Attendee notification",
+		description:
+			"You will get email notification for Every attendee you will add",
+		enabled: true,
+	},
+	{
+		id: "complimentary-tickets",
+		title: "Complimentary tickets",
+		description:
+			"You will get all emails of complimentory tickets when you send to customer",
+		enabled: true,
+	},
+	{
+		id: "promotional-email",
+		title: "X Promotional email from TG",
+		description:
+			"You will recieve all important updates from Ticketgateway",
+		enabled: true,
+	},
+	{
+		id: "user-review-notification",
+		title: "X User review notification email",
+		description: "You will recieve all user review for your events",
+		enabled: true,
+	},
+	{
+		id: "notifications-stop",
+		title: "Email notifications stop all events",
+		description: "Stop all email notifications for your events",
+		enabled: true,
+	},
+	{
+		id: "user-follower-notification",
+		title: "X User follower notification email",
+		description: "You will get email notification for follower users",
+		enabled: true,
+	},
+];
