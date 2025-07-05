@@ -13,12 +13,16 @@ import {
 	TableRow,
 	Tabs,
 } from "@mui/material";
-import { Menu, Moon, PlusCircle, Sun, X } from "lucide-react";
+import { Menu, Moon, Pencil, PlusCircle, Sun, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import "react-phone-number-input/style.css";
 import { Link } from "react-router-dom";
 import SideBar from "../../components/(headers)/DashboardSidebar";
 import { useTheme } from "../../context/ThemeContext";
+import { DataGrid } from "@mui/x-data-grid";
+import EventEarn from "../../components/my-earnings/EventEarn";
+import ReferralEarn from "../../components/my-earnings/ReferralEarn";
+import AffiliateEarn from "../../components/my-earnings/AffiliateEarn";
 
 const MyEarnings = () => {
 	const { theme, toggleTheme } = useTheme();
@@ -26,7 +30,6 @@ const MyEarnings = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(
 		window.innerWidth >= 1024
 	);
-	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -141,245 +144,10 @@ const MyEarnings = () => {
 								<Tab label="Affiliate Earn" />
 							</Tabs>
 						</Box>
-						<div className="p-4 pt-3 md:p-6">
-							{tabValue === 0 && (
-								<TableContainer
-									component={Paper}
-									sx={{
-										mt: 2,
-										boxShadow: "none",
-										overflowX: "auto",
-									}}
-								>
-									<Table
-										aria-label="event earnings table"
-										sx={{
-											minWidth: { xs: "auto", md: 650 },
-										}}
-									>
-										<TableHead>
-											<TableRow
-												sx={{ bgcolor: "#D9D9D973" }}
-											>
-												<TableCell>
-													Event Name
-												</TableCell>
-												<TableCell>Amount</TableCell>
-												<TableCell>Paid</TableCell>
-												<TableCell>Due</TableCell>
-												<TableCell>Date</TableCell>
-												<TableCell>Status</TableCell>
-												<TableCell>Edit</TableCell>
-												<TableCell>Delete</TableCell>
-											</TableRow>
-										</TableHead>
-										<TableBody>
-											{loading ? (
-												<TableRow>
-													<TableCell
-														colSpan={8}
-														align="center"
-													>
-														<CircularProgress />
-													</TableCell>
-												</TableRow>
-											) : (
-												<TableRow>
-													<TableCell
-														colSpan={8}
-														align="center"
-													>
-														No earnings found
-													</TableCell>
-												</TableRow>
-											)}
-										</TableBody>
-									</Table>
-								</TableContainer>
-							)}
-							{tabValue === 1 && (
-								<>
-									<TableContainer
-										component={Paper}
-										sx={{
-											mt: 2,
-											boxShadow: "none",
-											overflowX: "auto",
-										}}
-									>
-										<Table
-											aria-label="referral earnings table"
-											sx={{
-												minWidth: {
-													xs: "auto",
-													md: 650,
-												},
-											}}
-										>
-											<TableHead>
-												<TableRow
-													sx={{
-														bgcolor: "#D9D9D973",
-													}}
-												>
-													<TableCell>
-														Amount
-													</TableCell>
-													<TableCell>Paid</TableCell>
-													<TableCell>Due</TableCell>
-													<TableCell>
-														Quick Links
-													</TableCell>
-												</TableRow>
-											</TableHead>
-											<TableBody>
-												{loading ? (
-													<TableRow>
-														<TableCell
-															colSpan={4}
-															align="center"
-														>
-															<CircularProgress />
-														</TableCell>
-													</TableRow>
-												) : (
-													<TableRow>
-														<TableCell
-															colSpan={4}
-															align="center"
-														>
-															No earnings found
-														</TableCell>
-													</TableRow>
-												)}
-											</TableBody>
-										</Table>
-									</TableContainer>
-									<Box>
-										<h4 className="text-[#040171] text-lg md:text-xl font-normal mt-8 md:mt-10">
-											WITHDRAWAL DETAILS
-										</h4>
-										<TableContainer
-											component={Paper}
-											sx={{
-												mt: 2,
-												boxShadow: "none",
-												overflowX: "auto",
-											}}
-										>
-											<Table
-												aria-label="withdrawal details table"
-												sx={{
-													minWidth: {
-														xs: "auto",
-														md: 650,
-													},
-												}}
-											>
-												<TableHead>
-													<TableRow
-														sx={{
-															bgcolor:
-																"#D9D9D973",
-														}}
-													>
-														<TableCell>
-															User Id
-														</TableCell>
-														<TableCell>
-															Withdrawal No
-														</TableCell>
-														<TableCell>
-															Date
-														</TableCell>
-														<TableCell>
-															Amount
-														</TableCell>
-														<TableCell>
-															Status
-														</TableCell>
-													</TableRow>
-												</TableHead>
-												<TableBody>
-													{loading ? (
-														<TableRow>
-															<TableCell
-																colSpan={5}
-																align="center"
-															>
-																<CircularProgress />
-															</TableCell>
-														</TableRow>
-													) : (
-														<TableRow>
-															<TableCell
-																colSpan={5}
-																align="center"
-															>
-																No withdrawal
-																details
-															</TableCell>
-														</TableRow>
-													)}
-												</TableBody>
-											</Table>
-										</TableContainer>
-									</Box>
-								</>
-							)}
-							{tabValue === 2 && (
-								<TableContainer
-									component={Paper}
-									sx={{
-										mt: 2,
-										boxShadow: "none",
-										overflowX: "auto",
-									}}
-								>
-									<Table
-										aria-label="affiliate earnings table"
-										sx={{
-											minWidth: { xs: "auto", md: 650 },
-										}}
-									>
-										<TableHead>
-											<TableRow
-												sx={{ bgcolor: "#D9D9D973" }}
-											>
-												<TableCell>
-													Event Name
-												</TableCell>
-												<TableCell>Amount</TableCell>
-												<TableCell>Date</TableCell>
-												<TableCell>
-													Quick links
-												</TableCell>
-											</TableRow>
-										</TableHead>
-										<TableBody>
-											{loading ? (
-												<TableRow>
-													<TableCell
-														colSpan={4}
-														align="center"
-													>
-														<CircularProgress />
-													</TableCell>
-												</TableRow>
-											) : (
-												<TableRow>
-													<TableCell
-														colSpan={4}
-														align="center"
-													>
-														No withdrawal details
-													</TableCell>
-												</TableRow>
-											)}
-										</TableBody>
-									</Table>
-								</TableContainer>
-							)}
+						<div className="p-4 pt-3 md:p-6 md:pt-0">
+							{tabValue === 0 && <EventEarn />}
+							{tabValue === 1 && <ReferralEarn />}
+							{tabValue === 2 && <AffiliateEarn />}
 						</div>
 					</Box>
 				</div>

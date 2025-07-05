@@ -21,6 +21,36 @@ export const usersApi = {
 		});
 		return res.data;
 	},
+	async followUser(user_id: string) {
+		const res = await newApi.post("/users/follow", { user_id });
+		return res.data;
+	},
+	async unFollowUser(user_id: string) {
+		const res = await newApi.post("/users/unfollow", { user_id });
+		return res.data;
+	},
+	async getUserEventEarnings() {
+		const res = await newApi.get("/users/event-earnings");
+		return res.data;
+	},
+	async getUserFollowers() {
+		const res = await newApi.get("/users/followers");
+	},
+	async getUserFollowing() {
+		const res = await newApi.get("/users/following");
+	},
+	async getUserEarnings() {
+		const res = await newApi.get("/users/earnings");
+		return res.data;
+	},
+	async getUserAffiliateEarnings() {
+		const res = await newApi.get("/users/affiliate-earnings");
+		return res.data;
+	},
+	async getUserReferralEarnings() {
+		const res = await newApi.get("/users/referral-earnings");
+		return res.data;
+	},
 	async deleteUser({ reason }: { reason: string }) {
 		const res = await newApi.delete("/users/me", {
 			data: { reason },
