@@ -61,8 +61,8 @@ const ScanManager = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await eventsApi.getMyEvents();
-        setEvents(response.events);
+        const events = await eventsApi.getMyEvents();
+        setEvents(events);
       } catch (error) {
         console.error("Failed to fetch events:", error);
       } finally {
