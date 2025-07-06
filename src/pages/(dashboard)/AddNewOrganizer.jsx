@@ -123,7 +123,7 @@ const AddNewOrganizer = () => {
 					<form>
 						{/* About the organizer */}
 						<div>
-							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+							<div className="bg-[#040171] text-white p-4 rounded-t-lg">
 								<h2 className="text-xl font-medium">
 									About the organizer
 								</h2>
@@ -190,7 +190,7 @@ const AddNewOrganizer = () => {
 												className="object-cover w-full h-full rounded-full"
 											/>
 										) : (
-											<p className="text-[#0a0a80] font-bold text-center">
+											<p className="text-[#040171] font-bold text-center">
 												ADD A PROFILE IMAGE
 											</p>
 										)}
@@ -213,7 +213,7 @@ const AddNewOrganizer = () => {
 									</div>
 									<button
 										type="button"
-										className="bg-[#0a0a80] text-white px-6 py-3 rounded-full shadow-md hover:bg-[#09096e] transition-colors mt-10"
+										className="bg-[#040171] text-white px-6 py-3 rounded-full shadow-md hover:bg-[#09096e] transition-colors mt-10"
 									>
 										Add Gallery Images
 									</button>
@@ -223,7 +223,7 @@ const AddNewOrganizer = () => {
 
 						{/* Add Banner Images */}
 						<div className="mt-6">
-							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+							<div className="bg-[#040171] text-white p-4 rounded-t-lg">
 								<h2 className="text-xl font-medium">
 									Add Banner Images
 								</h2>
@@ -274,7 +274,7 @@ const AddNewOrganizer = () => {
 
 						{/* Optional Settings */}
 						<div className="mt-6">
-							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+							<div className="bg-[#040171] text-white p-4 rounded-t-lg">
 								<h2 className="text-xl font-medium">
 									Optional Settings
 								</h2>
@@ -350,7 +350,7 @@ const AddNewOrganizer = () => {
 
 						{/* Promote Your Profile */}
 						<div className="mt-6">
-							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+							<div className="bg-[#040171] text-white p-4 rounded-t-lg">
 								<h2 className="text-xl font-medium">
 									Promote Your Profile
 								</h2>
@@ -421,7 +421,7 @@ const AddNewOrganizer = () => {
 
 						{/* Add Social Networks */}
 						<div className="mt-6">
-							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+							<div className="bg-[#040171] text-white p-4 rounded-t-lg">
 								<h2 className="text-xl font-medium">
 									Add Social Networks
 								</h2>
@@ -473,7 +473,7 @@ const AddNewOrganizer = () => {
 
 						{/* Add Social Networks (Second Section) */}
 						<div className="mt-6">
-							<div className="bg-[#0a0a80] text-white p-4 rounded-t-lg">
+							<div className="bg-[#040171] text-white p-4 rounded-t-lg">
 								<h2 className="text-xl font-medium">
 									Add Social Networks
 								</h2>
@@ -545,7 +545,7 @@ const AddNewOrganizer = () => {
 							<button
 								type="submit"
 								// disabled={isSubmitting}
-								className="bg-[#0a0a80] text-white px-8 py-3 rounded-full shadow-lg hover:bg-[#09096e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+								className="bg-[#040171] text-white px-8 py-3 rounded-full shadow-lg hover:bg-[#09096e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 							>
 								{/* {isSubmitting ? "Saving..." : "Save"} */}
 								Save

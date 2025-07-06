@@ -1,28 +1,15 @@
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 
-import {
-	Box,
-	CircularProgress,
-	Paper,
-	Tab,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Tabs,
-} from "@mui/material";
-import { Menu, Moon, Pencil, PlusCircle, Sun, Trash2, X } from "lucide-react";
+import { Box, Tab, Tabs } from "@mui/material";
+import { Menu, Moon, PlusCircle, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import "react-phone-number-input/style.css";
 import { Link } from "react-router-dom";
 import SideBar from "../../components/(headers)/DashboardSidebar";
-import { useTheme } from "../../context/ThemeContext";
-import { DataGrid } from "@mui/x-data-grid";
+import AffiliateEarn from "../../components/my-earnings/AffiliateEarn";
 import EventEarn from "../../components/my-earnings/EventEarn";
 import ReferralEarn from "../../components/my-earnings/ReferralEarn";
-import AffiliateEarn from "../../components/my-earnings/AffiliateEarn";
+import { useTheme } from "../../context/ThemeContext";
 
 const MyEarnings = () => {
 	const { theme, toggleTheme } = useTheme();

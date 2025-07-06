@@ -160,7 +160,7 @@ export const sidebarData = {
 		},
 		{
 			text: "Multi-User Access",
-			link: "/dashboard/multi-user-access",
+			link: "/dashboard/profile/multi-user-access",
 			active: false,
 		},
 		{

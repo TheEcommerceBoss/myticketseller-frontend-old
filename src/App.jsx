@@ -69,6 +69,7 @@ import TicketOrders from "./pages/(event-dashboard)/TicketOrders";
 import RefundRequestLit from "./pages/(event-dashboard)/RefundRequestList";
 import Payout from "./pages/(event-dashboard)/payment-details/Payout";
 import MyFollowing from "./pages/(dashboard)/MyFollowing";
+import MultiUserAccess from "./pages/(dashboard)/MultiUserAccess";
 
 function App() {
 	return (
@@ -269,6 +270,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<MyFollowing />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/profile/multi-user-access"
+								element={
+									<ProtectedRoute>
+										<MultiUserAccess />
 									</ProtectedRoute>
 								}
 							/>

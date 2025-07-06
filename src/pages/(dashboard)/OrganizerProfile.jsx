@@ -21,7 +21,6 @@ const OrganizerProfile = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(
 		window.innerWidth >= 1024
 	);
-	const [addNewOrganizer, setAddNewOrganizer] = useState(false);
 	const [loading, setLoading] = useState(true); // Track loading state
 
 	useEffect(() => {
