@@ -19,6 +19,10 @@ export const eventsApi = {
     const res = await newApi.get(`/events/${event_id}/checkins`);
     return res.data;
   },
+  async getEventSuccessfulTransactions(event_id: string) {
+    const res = await newApi.get(`/events/${event_id}/successful-transactions`);
+    return res.data;
+  },
   async getEventAttendees(event_id: string) {
     const res = await newApi.get(`/events/${event_id}/attendees`);
     return res.data;
