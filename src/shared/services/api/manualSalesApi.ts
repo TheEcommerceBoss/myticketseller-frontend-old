@@ -9,14 +9,14 @@ export interface IManualSale {
   phone_number: string;
   payment_type: string;
   notes: string;
-  quantity: string;
+  quantity: number;
   amount_paid: string;
   price: string;
   user_id: string | number;
   ticket_type: string;
 }
 
-type ICreateManualSale = Omit<IManualSale, "user_id">;
+type ICreateManualSale = Partial<IManualSale>;
 
 export const manualSalesApi = {
   async createManualSale(data: ICreateManualSale) {

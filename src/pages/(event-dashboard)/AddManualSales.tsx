@@ -23,29 +23,35 @@ export default function AddManualSales() {
   const [notes, setNotes] = useState<string>("");
   const [amountPaid, setAmountPaid] = useState<string>("");
   const [price, setPrice] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchManualSales() {
       const data = await manualSalesApi.getManualSales();
       setManualSales(data);
+      console.log(data);
     }
     fetchManualSales();
   }, []);
 
   async function handleSubmit() {
-    const data = {
-      first_name: firstName,
-      event_id: id,
-      // ticket_type: "",
-      last_name: lastName,
-      email: email,
-      phone_number: phoneNumber,
-      payment_type: paymentType,
-      notes: notes,
-      quantity: 1,
-      // amount_paid: amountPaid,
-      // price: price,
-    };
+    try {
+      setIsSubmitting(true);
+      const data = {
+        first_name: firstName,
+        event_id: id!,
+        last_name: lastName,
+        email: email,
+        phone_number: phoneNumber,
+        payment_type: paymentType,
+        notes: notes,
+        quantity: 1,
+      };
+      const response = await manualSalesApi.createManualSale(data);
+    } catch (err) {
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   // useEffect(
@@ -89,13 +95,13 @@ export default function AddManualSales() {
   };
 
   const columns = [
-    { field: "ticket_type", headerName: "Ticket Type", width: 150 },
-    // { field: "sales_end", headerName: "Sales End", width: 150 },
+    { field: "first_name", headerName: "First Name", width: 120 },
+    { field: "last_name", headerName: "Last Name", width: 120 },
     { field: "price", headerName: "Price", width: 120 },
-    { field: "inventory", headerName: "Inventory/Available", width: 180 },
+
     { field: "quantity", headerName: "Quantity", width: 120 },
     { field: "amount_paid", headerName: "Amount Paid", width: 150 },
-    { field: "date", headerName: "Date", width: 180 },
+    { field: "created_at", headerName: "Date", width: 180 },
   ];
 
   const [rows, setRows] = useState([]);
@@ -242,13 +248,13 @@ export default function AddManualSales() {
                       <div className="flex items-center justify-center h-24">
                         <CircularProgress size={40} />
                       </div>
-                    ) : rows.length === 0 ? (
+                    ) : manualSales.length === 0 ? (
                       <div className="flex items-center justify-center h-96">
                         <span>No events found</span>
                       </div>
                     ) : (
                       <DataGrid
-                        rows={rows}
+                        rows={manualSales}
                         columns={columns}
                         pageSize={25}
                         rowsPerPageOptions={[5]}
@@ -327,6 +333,10 @@ export default function AddManualSales() {
                       type="email"
                       id="email"
                       name="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                      }}
                       className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
                     />
                   </div>
@@ -339,8 +349,12 @@ export default function AddManualSales() {
                     </label>
                     <input
                       type="text"
-                      id="seoTitle"
-                      name="seoTitle"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      value={phoneNumber}
+                      onChange={(e) => {
+                        setPhoneNumber(e.target.value);
+                      }}
                       className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
                     />
                   </div>
@@ -363,7 +377,9 @@ export default function AddManualSales() {
                     <select
                       name="category"
                       value={""}
-                      // onChange={handleChange}
+                      onChange={(e) => {
+                        setPaymentType(e.target.value);
+                      }}
                       className={`w-full p-3 border border-gray-300 ${
                         theme === "dark" ? "text-white" : "text-[#000]"
                       } font-normal rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
@@ -388,6 +404,10 @@ export default function AddManualSales() {
                       type="text"
                       id="notes"
                       name="notes"
+                      value={notes}
+                      onChange={(e) => {
+                        setNotes(e.target.value);
+                      }}
                       className="w-full p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2"
                       rows={4}
                     />
@@ -416,11 +436,14 @@ export default function AddManualSales() {
             <div className="flex justify-end mt-8">
               <button
                 type="submit"
-                // disabled={isSubmitting}
+                disabled={isSubmitting}
                 className="bg-[#0a0a80] text-white px-8 py-3 rounded-full shadow-lg hover:bg-[#09096e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSubmit();
+                }}
               >
-                {/* {isSubmitting ? "Saving..." : "Save"} */}
-                Save
+                {isSubmitting ? "Saving..." : "Save"}
               </button>
             </div>
           </form>
