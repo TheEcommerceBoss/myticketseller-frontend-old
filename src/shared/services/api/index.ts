@@ -10,6 +10,7 @@ export * from "./scanApi";
 export * from "./ticketsApi";
 export * from "./earningsApi";
 export * from "./organizerProfileApi";
+export * from "./manualSalesApi";
 
 const newApi = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
