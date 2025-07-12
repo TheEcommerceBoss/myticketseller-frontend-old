@@ -70,6 +70,7 @@ import RefundRequestLit from "./pages/(event-dashboard)/RefundRequestList";
 import Payout from "./pages/(event-dashboard)/payment-details/Payout";
 import MyFollowing from "./pages/(dashboard)/MyFollowing";
 import MultiUserAccess from "./pages/(dashboard)/MultiUserAccess";
+import PaymentAccount from "./pages/(event-dashboard)/payment-details/PaymentAccount";
 
 function App() {
 	return (
@@ -454,6 +455,14 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<Payout />
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/dashboard/event/:id/payment-account"
+								element={
+									<ProtectedRoute>
+										<PaymentAccount />
 									</ProtectedRoute>
 								}
 							/>
