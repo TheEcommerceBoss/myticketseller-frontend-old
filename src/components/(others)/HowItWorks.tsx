@@ -1,5 +1,5 @@
-import MasksIcon from "../../components/Icons/MasksIcon";
-import CalendarIcon from "../../components/Icons/CalendarIcon";
+import MasksIcon from "../Icons/MasksIcon";
+import CalendarIcon from "../Icons/CalendarIcon";
 import { howItWorksSteps } from "../../lib/data";
 import bell from "../../assets/(landing)/icons/bell.svg";
 import searchSuggestionSm from "../../assets/(landing)/search-suggestion_sm.svg";

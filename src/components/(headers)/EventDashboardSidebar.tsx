@@ -23,7 +23,13 @@ import logo from "../../assets/(site_assets)/logo.png";
 import { useTheme } from "../../context/ThemeContext";
 import { sidebarData } from "../../lib/data";
 
-const SideBar = ({ isOpen, toggleSidebar }) => {
+const SideBar = ({
+	isOpen,
+	toggleSidebar,
+}: {
+	isOpen: boolean;
+	toggleSidebar: any;
+}) => {
 	const { id } = useParams();
 	const { theme } = useTheme();
 	const location = useLocation();
@@ -38,7 +44,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 	const [guestListExpanded, setGuestListExpanded] = useState(false);
 	const [subscriberExpanded, setSubscriberExpanded] = useState(false);
 
-	const NavItem = ({ icon, text, link, active }) => (
+	const NavItem = ({ icon, text, link, active }: any) => (
 		<Link to={link}>
 			<div
 				className={`flex items-center space-x-3 pl-[.2rem] pr-4 py-1 cursor-pointer transition-colors duration-200

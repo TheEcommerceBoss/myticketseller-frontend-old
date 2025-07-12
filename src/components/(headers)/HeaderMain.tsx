@@ -109,7 +109,17 @@ const LocationData = () => {
 	);
 };
 
-const HeaderMain = ({ variation, showsearch, hidemenu, nobg }) => {
+const HeaderMain = ({
+	variation,
+	showsearch,
+	hidemenu,
+	nobg,
+}: {
+	variation: string;
+	showsearch: any;
+	hidemenu: any;
+	nobg?: any;
+}) => {
 	const { theme, toggleTheme } = useTheme();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const toggleMenu = () => {

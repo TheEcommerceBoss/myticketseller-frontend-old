@@ -5,23 +5,48 @@ import { Link } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import SideBar from "../../components/(headers)/DashboardSidebar";
 import { useTheme } from "../../context/ThemeContext";
+import { IEmailPreferences, settingsApi } from "../../shared/services/api";
 
+const defaultEmailPreference = {
+	email_from_organizer: false,
+	event_review_notification: false,
+	event_updates: false,
+	followed_organizers: false,
+
+	newsletter_emails: false,
+	promotional_email: false,
+	purchase_notification: false,
+};
 const EmailPreferences = () => {
 	const [loading, setLoading] = useState(true);
 	const { theme, toggleTheme } = useTheme();
 	const [activeTab, setActiveTab] = useState("customer");
+	const [emailPreferences, setEmailPreferences] = useState<
+		Omit<Partial<IEmailPreferences>, "id">
+	>(defaultEmailPreference);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(
 		window.innerWidth >= 1024
 	);
 
 	const [preferences, setPreferences] = useState(customerPreferences);
 
-	const togglePreference = (id) => {
+	const togglePreference = async (label: string) => {
 		setPreferences((prev) =>
 			prev.map((pref) =>
-				pref.id === id ? { ...pref, enabled: !pref.enabled } : pref
+				pref.label === label
+					? { ...pref, enabled: !pref.enabled }
+					: pref
 			)
 		);
+		const newUpdatedEmailPreferences = {
+			...emailPreferences,
+			[label]: !emailPreferences[label],
+		};
+		const res = await settingsApi.updateEmailPreferences(
+			newUpdatedEmailPreferences
+		);
+		// console.log(res);
+		setEmailPreferences((prev) => newUpdatedEmailPreferences);
 	};
 
 	useEffect(() => {
@@ -31,6 +56,21 @@ const EmailPreferences = () => {
 
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	useEffect(function () {
+		async function fetchEmailPreferences() {
+			try {
+				// Simulate fetching preferences from an API
+				setLoading(false);
+				const data = await settingsApi.getEmailPreferences();
+				// console.log(data);
+				setEmailPreferences(data);
+			} catch (error) {
+				console.error("Error fetching email preferences:", error);
+			}
+		}
+		fetchEmailPreferences();
 	}, []);
 
 	return (
@@ -167,17 +207,23 @@ const EmailPreferences = () => {
 										{/* Toggle Switch */}
 										<button
 											onClick={() =>
-												togglePreference(preference.id)
+												togglePreference(
+													preference.label
+												)
 											}
 											className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-												preference.enabled
+												emailPreferences[
+													preference.label
+												]
 													? "bg-[#040171]"
 													: "bg-gray-200"
 											}`}
 										>
 											<span
 												className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-													preference.enabled
+													emailPreferences[
+														preference.label
+													]
 														? "translate-x-6"
 														: "translate-x-1"
 												}`}
@@ -217,18 +263,21 @@ const customerPreferences = [
 		title: "Event updates",
 		description: "Get All notification for Your Event updates",
 		enabled: true,
+		label: "event_updates",
 	},
 	{
 		id: "purchase-notification",
 		title: "Purchase notification email",
 		description: "You will recieve all the emails for purchase",
 		enabled: true,
+		label: "purchase_notification",
 	},
 	{
 		id: "promotional-email",
 		title: "X Promotional email from MTS",
 		description: "You will recieve all the emails for purchase",
 		enabled: true,
+		label: "promotional_email",
 	},
 	{
 		id: "event-review",
@@ -236,18 +285,21 @@ const customerPreferences = [
 		description:
 			"You will recieve all important updates from MyTicketseller",
 		enabled: true,
+		label: "event_review_notification",
 	},
 	{
 		id: "organizer-email",
 		title: "X Email from organizer",
 		description: "You will recieve review email for events",
 		enabled: true,
+		label: "email_from_organizer",
 	},
 	{
 		id: "newsletter",
 		title: "Newsletter Emails",
 		description: "You will recieve email for newsletter",
 		enabled: true,
+		label: "newsletter_emails",
 	},
 	{
 		id: "followed-organizers",
@@ -255,6 +307,7 @@ const customerPreferences = [
 		description:
 			"You will recieve email when your favorite organizers create new events",
 		enabled: true,
+		label: "followed_organizers",
 	},
 ];
 

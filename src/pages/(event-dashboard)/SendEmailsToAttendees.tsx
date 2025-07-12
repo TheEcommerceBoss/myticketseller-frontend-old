@@ -8,9 +8,9 @@ import {
 	Radio,
 	RadioGroup,
 } from "@mui/material";
-import DashboardHeader from "../../components/(events)/DashboardHeader.jsx";
-import SideBar from "../../components/(headers)/EventDashboardSidebar.jsx";
-import { useTheme } from "../../context/ThemeContext.jsx";
+import DashboardHeader from "../../components/(events)/DashboardHeader";
+import SideBar from "../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../context/ThemeContext";
 import { manualSalesApi } from "../../shared/services/api";
 
 export default function SendEmailsToAttendees() {

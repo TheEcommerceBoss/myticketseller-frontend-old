@@ -7,6 +7,16 @@ import PropTypes from "prop-types";
 const placeholder =
 	"https://kzmo9y7ki044m4widvt3.lite.vusercontent.net/placeholder.svg?height=200&width=300";
 
+interface FeaturedEventCardProps {
+	id?: string | number;
+	image?: string;
+	title: string;
+	date: string;
+	description?: string;
+	location: string;
+	category: string;
+}
+
 export default function FeaturedEventCard({
 	id,
 	image,
@@ -15,7 +25,7 @@ export default function FeaturedEventCard({
 	description,
 	location,
 	category,
-}) {
+}: FeaturedEventCardProps) {
 	return (
 		<div className="bg-white rounded-lg shadow-[0_4px_10px_0] shadow-black/20 overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-lg h-full">
 			<Link

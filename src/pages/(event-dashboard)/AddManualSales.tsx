@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { CircularProgress } from "@mui/material";
-import DashboardHeader from "../../components/(events)/DashboardHeader.jsx";
-import SideBar from "../../components/(headers)/EventDashboardSidebar.jsx";
-import { useTheme } from "../../context/ThemeContext.jsx";
+import DashboardHeader from "../../components/(events)/DashboardHeader";
+import SideBar from "../../components/(headers)/EventDashboardSidebar";
+import { useTheme } from "../../context/ThemeContext";
 import { IManualSale, manualSalesApi } from "../../shared/services/api";
 
 export default function AddManualSales() {
@@ -104,7 +104,7 @@ export default function AddManualSales() {
 		{ field: "created_at", headerName: "Date", width: 180 },
 	];
 
-	const [rows, setRows] = useState([]);
+	const [rows, setRows] = useState<any[]>([]);
 
 	// Simulate fetching data
 	useEffect(() => {

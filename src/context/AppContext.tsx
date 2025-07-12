@@ -1,9 +1,16 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useState } from "react";
 
-const AppContext = createContext(undefined);
+interface IAppContext {
+	isMenuOpen: boolean;
+	toggleMenu: () => void;
+	activeTimeFilter: string;
+	setActiveTimeFilter: (filter: string) => void;
+}
 
-export const AppProvider = ({ children }) => {
+const AppContext = createContext<IAppContext | null>(null);
+
+export const AppProvider = ({ children }: {children: React.ReactNode}) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [activeTimeFilter, setActiveTimeFilter] = useState("Today");
 

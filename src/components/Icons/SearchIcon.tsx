@@ -1,7 +1,7 @@
 import { cn } from "../../lib/utils";
 import PropTypes from "prop-types";
 
-const SearchIcon = ({ className, fillColor }) => {
+const SearchIcon = ({ className, fillColor }: any) => {
 	return (
 		<svg
 			width="22"

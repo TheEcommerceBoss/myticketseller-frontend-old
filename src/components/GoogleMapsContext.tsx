@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState } from 'react';
+import  { createContext, useContext } from 'react';
 import { LoadScript, useLoadScript } from '@react-google-maps/api';
 
-const GoogleMapsContext = createContext();
+const GoogleMapsContext = createContext<any>(null);
 
-export const GoogleMapsProvider = ({ children }) => {
+export const GoogleMapsProvider = ({ children }: {children: React.ReactNode}) => {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,

@@ -1,8 +1,8 @@
 import { featuredEvents } from "../../lib/data";
-import SearchIcon from "../../components/Icons/SearchIcon";
+import SearchIcon from "../Icons/SearchIcon";
 import Button from "../ui/button";
 import EventTabs from "./EventTabs";
-import FeaturedEventCard from "..//../components/ui/FeaturedEventCard";
+import FeaturedEventCard from "../ui/FeaturedEventCard";
 import { Link } from "react-router-dom";
 // import FeaturedEventCard from "../ui/FeaturedEventCard";
 
@@ -36,7 +36,7 @@ export default function FeaturedEvents() {
 				</div>
 				<div className="flex justify-center mt-10 md:mt-[67px] lg:mt-[93px]">
 					<Link to={"/discover"} className="block">
-						<Button className="flex font-semibold rounded-full h-12 e w-[248px] gap-[10px] text-lg  lg:h-14">
+						<Button className="flex font-semibold rounded-full h-12 e w-[248px] gap-[10px] text-lg  lg:h-14" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
 							<SearchIcon className="size-[22px]" />
 							Find More Events
 						</Button>

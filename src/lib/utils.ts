@@ -1,11 +1,11 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs) {
+export function cn(...inputs: any[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function formatEventDate(eventDay, openDoor) {
+export function formatEventDate(eventDay: any, openDoor: any) {
 	const [year, month, day] = eventDay.split("-").map(Number);
 	const [hour, minute] = openDoor.split(":").map(Number);
 

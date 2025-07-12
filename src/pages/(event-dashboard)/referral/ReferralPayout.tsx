@@ -64,7 +64,7 @@ const AddButton = styled(Button)(({ theme }) => ({
 }));
 
 export default function ReferralPayout() {
-	const [referrals, setReferrals] = useState([]);
+	const [referrals, setReferrals] = useState<any[]>([]);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openPayoutDialog, setOpenPayoutDialog] = useState(false);
 	const [currentReferral, setCurrentReferral] = useState({
@@ -106,7 +106,7 @@ export default function ReferralPayout() {
 		setOpenDialog(false);
 	};
 
-	const handleOpenPayoutDialog = (referral) => {
+	const handleOpenPayoutDialog = (referral: any) => {
 		setCurrentReferral(referral);
 		setPayoutDetails({
 			amount: referral.referralTotal,
@@ -120,7 +120,7 @@ export default function ReferralPayout() {
 		setOpenPayoutDialog(false);
 	};
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: any) => {
 		const { name, value } = e.target;
 		setCurrentReferral((prev) => ({
 			...prev,
@@ -168,11 +168,11 @@ export default function ReferralPayout() {
 		});
 	};
 
-	const handleDeleteReferral = (id) => {
+	const handleDeleteReferral = (id: string | number) => {
 		setReferrals((prev) => prev.filter((ref) => ref.id !== id));
 	};
 
-	const handleViewReferral = (referral) => {
+	const handleViewReferral = (referral: any) => {
 		// View functionality would go here
 		console.log("Viewing referral:", referral);
 	};

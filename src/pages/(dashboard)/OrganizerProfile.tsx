@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { DataGrid } from "@mui/x-data-grid";
 import { CircularProgress } from "@mui/material";
+import { organizerProfileApi } from "../../shared/services/api";
 
 const OrganizerProfile = () => {
 	const { theme, toggleTheme } = useTheme();
@@ -32,6 +33,19 @@ const OrganizerProfile = () => {
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
+	useEffect(function () {
+		async function fetchProfiles() {
+			try {
+				// console.log("Haaaa");
+				const res =
+					await organizerProfileApi.getUserOrganizerProfiles();
+				console.log("my res", res);
+			} catch (error) {
+				console.error("Error fetching organizer profiles:", error);
+			}
+		}
+		fetchProfiles();
+	}, []);
 	const columns = [
 		{ field: "name", headerName: "Name", width: 250 },
 		{

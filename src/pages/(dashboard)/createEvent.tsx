@@ -26,8 +26,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 
 import Swal from "sweetalert2";
-import { eventsApi } from "../../shared/services/api/eventsApi.ts";
-import { categoriesApi } from "../../shared/services/api/index.ts";
+import { eventsApi } from "../../shared/services/api/eventsApi";
+import { categoriesApi } from "../../shared/services/api";
 
 const CreateEvent = ({ manage }) => {
 	let { id } = useParams();

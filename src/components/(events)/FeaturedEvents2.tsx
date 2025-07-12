@@ -14,11 +14,11 @@ import DatePicker from "react-datepicker"; // Import the date picker
 import "react-datepicker/dist/react-datepicker.css"; // Import the date picker styles
 import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { eventsApi } from "../../shared/services/api/eventsApi.ts";
-import { categoriesApi } from "../../shared/services/api/index.ts";
-import { useTheme } from "../../context/ThemeContext.jsx"; // Adjust path as necessary
-import FeaturedEventCard from "../ui/FeaturedEventCard.jsx";
-import { cn, formatEventDate } from "../../lib/utils.js";
+import { eventsApi, categoriesApi } from "../../shared/services/api";
+
+import { useTheme } from "../../context/ThemeContext"; // Adjust path as necessary
+import FeaturedEventCard from "../ui/FeaturedEventCard";
+import { cn, formatEventDate } from "../../lib/utils";
 
 const options = [
 	{ value: "location1", label: "Location 1" },
@@ -26,7 +26,7 @@ const options = [
 	{ value: "location3", label: "Location 3" },
 ];
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({ currentPage, totalPages, onPageChange }: any) => {
 	const pageNumbers = [];
 	for (let i = 1; i <= totalPages; i++) {
 		pageNumbers.push(i);

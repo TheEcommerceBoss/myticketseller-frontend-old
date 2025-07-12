@@ -64,14 +64,14 @@ import SetupScan from "./pages/(event-dashboard)/scanning/SetupScan";
 import ManualScanning from "./pages/(event-dashboard)/scanning/ManualScanning";
 import ScanningReport from "./pages/(event-dashboard)/scanning/ScanningReport";
 import TicketHistogram from "./pages/(event-dashboard)/TicketHistogram";
-import AddManualSales from "./pages/(event-dashboard)/AddManualSales.tsx";
+import AddManualSales from "./pages/(event-dashboard)/AddManualSales";
 import TicketOrders from "./pages/(event-dashboard)/TicketOrders";
 import RefundRequestLit from "./pages/(event-dashboard)/RefundRequestList";
 import Payout from "./pages/(event-dashboard)/payment-details/Payout";
 import MyFollowing from "./pages/(dashboard)/MyFollowing";
 import MultiUserAccess from "./pages/(dashboard)/MultiUserAccess";
 import PaymentAccount from "./pages/(event-dashboard)/payment-details/PaymentAccount";
-import SendEmailsToAttendees from "./pages/(event-dashboard)/SendEmailsToAttendees.jsx";
+import SendEmailsToAttendees from "./pages/(event-dashboard)/SendEmailsToAttendees";
 
 function App() {
 	return (

@@ -13,6 +13,7 @@ import {
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import SideBar from "../../components/(headers)/EventDashboardSidebar";
 import { useTheme } from "../../context/ThemeContext";
+import { eventsApi } from "../../shared/services/api";
 
 export default function GuestList() {
 	const { id } = useParams();
@@ -56,6 +57,26 @@ export default function GuestList() {
 		};
 	}, []);
 
+	useEffect(() => {
+		async function fetchGuestList() {
+			const data = await eventsApi.getEventGuestList(id);
+			// console.log(data);
+			setRows(
+				data.map((guest, index) => ({
+					id: index + 1,
+					first_name: guest.full_name.split(" ")[0],
+					last_name: guest.full_name.split(" ")[1] || "",
+					email: guest.email,
+					phone_number: guest.phone_number || "N/A",
+					// no_of_guest: guest.no_of_guest,
+					// date: new Date(guest.created_at).toLocaleString(),
+				}))
+			);
+			setLoading(false);
+		}
+		fetchGuestList();
+	}, [id]);
+
 	const toggleSidebar = () => {
 		setIsOpen(!isOpen);
 	};
@@ -64,68 +85,68 @@ export default function GuestList() {
 		{ field: "first_name", headerName: "First Name", width: 180 },
 		{ field: "last_name", headerName: "Last Name", width: 180 },
 		{ field: "email", headerName: "Email", width: 220 },
-		{ field: "contact_no", headerName: "Contact No", width: 180 },
-		{ field: "no_of_guest", headerName: "No of Guest", width: 150 },
-		{ field: "date", headerName: "Date", width: 200 },
+		{ field: "phone_number", headerName: "Contact No", width: 180 },
+		// { field: "no_of_guest", headerName: "No of Guest", width: 150 },
+		// { field: "date", headerName: "Date", width: 200 },
 	];
 
 	const [rows, setRows] = useState([]);
 
 	// Simulate fetching data
-	useEffect(() => {
-		setLoading(true);
-		// Replace this with your actual API call
-		setTimeout(() => {
-			setRows([
-				{
-					id: 1,
-					first_name: "John",
-					last_name: "Doe",
-					email: "john.doe@example.com",
-					contact_no: "+1234567890",
-					no_of_guest: 2,
-					date: "2024-06-01 10:15 AM",
-				},
-				{
-					id: 2,
-					first_name: "Jane",
-					last_name: "Smith",
-					email: "jane.smith@example.com",
-					contact_no: "+1987654321",
-					no_of_guest: 1,
-					date: "2024-06-02 02:30 PM",
-				},
-				{
-					id: 3,
-					first_name: "Alice",
-					last_name: "Johnson",
-					email: "alice.johnson@example.com",
-					contact_no: "+1122334455",
-					no_of_guest: 3,
-					date: "2024-06-03 09:45 AM",
-				},
-				{
-					id: 4,
-					first_name: "Bob",
-					last_name: "Lee",
-					email: "bob.lee@example.com",
-					contact_no: "+1222333444",
-					no_of_guest: 2,
-					date: "2024-06-04 11:00 AM",
-				},
-				{
-					id: 5,
-					first_name: "Emily",
-					last_name: "Clark",
-					email: "emily.clark@example.com",
-					contact_no: "+1333444555",
-					no_of_guest: 4,
-					date: "2024-06-05 03:20 PM",
-				},
-			]);
-			setLoading(false);
-		}, 1000);
-	}, []);
+	// useEffect(() => {
+	// 	setLoading(true);
+	// 	// Replace this with your actual API call
+	// 	setTimeout(() => {
+	// 		setRows([
+	// 			{
+	// 				id: 1,
+	// 				first_name: "John",
+	// 				last_name: "Doe",
+	// 				email: "john.doe@example.com",
+	// 				contact_no: "+1234567890",
+	// 				no_of_guest: 2,
+	// 				date: "2024-06-01 10:15 AM",
+	// 			},
+	// 			{
+	// 				id: 2,
+	// 				first_name: "Jane",
+	// 				last_name: "Smith",
+	// 				email: "jane.smith@example.com",
+	// 				contact_no: "+1987654321",
+	// 				no_of_guest: 1,
+	// 				date: "2024-06-02 02:30 PM",
+	// 			},
+	// 			{
+	// 				id: 3,
+	// 				first_name: "Alice",
+	// 				last_name: "Johnson",
+	// 				email: "alice.johnson@example.com",
+	// 				contact_no: "+1122334455",
+	// 				no_of_guest: 3,
+	// 				date: "2024-06-03 09:45 AM",
+	// 			},
+	// 			{
+	// 				id: 4,
+	// 				first_name: "Bob",
+	// 				last_name: "Lee",
+	// 				email: "bob.lee@example.com",
+	// 				contact_no: "+1222333444",
+	// 				no_of_guest: 2,
+	// 				date: "2024-06-04 11:00 AM",
+	// 			},
+	// 			{
+	// 				id: 5,
+	// 				first_name: "Emily",
+	// 				last_name: "Clark",
+	// 				email: "emily.clark@example.com",
+	// 				contact_no: "+1333444555",
+	// 				no_of_guest: 4,
+	// 				date: "2024-06-05 03:20 PM",
+	// 			},
+	// 		]);
+	// 		setLoading(false);
+	// 	}, 1000);
+	// }, []);
 
 	return (
 		<div
