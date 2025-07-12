@@ -10,13 +10,18 @@ import {
 } from "lucide-react";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { eventsApi, usersApi } from "../../shared/services/api";
+import {
+  eventsApi,
+  usersApi,
+  organizerProfileApi,
+} from "../../shared/services/api";
 import Swal from "sweetalert2";
 
 const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
   const [userDetails, setUserDetails] = useState();
   const [eventsCreated, setEventsCreated] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
+  const [followerCount, setFollowerCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,17 +32,18 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
           userDetailsResponse,
           totalOrdersResponse,
           userFollowersResponse,
-
+          organizerProfilesResponse,
           eventsCreatedResponse,
         ] = await Promise.all([
           usersApi.getMe(),
           usersApi.getTotalOrders(),
           usersApi.getUserFollowers(),
+          organizerProfileApi.getUserOrganizerProfiles(),
           eventsApi.getMyEvents(),
         ]);
 
-        setEventsCreated(eventsCreatedResponse.length);
-        console.log(userFollowersResponse);
+        setEventsCreated(eventsCreatedResponse?.length);
+        setFollowerCount(userFollowersResponse?.data?.length);
         setUserDetails(userDetailsResponse);
         setTotalOrders(totalOrdersResponse.total_orders);
       } catch (error) {
@@ -269,7 +275,7 @@ const ProfileDetails = ({ setEditProfile, setDeleteAccount }) => {
               />
               <StatCard
                 icon={<UserPlus className="w-6 h-6 text-[#040171]" />}
-                count="+2"
+                count={followerCount}
                 label="All Followers"
               />
               <StatCard
