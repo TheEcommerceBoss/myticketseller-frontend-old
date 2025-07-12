@@ -125,13 +125,13 @@ export const sidebarData = {
 			active: false,
 		},
 	],
-	subscriberEmails: [
-		{
-			text: "View Subscriber",
-			link: "/dashboard/event/:id/subscriber-emails",
-			active: false,
-		},
-	],
+	// subscriberEmails: [
+	// 	{
+	// 		text: "View Subscriber",
+	// 		link: "/dashboard/event/:id/subscriber-emails",
+	// 		active: false,
+	// 	},
+	// ],
 	profile: [
 		{
 			text: "My Profile",

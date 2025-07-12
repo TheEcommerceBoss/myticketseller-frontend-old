@@ -13,7 +13,6 @@ import {
 	Megaphone,
 	QrCode,
 	Send,
-	Star,
 	Ticket,
 	User,
 } from "lucide-react";
@@ -415,7 +414,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 							))}
 						</List>
 					</Collapse>
-					<DropdownNavItem
+					{/* <DropdownNavItem
 						icon={<Mail size={20} />}
 						text="Subscriber Emails"
 						active={subscriberExpanded}
@@ -448,7 +447,7 @@ const SideBar = ({ isOpen, toggleSidebar }) => {
 								</ListItem>
 							))}
 						</List>
-					</Collapse>
+					</Collapse> */}
 					<NavItem
 						icon={<Send size={20} />}
 						link={`/dashboard/event/${id}/send-emails-to-attendees`}
