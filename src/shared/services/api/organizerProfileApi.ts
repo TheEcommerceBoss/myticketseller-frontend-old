@@ -1,6 +1,6 @@
 import newApi from ".";
 
-interface IOrganizerProfile {
+export interface IOrganizerProfile {
 	id: string;
 	user_id: string;
 	name: string;
@@ -13,7 +13,7 @@ interface IOrganizerProfile {
 	show_number_of_events: boolean;
 	short_url: string;
 }
-type ICreateOrganizerProfile = Omit<IOrganizerProfile, "id">;
+export type ICreateOrganizerProfile = Omit<Partial<IOrganizerProfile>, "id">;
 
 export const organizerProfileApi = {
 	async getOrganizerProfile(organizer_id: string) {

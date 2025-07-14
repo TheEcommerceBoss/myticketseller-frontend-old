@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import DashboardHeader from "../../components/(events)/DashboardHeader";
 import SideBar from "../../components/(headers)/DashboardSidebar";
 import { useTheme } from "../../context/ThemeContext";
+import { ICreateOrganizerProfile, organizerProfileApi } from "../../shared/services/api";
 
 const AddNewOrganizer = () => {
 	const { theme, toggleTheme } = useTheme();
@@ -25,18 +26,43 @@ const AddNewOrganizer = () => {
 		window.innerWidth >= 1024
 	);
 
-	const [selectedButtonSize, setSelectedButtonSize] = useState("large");
-	const [eventDisplay, setEventDisplay] = useState("organizers-only");
+	// Form state
+	const [organizerName, setOrganizerName] = useState("");
+	const [seoTitle, setSeoTitle] = useState("");
+	const [description, setDescription] = useState("");
+	const [profileImage, setProfileImage] = useState<File | null>(null);
+	const [previewUrl, setPreviewUrl] = useState("");
+
+	// Banner images state
+	const [bannerImages, setBannerImages] = useState([
+		{ file: null, startDate: "", endDate: "" },
+	]);
+
+	// Optional settings state
 	const [showWebsite, setShowWebsite] = useState(false);
 	const [showEventsHeld, setShowEventsHeld] = useState(false);
+	const [eventDisplay, setEventDisplay] = useState("organizers-only");
+	const [organizerUrlName, setOrganizerUrlName] = useState("");
+
+	// Promote profile state
+	const [selectedButtonSize, setSelectedButtonSize] = useState<
+		"large" | "medium" | "small"
+	>("large");
+	const [promotionCode, setPromotionCode] = useState("");
+
+	// Social networks state (first section)
 	const [facebookLink, setFacebookLink] = useState(false);
 	const [twitterLink, setTwitterLink] = useState(false);
 	const [instagramLink, setInstagramLink] = useState(false);
+
+	// Social networks state (second section)
 	const [facebookLink2, setFacebookLink2] = useState(true);
 	const [twitterLink2, setTwitterLink2] = useState(false);
 	const [instagramLink2, setInstagramLink2] = useState(false);
-	const [previewUrl, setPreviewUrl] = useState("");
-	const [profileImage, setProfileImage] = useState(null);
+	const [facebookUsername, setFacebookUsername] = useState("");
+
+	// Submission state
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -46,6 +72,74 @@ const AddNewOrganizer = () => {
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
+
+	// Handle banner image operations
+	const addBannerImage = () => {
+		setBannerImages([
+			...bannerImages,
+			{ file: null, startDate: "", endDate: "" },
+		]);
+	};
+
+	const removeBannerImage = (index: number) => {
+		setBannerImages(bannerImages.filter((_, i) => i !== index));
+	};
+
+	const updateBannerImage = (index: number, field: string, value: any) => {
+		const updatedImages = bannerImages.map((img, i) =>
+			i === index ? { ...img, [field]: value } : img
+		);
+		setBannerImages(updatedImages);
+	};
+
+	// Submit function
+	const handleSubmit = async (e: any) => {
+		e.preventDefault();
+		setIsSubmitting(true);
+
+		// Package all form values into a payload
+		const payload: ICreateOrganizerProfile = {
+			banner_url: "",
+			button_size: selectedButtonSize,
+			description: description,
+			name: organizerName,
+			short_url: organizerName,
+			show_my_profile: eventDisplay === "organizers-only",
+			show_number_of_events: showEventsHeld,
+			show_my_website: showWebsite,
+			seo_title: seoTitle,
+		};
+		
+		
+		// Log the packaged payload
+		console.log("Form Submission Payload:", payload);
+
+		
+		
+
+		try {
+			// Simulate API call
+			const res = await organizerProfileApi.createOrganizerProfile(payload);
+			
+
+			// Here you would typically send the payload to your API
+			// const response = await fetch('/api/organizers', {
+			//   method: 'POST',
+			//   headers: { 'Content-Type': 'application/json' },
+			//   body: JSON.stringify(payload)
+			// });
+
+			console.log("Form submitted successfully!");
+			console.log(res)
+
+			// Reset form or redirect user
+			// resetForm();
+		} catch (error) {
+			console.error("Form submission error:", error);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<div
@@ -120,7 +214,7 @@ const AddNewOrganizer = () => {
 				</div>
 
 				<div className="container mx-auto lg:px-0">
-					<form>
+					<form onSubmit={handleSubmit}>
 						{/* About the organizer */}
 						<div>
 							<div className="bg-[#040171] text-white p-4 rounded-t-lg">
@@ -142,6 +236,10 @@ const AddNewOrganizer = () => {
 											type="text"
 											id="organizerName"
 											name="organizerName"
+											value={organizerName}
+											onChange={(e) =>
+												setOrganizerName(e.target.value)
+											}
 											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
 										/>
 									</div>
@@ -156,6 +254,10 @@ const AddNewOrganizer = () => {
 											type="text"
 											id="seoTitle"
 											name="seoTitle"
+											value={seoTitle}
+											onChange={(e) =>
+												setSeoTitle(e.target.value)
+											}
 											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
 										/>
 									</div>
@@ -171,6 +273,10 @@ const AddNewOrganizer = () => {
 										id="description"
 										name="description"
 										rows={4}
+										value={description}
+										onChange={(e) =>
+											setDescription(e.target.value)
+										}
 										className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
 									></textarea>
 								</div>
@@ -198,7 +304,8 @@ const AddNewOrganizer = () => {
 											type="file"
 											accept="image/*"
 											onChange={(e) => {
-												const file = e.target.files[0];
+												const files = e.target.files;
+												const file = files && files[0];
 												if (file) {
 													setProfileImage(file);
 													setPreviewUrl(
@@ -235,39 +342,85 @@ const AddNewOrganizer = () => {
 								</p>
 
 								<Box className="pt-4 space-y-4">
-									<div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
-										<Button
-											variant="outlined"
-											className="text-gray-500 w-fit"
+									{bannerImages.map((banner, index) => (
+										<div
+											key={index}
+											className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center"
 										>
-											Choose File
-										</Button>
-										<input
-											type="text"
-											id="seoTitle"
-											name="seoTitle"
-											placeholder="Start Date"
-											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
-										/>
-										<input
-											type="text"
-											id="seoTitle"
-											name="seoTitle"
-											placeholder="Ebd Date"
-											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
-										/>
-										<div className="flex gap-4">
-											<button className="block p-2 text-green-600 bg-green-100 rounded-lg hover:bg-green-200 h-fit">
-												<Plus size={16} />
-											</button>
-											<button
-												title="Delete"
-												className="block p-2 text-red-600 bg-red-100 rounded-lg hover:bg-red-200 h-fit"
+											<Button
+												variant="outlined"
+												className="text-gray-500 w-fit"
+												component="label"
 											>
-												<Trash2 size={16} />
-											</button>
+												Choose File
+												<input
+													type="file"
+													hidden
+													accept="image/*"
+													onChange={(e) => {
+														const file =
+															e.target.files?.[0];
+														if (file) {
+															updateBannerImage(
+																index,
+																"file",
+																file
+															);
+														}
+													}}
+												/>
+											</Button>
+											<input
+												type="date"
+												placeholder="Start Date"
+												value={banner.startDate}
+												onChange={(e) =>
+													updateBannerImage(
+														index,
+														"startDate",
+														e.target.value
+													)
+												}
+												className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
+											/>
+											<input
+												type="date"
+												placeholder="End Date"
+												value={banner.endDate}
+												onChange={(e) =>
+													updateBannerImage(
+														index,
+														"endDate",
+														e.target.value
+													)
+												}
+												className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
+											/>
+											<div className="flex gap-4">
+												<button
+													type="button"
+													onClick={addBannerImage}
+													className="block p-2 text-green-600 bg-green-100 rounded-lg hover:bg-green-200 h-fit"
+												>
+													<Plus size={16} />
+												</button>
+												{bannerImages.length > 1 && (
+													<button
+														type="button"
+														onClick={() =>
+															removeBannerImage(
+																index
+															)
+														}
+														title="Delete"
+														className="block p-2 text-red-600 bg-red-100 rounded-lg hover:bg-red-200 h-fit"
+													>
+														<Trash2 size={16} />
+													</button>
+												)}
+											</div>
 										</div>
-									</div>
+									))}
 								</Box>
 							</div>
 						</div>
@@ -338,9 +491,13 @@ const AddNewOrganizer = () => {
 
 										<input
 											type="text"
-											id="seoTitle"
-											name="seoTitle"
 											placeholder="Organizer URL Name"
+											value={organizerUrlName}
+											onChange={(e) =>
+												setOrganizerUrlName(
+													e.target.value
+												)
+											}
 											className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 lg:flex-1"
 										/>
 									</Box>
@@ -367,7 +524,7 @@ const AddNewOrganizer = () => {
 												value={selectedButtonSize}
 												onChange={(e) =>
 													setSelectedButtonSize(
-														e.target.value
+														e.target.value as "large" | "medium" | "small"
 													)
 												}
 											>
@@ -401,6 +558,12 @@ const AddNewOrganizer = () => {
 												rows={3}
 												fullWidth
 												variant="outlined"
+												value={promotionCode}
+												onChange={(e) =>
+													setPromotionCode(
+														e.target.value
+													)
+												}
 												sx={{
 													fontFamily: "monospace",
 													fontSize: "0.75rem",
@@ -535,6 +698,12 @@ const AddNewOrganizer = () => {
 											variant="outlined"
 											fullWidth
 											size="small"
+											value={facebookUsername}
+											onChange={(e) =>
+												setFacebookUsername(
+													e.target.value
+												)
+											}
 										/>
 									</Box>
 								</Box>
@@ -544,11 +713,10 @@ const AddNewOrganizer = () => {
 						<div className="flex justify-center mt-8">
 							<button
 								type="submit"
-								// disabled={isSubmitting}
+								disabled={isSubmitting}
 								className="bg-[#040171] text-white px-8 py-3 rounded-full shadow-lg hover:bg-[#09096e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 							>
-								{/* {isSubmitting ? "Saving..." : "Save"} */}
-								Save
+								{isSubmitting ? "Saving..." : "Save"}
 							</button>
 						</div>
 					</form>
