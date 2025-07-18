@@ -25,6 +25,7 @@ const PaymentSettings = () => {
 
 	useEffect(() => {
 		const fetchEvents = async () => {
+			if (!id) return;
 			try {
 				// const token = Cookies.get("auth_token");
 				const event = await eventsApi.getEventById(id);

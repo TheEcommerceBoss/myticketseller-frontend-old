@@ -1,25 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import {
-	Home,
-	PlusCircle,
-	ListChecks,
-	Ticket,
-	Megaphone,
-	Settings,
-	HelpCircle,
-	Menu,
-	ChevronLeft,
-	ChevronRight,
-	Search,
-	Moon,
-	Sun,
-	CalendarCogIcon,
-	BellDot,
-	Bell,
-	X,
-} from "lucide-react";
+import { PlusCircle, Menu, Search, Moon, Sun, X } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import SideBar from "../../components/(headers)/DashboardSidebar";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -268,7 +250,7 @@ const EditEvent = ({ manage }) => {
 			console.log(formData);
 
 			setPreview(reader.result); // Set preview for mini image display
-			
+
 			console.log(formData);
 		};
 		reader.onerror = (error) => {

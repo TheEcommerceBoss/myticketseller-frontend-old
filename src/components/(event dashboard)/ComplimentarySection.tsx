@@ -23,6 +23,7 @@ import { Send, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { eventsApi, ticketsApi } from "../../shared/services/api";
+import { IEvent } from "../../types";
 
 // Custom styled components
 
@@ -47,9 +48,9 @@ export default function ComplimentarySection() {
 	const [showEmailInput, setShowEmailInput] = useState(false);
 	const [email, setEmail] = useState("");
 	const [name, setName] = useState("");
-	const [complimentaryTickets, setComplimentaryTickets] = useState([]);
+	const [complimentaryTickets, setComplimentaryTickets] = useState<any[]>([]);
 	const [emailError, setEmailError] = useState("");
-	const [event, setEvent] = useState();
+	const [event, setEvent] = useState<IEvent | null>(null);
 	const [ticketId, setTicketId] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	// const [complimentaryTickets, setComp]
@@ -63,12 +64,14 @@ export default function ComplimentarySection() {
 		function () {
 			if (!id) return;
 			async function fetchEvent() {
-				const eventResponse = await eventsApi.getEventById(id);
+				const eventResponse = await eventsApi.getEventById(id!);
 				setEvent(eventResponse);
 				setTicketId(eventResponse.tickets[0].id);
 			}
 			async function fetchComplimentaries() {
-				const res = await ticketsApi.fetchEventComplimentaryTickets(id);
+				const res = await ticketsApi.fetchEventComplimentaryTickets(
+					id!
+				);
 				setComplimentaryTickets(res.data);
 				setIsLoading(false);
 				console.log(res.data);
@@ -93,22 +96,23 @@ export default function ComplimentarySection() {
 	}
 
 	async function handleSendTicket() {
+		if (!id) return;
 		const res = await ticketsApi.sendComplimentaryTicket({
 			ticket_id: ticketId,
-			event_id: id,
+			event_id: id!,
 			recipient_email: email,
 			recipient_name: name,
 		});
 		console.log(res);
 	}
 
-	const handleDeleteEmail = (id) => {
+	const handleDeleteEmail = (id: string) => {
 		setComplimentaryTickets(
 			complimentaryTickets.filter((item) => item.id !== id)
 		);
 	};
 
-	const handleResendEmail = (id) => {
+	const handleResendEmail = (id: string) => {
 		setComplimentaryTickets(
 			complimentaryTickets.map((item) =>
 				item.id === id
