@@ -81,7 +81,7 @@ function SearchEventComponent({ variation }) {
             try {
                 const response = await api.post("/search_events",
                     {
-                        query: searchParam,
+                        query: searchParam, 
                     }, {
                     headers: {
 

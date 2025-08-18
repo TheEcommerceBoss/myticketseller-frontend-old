@@ -33,23 +33,54 @@ export function useLocationData() {
         if (
           locationData &&
           lastSavedTime &&
-          currentTime - lastSavedTime > 5 * 60 * 1000
+          currentTime - Number(lastSavedTime) < 5 * 60 * 1000
         ) {
+          console.log("using cached data");
           const parsedLocation = JSON.parse(locationData);
+          // console.log(locationData)
           setLocation(parsedLocation);
           setConversionRate(
             await fetchConversionRate(parsedLocation.currencyCode)
-          ); // Fetch conversion rate for the current location
+          );
         } else {
+          console.log("using live data");
+
+          const getUserIP = (): Promise<string> => {
+            return new Promise((resolve, reject) => {
+              const rtc = new RTCPeerConnection({ iceServers: [] });
+              rtc.createDataChannel("");
+              rtc.createOffer()
+                .then((offer) => rtc.setLocalDescription(offer))
+                .catch(reject);
+
+              rtc.onicecandidate = (event) => {
+                if (event && event.candidate && event.candidate.candidate) {
+                  const ipMatch = event.candidate.candidate.match(
+                    /([0-9]{1,3}(\.[0-9]{1,3}){3})/
+                  );
+                  if (ipMatch) {
+                    resolve(ipMatch[1]);
+                    rtc.close();
+                  }
+                }
+              };
+
+              setTimeout(() => reject("IP fetch timeout"), 3000);
+            });
+          };
           const ipResponse = await newApi.get("/ip");
           const ipData = await ipResponse.data;
-
           const ipAddress =
-            ipData.ip === "127.0.0.1" ? "129.205.124.208" : ipData.ip;
+            ipData.ip === "127.0.0.1"
+              ? "129.205.124.208"
+              : ipData.ip;
+          // const ipAddress = '100.43.96.0';
+           
+
           const response = await axios.get(
             `https://ipwhois.app/json/${ipAddress}`
           );
-          const data = await response.data;
+          const data = response.data;
 
           const flagUrl = `https://flagcdn.com/w320/${data.country_code.toLowerCase()}.png`;
 
@@ -67,11 +98,12 @@ export function useLocationData() {
           Cookies.set("locationData", JSON.stringify(locationInfo), {
             expires: 1 / 24,
           });
-          Cookies.set("locationDataTime", currentTime, {
+          Cookies.set("locationDataTime", currentTime.toString(), {
             expires: 1 / 24,
           });
+
           setLocation(locationInfo);
-          setConversionRate(await fetchConversionRate(data.currency_code)); // Fetch conversion rate for the detected currency
+          setConversionRate(await fetchConversionRate(data.currency_code));
         }
       } catch (error) {
         console.error("Error fetching location data", error);
@@ -85,7 +117,6 @@ export function useLocationData() {
 
     fetchLocationData();
   }, []);
-
   return {
     location,
     error,

@@ -25,6 +25,7 @@ import {
   CalendarDays,
   CloudDownload,
   Eye,
+  Mail,
   Menu,
   Moon,
   PlusCircle,
@@ -58,6 +59,19 @@ const EventDashboard = () => {
   };
 
   const [successfulTransactions, setSuccessfulTransactions] = useState([])
+  const [resendingEmails, setResendingEmails] = useState({})
+  const handleResendEmails = async (transactionId: string) => {
+    try {
+      setResendingEmails(prev => ({ ...prev, [transactionId]: true }))
+      await eventsApi.resendTransactionEmails(transactionId)
+      alert('Ticket emails resent successfully!')
+    } catch (error) {
+      console.error('Failed to resend emails:', error)
+      alert('Failed to resend emails. Please try again.')
+    } finally {
+      setResendingEmails(prev => ({ ...prev, [transactionId]: false }))
+    }
+  }
 
   useEffect(() => {
 
@@ -740,21 +754,74 @@ const EventDashboard = () => {
                 aria-label="orders table"
               >
                 <TableHead>
-                  <TableRow sx={{ bgcolor: "#D9D9D973" }}>
-                    <TableCell>Order</TableCell>
-                    <TableCell>
-                      Ticket Buyer/ Email
-                    </TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Qty</TableCell>
-                    <TableCell>Price</TableCell>
+                  <TableRow
+                    sx={{
+                      bgcolor: "#D9D9D973",
+                    }}
+                  >
+                    <TableCell>Order ID</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Customer Name</TableCell>
+                    <TableCell>Phone</TableCell>
+                    <TableCell>Amount</TableCell>
+                    <TableCell>Currency</TableCell>
                     <TableCell>Date</TableCell>
-                    <TableCell>Refund</TableCell>
-                    <TableCell>IP</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {/* Empty state or would map through orders here */}
+                  {successfulTransactions.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={9} align="center" sx={{ py: 4 }}>
+                        <Typography variant="body1" color="text.secondary">
+                          No transactions found
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    successfulTransactions.map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell>{transaction.reference_id || `TXN-${transaction.id}`}</TableCell>
+                        <TableCell>{transaction.buyer_email}</TableCell>
+                        <TableCell>{transaction.fullname}</TableCell>
+                        <TableCell>{transaction.phone_number}</TableCell>
+                        <TableCell>${transaction.total_amount.toFixed(2)}</TableCell>
+                        <TableCell>{transaction.currency_code}</TableCell>
+                        <TableCell>{new Date(transaction.purchase_date).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={transaction.status}
+                            sx={{
+                              bgcolor: transaction.status === 'success' ? "#4caf50" : "#ff9800",
+                              color: "white",
+                              fontSize: "0.75rem",
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            startIcon={<Mail size={16} />}
+                            onClick={() => handleResendEmails(transaction.id)}
+                            disabled={resendingEmails[transaction.id]}
+                            sx={{
+                              textTransform: "none",
+                              borderColor: "#000080",
+                              color: "#000080",
+                              "&:hover": {
+                                bgcolor: "#000080",
+                                color: "white",
+                              },
+                            }}
+                          >
+                            {resendingEmails[transaction.id] ? "Sending..." : "Resend Email"}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -832,3 +899,4 @@ const EventDashboard = () => {
 };
 
 export default EventDashboard;
+

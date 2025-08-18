@@ -116,10 +116,9 @@ function LandingPage() {
 				</div>
 			</div>
 			<FeaturedEvents2 />
-			{/* <FeaturedEvents /> */}
 			<WhyTicketSeller />
 			<HowItWorks />
-			<Footer />
+			<Footer theme={theme} />
 		</>
 	);
 }

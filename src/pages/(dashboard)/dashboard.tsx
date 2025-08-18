@@ -76,6 +76,23 @@ const Dashboard = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
+				// Check localStorage first
+				const cachedData = localStorage.getItem('dashboardChartData');
+				const cachedTime = localStorage.getItem('dashboardChartDataTime');
+				const currentTime = Date.now();
+				
+				// Use cached data if it exists and is less than 30 minutes old
+				if (cachedData && cachedTime && (currentTime - parseInt(cachedTime)) < 30 * 60 * 1000) {
+					const parsedData = JSON.parse(cachedData);
+					setChartData(parsedData.chartData || []);
+					setStats(parsedData.stats || []);
+					setTotalTickets(parsedData.totalTickets || 0);
+					setEvents(parsedData.events || []);
+					setUserDetails(parsedData.userDetails || {});
+					setLoading(false);
+					return;
+				}
+				
 				const userDetailsResposnse = await usersApi.getMe();
 				setUserDetails(userDetailsResposnse);
 
@@ -89,9 +106,7 @@ const Dashboard = () => {
 				// Process stats data
 				const statsData = statsResponse;
 				console.log("data", statsData);
-				setStats(statsData.event_days);
-
-				// console.log(statsData, events);
+				setStats(statsData.event_days || []);
 
 				// Process your chart data logic
 				const monthNames = [
@@ -109,8 +124,29 @@ const Dashboard = () => {
 					"Dec",
 				];
 
-				const formatMonthYear = (month, year) =>
-					`${monthNames[month - 1]} '${year.toString().slice(-2)}`;
+				const formatMonthYear = (month, year) => {
+					if (!month || !year) return "";
+					return `${monthNames[month - 1]} '${year.toString().slice(-2)}`;
+				};
+
+				// Handle empty data
+				if (!statsData.event_creation_rate || !statsData.successful_transactions) {
+					const emptyData = [];
+					setChartData(emptyData);
+					setTotalTickets(0);
+					
+					// Save to localStorage
+					const dataToCache = {
+						chartData: emptyData,
+						stats: [],
+						totalTickets: 0,
+						events: events || [],
+						userDetails: userDetailsResposnse || {}
+					};
+					localStorage.setItem('dashboardChartData', JSON.stringify(dataToCache));
+					localStorage.setItem('dashboardChartDataTime', currentTime.toString());
+					return;
+				}
 
 				const transformedEventData = statsData.event_creation_rate.map(
 					(entry) => ({
@@ -128,13 +164,54 @@ const Dashboard = () => {
 						total_tickets: entry.total_tickets,
 					}));
 
+				// Handle empty transformed data
+				if (transformedEventData.length === 0) {
+					// Use current date as reference if no data
+					const currentDate = new Date();
+					const latestDate = currentDate;
+					
+					const requiredMonths = [];
+					for (let i = -5; i <= 1; i++) {
+						const date = new Date(
+							latestDate.getFullYear(),
+							latestDate.getMonth() + i
+						);
+						requiredMonths.push({
+							month: date.getMonth() + 1,
+							year: date.getFullYear(),
+							total_events: 0,
+							total_scans: 0,
+							total_tickets: 0,
+							label: formatMonthYear(
+								date.getMonth() + 1,
+								date.getFullYear()
+							),
+						});
+					}
+					
+					setChartData(requiredMonths);
+					setTotalTickets(0);
+					
+					// Save to localStorage
+					const dataToCache = {
+						chartData: requiredMonths,
+						stats: statsData.event_days || [],
+						totalTickets: 0,
+						events: events || [],
+						userDetails: userDetailsResposnse || {}
+					};
+					localStorage.setItem('dashboardChartData', JSON.stringify(dataToCache));
+					localStorage.setItem('dashboardChartDataTime', currentTime.toString());
+					return;
+				}
+
 				const latestEntry =
 					transformedEventData.length > 0
 						? transformedEventData[transformedEventData.length - 1]
 						: {};
 				const latestDate = new Date(
-					latestEntry.year,
-					latestEntry.month - 1
+					latestEntry.year || new Date().getFullYear(),
+					(latestEntry.month || new Date().getMonth() + 1) - 1
 				);
 
 				const requiredMonths = [];
@@ -189,11 +266,30 @@ const Dashboard = () => {
 					(acc, entry) => acc + entry.total_tickets,
 					0
 				);
-				setTotalTickets(statsData.total_sold_tickets);
-
-				// console.table(paddedData);
+				setTotalTickets(statsData.total_sold_tickets || 0);
+				
+				// Save to localStorage
+				const dataToCache = {
+					chartData: paddedData,
+					stats: statsData.event_days || [],
+					totalTickets: statsData.total_sold_tickets || 0,
+					events: events || [],
+					userDetails: userDetailsResposnse || {}
+				};
+				localStorage.setItem('dashboardChartData', JSON.stringify(dataToCache));
+				localStorage.setItem('dashboardChartDataTime', currentTime.toString());
 			} catch (error) {
 				console.error("Failed to fetch data:", error);
+				// Try to use cached data even if it's older than 30 minutes
+				const cachedData = localStorage.getItem('dashboardChartData');
+				if (cachedData) {
+					const parsedData = JSON.parse(cachedData);
+					setChartData(parsedData.chartData || []);
+					setStats(parsedData.stats || []);
+					setTotalTickets(parsedData.totalTickets || 0);
+					setEvents(parsedData.events || []);
+					setUserDetails(parsedData.userDetails || {});
+				}
 			} finally {
 				setLoading(false);
 			}
@@ -366,12 +462,10 @@ const Dashboard = () => {
 							</div>
 						) : (
 							<ResponsiveContainer>
-								<LineChart data={chartData}>
+								<LineChart data={chartData && chartData.length > 0 ? chartData : []}>
 									{" "}
-									{/* Use paddedData with labels */}
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis dataKey="label" />{" "}
-									{/* Set X-axis to use the label */}
 									<YAxis />
 									<Tooltip
 										content={({ payload }) => {
@@ -395,7 +489,7 @@ const Dashboard = () => {
 															<strong>
 																Sold Tickets:
 															</strong>{" "}
-															{totalTickets}
+															{total_tickets}
 														</p>
 													</div>
 												);

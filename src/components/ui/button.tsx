@@ -15,7 +15,7 @@ const Button = ({
 
 	const variants = {
 		primary: "bg-primary text-white hover:bg-orange-600",
-		secondary: "bg-secondary text-white hover:bg-secondary-foreground",
+		secondary: "bg-secondary-500text-white hover:bg-secondary-foreground",
 		destructive: "bg-destructive text-white hover:opacity-90",
 	};
 

@@ -1,4 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import IPInfo from 'ip-info-react';
 import { GoogleMapsProvider } from "./components/GoogleMapsContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UnProtectedRoute from "./components/UnProtectedRoute";

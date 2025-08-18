@@ -8,7 +8,7 @@ import planeTickets from "../../assets/(landing)/icons/plane-tickets.svg";
 
 export default function WhyTicketSeller() {
 	return (
-		<section className="pt-[108px] text-white bg-secondary pb-[141px] lg:pt-[82px] lg:pb-[98px]">
+		<section className="pt-[108px] text-white bg-secondary-500 pb-[141px] lg:pt-[82px] lg:pb-[98px]">
 			<div className="container px-5 mx-auto max-w-7xl">
 				<h2 className="relative text-2xl font-semibold mb-[118px] text-center uppercase tracking-wide md:text-3xl md:w-fit md:mx-auto lg:text-[2rem] lg:mb-[130px]">
 					Why My TicketSeller?

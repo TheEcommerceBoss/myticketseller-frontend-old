@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 		} catch (error: any) {
 			console.error("Login error:", error);
 			throw new Error(
-				error.response?.data?.message || "Failed to log in"
+				error.response?.data?.error || "Failed to log in"
 			);
 		}
 	};

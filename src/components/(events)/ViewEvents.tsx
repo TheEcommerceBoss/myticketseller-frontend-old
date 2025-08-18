@@ -413,7 +413,7 @@ function ViewEventComponent({ variation }) {
 		tickets: [],
 		user: [],
 		total_events_by_this_user_with_status_1: 0,
-	});
+	}); 
 
 	const [ticketDetails, setTicketDetails] = useState({
 		event_category: "",

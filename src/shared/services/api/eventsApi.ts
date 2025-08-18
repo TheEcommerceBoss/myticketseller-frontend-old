@@ -86,4 +86,8 @@ export const eventsApi = {
     const res = await newApi.get(`/events/${eventId}/orders`);
     return res.data;
   },
+  async resendTransactionEmails(transactionId: string) {
+    const res = await newApi.post(`/payments/resend-emails/${transactionId}`);
+    return res.data;
+  },
 };

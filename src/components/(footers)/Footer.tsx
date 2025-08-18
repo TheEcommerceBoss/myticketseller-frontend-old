@@ -6,10 +6,14 @@ import twitter from "../../assets/(landing)/icons/twitter.svg";
 import youtube from "../../assets/(landing)/icons/youtube.svg";
 import logo from "../../assets/(site_assets)/logo-white.svg";
 
-export default function Footer() {
+interface FooterProps {
+	theme?: string;
+}
+
+export default function Footer({ theme }: FooterProps) {
 	return (
-		<footer className="relative pt-[201px] bg-secondary text-white md:pt-[250px]">
-			<NewsLetter />
+		<footer className={`relative  ${theme === 'light' ? 'bg-[#040171B0]' : 'bg-secondary-500'} text-white  pt-[5rem]`}>
+			 
 
 			<div className="container mx-auto max-w-7xl">
 				<div className="flex flex-col px-5 items-center gap-[56px] pb-[98px] md:items-start md:px-8 lg:flex-row lg:justify-between lg:px-5 lg:items-center xl:px-10">
